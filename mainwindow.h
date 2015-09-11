@@ -21,9 +21,22 @@ private slots:
     void on_cropCheckBox_toggled(bool checked);
     void on_trimStartEndRadioButton_toggled(bool checked);
     void on_trimDurationRadioButton_toggled(bool checked);
+    void on_inputFileLineEdit_editingFinished();
+    void on_outputFileLineEdit_editingFinished();
+    void on_inputFileLineEdit_textEdited(const QString &arg1);
+    void on_outputFileLineEdit_textEdited(const QString &arg1);
+    void on_inputFileBrowsePushButton_clicked();
+    void on_outputFileBrowsePushButton_clicked();
+    void on_rateModeComboBox_currentIndexChanged(const QString &arg1);
+    void on_rateTargetModeComboBox_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
+    bool validateInputFile(QString &inputFilePath);
+    bool validateOutputFile(QString &outputFilePath);
+    void refreshTargetMode(QString &currentTargetMode);
+    void initializeStreamComboBoxes(QString &inputFilePath);
+    void clearStreamComboBoxes();
 };
 
 #endif // MAINWINDOW_H

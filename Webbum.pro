@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp\
+        ffmpeg/ffmpeg.c
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h\
+         ffmpeg/ffmpeg.h
 
 FORMS    += mainwindow.ui
