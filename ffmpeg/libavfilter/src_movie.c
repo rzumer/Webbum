@@ -39,6 +39,7 @@
 #include "libavutil/timestamp.h"
 #include "libavformat/avformat.h"
 #include "audio.h"
+#include "avcodec.h"
 #include "avfilter.h"
 #include "formats.h"
 #include "internal.h"

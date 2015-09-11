@@ -1817,23 +1817,6 @@ equalizer=f=1000:width_type=q:width=1:g=2,equalizer=f=100:width_type=q:width=2:g
 @end example
 @end itemize
 
-@section extrastereo
-
-Linearly increases the difference between left and right channels which
-adds some sort of "live" effect to playback.
-
-The filter accepts the following option:
-
-@table @option
-@item m
-Sets the difference coefficient (default: 2.5). 0.0 means mono sound
-(average of both channels), with 1.0 sound will be unchanged, with
--1.0 left and right channels will be swapped.
-
-@item c
-Enable clipping. By default is enabled.
-@end table
-
 @section flanger
 Apply a flanging effect to the audio.
 
@@ -2874,26 +2857,7 @@ Specify the sample rate, default is 44100.
 Specify the duration of the generated audio stream.
 
 @item samples_per_frame
-Set the number of samples per output frame.
-
-The expression can contain the following constants:
-
-@table @option
-@item n
-The (sequential) number of the output audio frame, starting from 0.
-
-@item pts
-The PTS (Presentation TimeStamp) of the output audio frame,
-expressed in @var{TB} units.
-
-@item t
-The PTS of the output audio frame, expressed in seconds.
-
-@item TB
-The timebase of the output audio frames.
-@end table
-
-Default is @code{1024}.
+Set the number of samples per output frame, default is 1024.
 @end table
 
 @subsection Examples
@@ -2914,12 +2878,6 @@ sine=f=220:b=4:d=5
 sine=frequency=220:beep_factor=4:duration=5
 @end example
 
-@item
-Generate a 1 kHz sine wave following @code{1602,1601,1602,1601,1602} NTSC
-pattern:
-@example
-sine=1000:samples_per_frame='st(0,mod(n,5)); 1602-not(not(eq(ld(0),1)+eq(ld(0),3)))'
-@end example
 @end itemize
 
 @c man end AUDIO SOURCES
@@ -3953,7 +3911,7 @@ Can be used in addition to the other key points component
 options. In this case, the unset component(s) will fallback on this
 @option{all} setting.
 @item psfile
-Specify a Photoshop curves file (@code{.acv}) to import the settings from.
+Specify a Photoshop curves file (@code{.asv}) to import the settings from.
 @end table
 
 To avoid some filtergraph syntax conflicts, each key points list need to be
@@ -3998,7 +3956,7 @@ curves=vintage
 @item
 Use a Photoshop preset and redefine the points of the green component:
 @example
-curves=psfile='MyCurvesPresets/purple.acv':green='0.45/0.53'
+curves=psfile='MyCurvesPresets/purple.asv':green='0.45/0.53'
 @end example
 @end itemize
 
@@ -9833,12 +9791,6 @@ alternating frames (left eye first, right eye second)
 @item ar
 alternating frames (right eye first, left eye second)
 
-@item irl
-interleaved rows (left eye has top row, right eye starts on next row)
-
-@item irr
-interleaved rows (right eye has top row, left eye starts on next row)
-
 Default value is @samp{sbsl}.
 @end table
 
@@ -9903,23 +9855,17 @@ anaglyph yellow/blue colored
 anaglyph yellow/blue color optimized with the least squares projection of dubois
 (yellow filter on left eye, blue filter on right eye)
 
+@item irl
+interleaved rows (left eye has top row, right eye starts on next row)
+
+@item irr
+interleaved rows (right eye has top row, left eye starts on next row)
+
 @item ml
 mono output (left eye only)
 
 @item mr
 mono output (right eye only)
-
-@item chl
-checkerboard, left eye first
-
-@item chr
-checkerboard, right eye first
-
-@item icl
-interleaved columns, left eye first
-
-@item icr
-interleaved columns, right eye first
 @end table
 
 Default value is @samp{arcd}.

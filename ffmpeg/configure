@@ -416,15 +416,6 @@ EOF
 }
 
 quotes='""'
-if test -t 1 && which tput >/dev/null; then
-    ncolors=$(tput colors)
-    if test -n "$ncolors" && test $ncolors -ge 8; then
-        bold_color=$(tput bold)
-        warn_color=$(tput setaf 3)
-        error_color=$(tput setaf 1)
-        reset_color=$(tput sgr0)
-    fi
-fi
 
 log(){
     echo "$@" >> $logfile
@@ -436,14 +427,18 @@ log_file(){
     log END $1
 }
 
+echolog(){
+    log "$@"
+    echo "$@"
+}
+
 warn(){
     log "WARNING: $*"
     WARNINGS="${WARNINGS}WARNING: $*\n"
 }
 
 die(){
-    log "$@"
-    echo "$error_color$bold_color$@$reset_color"
+    echolog "$@"
     cat <<EOF
 
 If you think configure made a mistake, make sure you are using the latest
@@ -1933,7 +1928,6 @@ CONFIG_EXTRA="
     llauddsp
     llviddsp
     lpc
-    lzf
     me_cmp
     mpeg_er
     mpegaudio
@@ -2194,7 +2188,6 @@ dnxhd_encoder_select="aandcttables blockdsp fdctdsp idctdsp mpegvideoenc pixbloc
 dvvideo_decoder_select="dvprofile idctdsp"
 dvvideo_encoder_select="dvprofile fdctdsp me_cmp pixblockdsp"
 dxa_decoder_select="zlib"
-dxv_decoder_select="lzf texturedsp"
 eac3_decoder_select="ac3_decoder"
 eac3_encoder_select="ac3_encoder"
 eamad_decoder_select="aandcttables blockdsp bswapdsp idctdsp mpegvideo"
@@ -5268,7 +5261,7 @@ enabled libshine          && require_pkg_config shine shine/layer3.h shine_encod
 enabled libsmbclient      && { use_pkg_config smbclient libsmbclient.h smbc_init ||
                                require smbclient libsmbclient.h smbc_init -lsmbclient; }
 enabled libsnappy         && require snappy snappy-c.h snappy_compress -lsnappy
-enabled libsoxr           && require libsoxr soxr.h soxr_create -lsoxr && LIBSOXR="-lsoxr"
+enabled libsoxr           && require libsoxr soxr.h soxr_create -lsoxr
 enabled libssh            && require_pkg_config libssh libssh/sftp.h sftp_init
 enabled libspeex          && require_pkg_config speex speex/speex.h speex_decoder_init -lspeex
 enabled libstagefright_h264 && require_cpp libstagefright_h264 "binder/ProcessState.h media/stagefright/MetaData.h
@@ -5587,6 +5580,7 @@ enabled xmm_clobber_test &&
                   -Wl,--wrap,avcodec_decode_video2      \
                   -Wl,--wrap,avcodec_decode_subtitle2   \
                   -Wl,--wrap,avcodec_encode_audio2      \
+                  -Wl,--wrap,avcodec_encode_video       \
                   -Wl,--wrap,avcodec_encode_video2      \
                   -Wl,--wrap,avcodec_encode_subtitle    \
                   -Wl,--wrap,swr_convert                \
@@ -6206,7 +6200,7 @@ echo "#endif /* AVUTIL_AVCONFIG_H */" >> $TMPH
 cp_if_changed $TMPH libavutil/avconfig.h
 
 if test -n "$WARNINGS"; then
-    printf "\n%s%s$WARNINGS%s" "$warn_color" "$bold_color" "$reset_color"
+    printf "\n$WARNINGS"
     enabled fatal_warnings && exit 1
 fi
 
@@ -6270,4 +6264,4 @@ pkgconfig_generate libavfilter   "FFmpeg audio/video filtering library" "$LIBAVF
 pkgconfig_generate libpostproc   "FFmpeg postprocessing library"        "$LIBPOSTPROC_VERSION"   ""
 pkgconfig_generate libavresample "Libav audio resampling library"       "$LIBAVRESAMPLE_VERSION" "$LIBM"
 pkgconfig_generate libswscale    "FFmpeg image rescaling library"       "$LIBSWSCALE_VERSION"    "$LIBM"
-pkgconfig_generate libswresample "FFmpeg audio resampling library"      "$LIBSWRESAMPLE_VERSION" "$LIBM $LIBSOXR"
+pkgconfig_generate libswresample "FFmpeg audio resampling library"      "$LIBSWRESAMPLE_VERSION" "$LIBM"

@@ -105,19 +105,19 @@ static const AVClass pipe_class = {
 static int file_read(URLContext *h, unsigned char *buf, int size)
 {
     FileContext *c = h->priv_data;
-    int ret;
+    int r;
     size = FFMIN(size, c->blocksize);
-    ret = read(c->fd, buf, size);
-    return (ret == -1) ? AVERROR(errno) : ret;
+    r = read(c->fd, buf, size);
+    return (-1 == r)?AVERROR(errno):r;
 }
 
 static int file_write(URLContext *h, const unsigned char *buf, int size)
 {
     FileContext *c = h->priv_data;
-    int ret;
+    int r;
     size = FFMIN(size, c->blocksize);
-    ret = write(c->fd, buf, size);
-    return (ret == -1) ? AVERROR(errno) : ret;
+    r = write(c->fd, buf, size);
+    return (-1 == r)?AVERROR(errno):r;
 }
 
 static int file_get_handle(URLContext *h)

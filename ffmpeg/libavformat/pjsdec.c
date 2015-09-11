@@ -100,7 +100,7 @@ static int pjs_read_header(AVFormatContext *s)
         }
     }
 
-    ff_subtitles_queue_finalize(s, &pjs->q);
+    ff_subtitles_queue_finalize(&pjs->q);
     return res;
 }
 

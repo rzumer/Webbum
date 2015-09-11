@@ -17,6 +17,6 @@ SOURCES += main.cpp\
         ffmpeg/ffmpeg.c
 
 HEADERS  += mainwindow.h\
-         ffmpeg/ffmpeg.h
+         ffmpeg.h
 
 FORMS    += mainwindow.ui

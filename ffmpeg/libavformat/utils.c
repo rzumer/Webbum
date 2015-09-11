@@ -1265,6 +1265,12 @@ static int parse_packet(AVFormatContext *s, AVPacket *pkt, int stream_index)
         if (out_pkt.data == pkt->data && out_pkt.size == pkt->size) {
             out_pkt.buf = pkt->buf;
             pkt->buf    = NULL;
+#if FF_API_DESTRUCT_PACKET
+FF_DISABLE_DEPRECATION_WARNINGS
+            out_pkt.destruct = pkt->destruct;
+            pkt->destruct = NULL;
+FF_ENABLE_DEPRECATION_WARNINGS
+#endif
         }
         if ((ret = av_dup_packet(&out_pkt)) < 0)
             goto fail;
@@ -3113,7 +3119,7 @@ int avformat_find_stream_info(AVFormatContext *ic, AVDictionary **options)
         max_analyze_duration        = 5*AV_TIME_BASE;
         max_subtitle_analyze_duration = 30*AV_TIME_BASE;
         if (!strcmp(ic->iformat->name, "flv"))
-            max_stream_analyze_duration = 90*AV_TIME_BASE;
+            max_stream_analyze_duration = 30*AV_TIME_BASE;
     }
 
     if (ic->pb)

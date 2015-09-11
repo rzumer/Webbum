@@ -89,7 +89,6 @@ void avfilter_register_all(void)
     REGISTER_FILTER(EARWAX,         earwax,         af);
     REGISTER_FILTER(EBUR128,        ebur128,        af);
     REGISTER_FILTER(EQUALIZER,      equalizer,      af);
-    REGISTER_FILTER(EXTRASTEREO,    extrastereo,    af);
     REGISTER_FILTER(FLANGER,        flanger,        af);
     REGISTER_FILTER(HIGHPASS,       highpass,       af);
     REGISTER_FILTER(JOIN,           join,           af);
@@ -289,6 +288,11 @@ void avfilter_register_all(void)
     /* multimedia sources */
     REGISTER_FILTER(AMOVIE,         amovie,         avsrc);
     REGISTER_FILTER(MOVIE,          movie,          avsrc);
+
+#if FF_API_AVFILTERBUFFER
+    REGISTER_FILTER_UNCONDITIONAL(vsink_ffbuffersink);
+    REGISTER_FILTER_UNCONDITIONAL(asink_ffabuffersink);
+#endif
 
     /* those filters are part of public or internal API => registered
      * unconditionally */

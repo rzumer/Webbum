@@ -107,8 +107,7 @@ AVOutputFormat ff_md5_muxer = {
     .write_header      = write_header,
     .write_packet      = write_packet,
     .write_trailer     = write_trailer,
-    .flags             = AVFMT_VARIABLE_FPS | AVFMT_TS_NONSTRICT |
-                         AVFMT_TS_NEGATIVE,
+    .flags             = AVFMT_NOTIMESTAMPS,
     .priv_class        = &md5enc_class,
 };
 #endif

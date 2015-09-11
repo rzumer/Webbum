@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    av_register_all(); // Initialize ffmpeg
 }
 
 MainWindow::~MainWindow()
@@ -45,6 +46,21 @@ void MainWindow::refreshTargetMode(QString &currentTargetMode)
 
 void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
 {
+    AVFormatContext *pFormatCtx = NULL;
+    if(avformat_open_input(&pFormatCtx,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
+    {
+        if(avformat_find_stream_info(pFormatCtx,NULL) >= 0)
+        {
+            for(int i = 0; i < pFormatCtx->nb_streams; i++)
+            {
+                AVStream * currentStream = pFormatCtx->streams[i];
+                if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+                {
+                    ui->streamVideoComboBox->addItem(QString("[" + QString::number(i) + "] " + QString::fromStdString(currentStream->codec->codec_name)));
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::clearStreamComboBoxes()
@@ -135,7 +151,11 @@ void MainWindow::on_inputFileLineEdit_editingFinished()
     QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
 
     if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath))
-        ui->encodePushButton->setEnabled(true);
+    {
+        initializeStreamComboBoxes(inputFilePath);
+        if(ui->streamVideoComboBox->count() > 1)
+            ui->encodePushButton->setEnabled(true);
+    }
 }
 
 void MainWindow::on_outputFileLineEdit_editingFinished()
@@ -144,7 +164,10 @@ void MainWindow::on_outputFileLineEdit_editingFinished()
     QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
 
     if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath))
-        ui->encodePushButton->setEnabled(true);
+    {
+        if(ui->streamVideoComboBox->count() > 1)
+            ui->encodePushButton->setEnabled(true);
+    }
 }
 
 void MainWindow::on_inputFileLineEdit_textEdited(const QString &arg1)

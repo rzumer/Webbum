@@ -66,8 +66,7 @@ pw_15212_m13377: times 4 dw 15212, -13377
 pw_15212_9929: times 4 dw 15212, 9929
 pw_m5283_m15212: times 4 dw -5283, -15212
 pw_13377x2: times 8 dw 13377*2
-pw_m13377_13377: times 4 dw -13377, 13377
-pw_13377_0: times 4 dw 13377, 0
+pw_13377_m13377: times 4 dw 13377, -13377
 
 pd_8192: times 4 dd 8192
 
@@ -357,24 +356,21 @@ IDCT_4x4_FN ssse3
     movq2dq           xmm3, m3
 %if cpuflag(ssse3)
     paddw               m3, m0
+%else
+    paddw             xmm6, xmm3, xmm0
+    punpcklwd         xmm6, xmm2
 %endif
     punpcklwd         xmm0, xmm1
     punpcklwd         xmm2, xmm3
     pmaddwd           xmm1, xmm0, [pw_5283_13377]
     pmaddwd           xmm4, xmm0, [pw_9929_13377]
-%if notcpuflag(ssse3)
-    pmaddwd           xmm6, xmm0, [pw_13377_0]
-%endif
     pmaddwd           xmm0, [pw_15212_m13377]
     pmaddwd           xmm3, xmm2, [pw_15212_9929]
-%if notcpuflag(ssse3)
-    pmaddwd           xmm7, xmm2, [pw_m13377_13377]
-%endif
     pmaddwd           xmm2, [pw_m5283_m15212]
 %if cpuflag(ssse3)
     psubw               m3, m2
 %else
-    paddd             xmm6, xmm7
+    pmaddwd           xmm6, [pw_13377_m13377]
 %endif
     paddd             xmm0, xmm2
     paddd             xmm3, xmm5
@@ -410,9 +406,9 @@ IDCT_4x4_FN ssse3
 
 %macro IADST4_FN 5
 INIT_MMX %5
-cglobal vp9_%1_%3_4x4_add, 3, 3, 0, dst, stride, block, eob
+cglobal vp9_%1_%3_4x4_add, 3, 3, 6 + notcpuflag(ssse3), dst, stride, block, eob
 %if WIN64 && notcpuflag(ssse3)
-    WIN64_SPILL_XMM 8
+WIN64_SPILL_XMM 7
 %endif
     movdqa            xmm5, [pd_8192]
     mova                m0, [blockq+ 0]
@@ -531,9 +527,10 @@ IADST4_FN iadst, IADST4, iadst, IADST4, ssse3
     pmulhrsw            m2, [pw_6270x2]                     ; m2=t2a
     pmulhrsw            m7, m1, [pw_16069x2]                ; m7=t7a
     pmulhrsw            m1, [pw_3196x2]                     ; m1=t4a
-    pmulhrsw            m5, m3, [pw_m9102x2]                ; m5=t5a
+    pmulhrsw            m5, m3, [pw_9102x2]                 ; m5=-t5a
     pmulhrsw            m3, [pw_13623x2]                    ; m3=t6a
     SUMSUB_BA            w,  5,  1, 4                       ; m1=t4a+t5a (t4), m5=t4a-t5a (t5a)
+    SWAP                 1,  5
     SUMSUB_BA            w,  3,  7, 4                       ; m3=t7a+t6a (t7), m7=t7a-t6a (t6a)
     SUMSUB_BA            w,  1,  7, 4                       ; m1=t6a+t5a (t6), m7=t6a-t5a (t5)
     pmulhrsw            m1, W_11585x2_REG                   ; m1=t6
@@ -1127,14 +1124,10 @@ IADST8_FN iadst, IADST8, iadst, IADST8, avx, 16
     pmulhrsw            m7, m4, [pw_16069x2]        ; t6-7
     pmulhrsw            m4, [pw_3196x2]             ; t4-5
 
-%if 0 ; overflows :(
     paddw               m6, m7, m4
     psubw               m5, m7, m4
     pmulhrsw            m5, [pw_11585x2]            ; t5
     pmulhrsw            m6, [pw_11585x2]            ; t6
-%else
-    VP9_UNPACK_MULSUB_2W_4X  5, 6, 7, 4, 11585, 11585, [pd_8192], 0, 1 ; t5,  t6
-%endif
 
     psubw               m0, m3, m7
     paddw               m7, m3
