@@ -11,10 +11,19 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Webbum
 TEMPLATE = app
 
+INCLUDEPATH += $$PWD/ffmpeg/include
 
 SOURCES += main.cpp\
         mainwindow.cpp
 
-HEADERS  += mainwindow.h\
+HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
+LIBS += -L$$PWD/ffmpeg/lib\
+        -lavcodec\
+        -lavformat\
+        -lavdevice\
+        -lswscale\
+        -lavutil\
+        -ldsound\
