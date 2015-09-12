@@ -3,12 +3,18 @@
 #include <QtCore>
 #include <QtWidgets>
 
+extern "C"
+{
+    #include "libavcodec/avcodec.h"
+    #include "libavformat/avformat.h"
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //av_register_all(); // Initialize ffmpeg
+    av_register_all(); // Initialize ffmpeg
 }
 
 MainWindow::~MainWindow()
