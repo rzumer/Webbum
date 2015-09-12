@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ffmpeg/ffmpeg.h"
 #include <QtCore>
 #include <QtWidgets>
 
@@ -9,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    av_register_all(); // Initialize ffmpeg
+    //av_register_all(); // Initialize ffmpeg
 }
 
 MainWindow::~MainWindow()
@@ -46,7 +45,7 @@ void MainWindow::refreshTargetMode(QString &currentTargetMode)
 
 void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
 {
-    AVFormatContext *pFormatCtx = NULL;
+    /*AVFormatContext *pFormatCtx = NULL;
     if(avformat_open_input(&pFormatCtx,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
     {
         if(avformat_find_stream_info(pFormatCtx,NULL) >= 0)
@@ -60,7 +59,7 @@ void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
                 }
             }
         }
-    }
+    }*/
 }
 
 void MainWindow::clearStreamComboBoxes()
