@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDropEvent>
+#include <QUrl>
+
 extern "C"
 {
     #include "libavcodec/avcodec.h"
@@ -20,16 +23,30 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    void dropEvent(QDropEvent *ev);
+    void dragEnterEvent(QDragEnterEvent *ev);
+
 private slots:
     void on_actionAbout_triggered();
     void on_inputFileLineEdit_textChanged(const QString &arg1);
     void on_outputFileLineEdit_textChanged(const QString &arg1);
-    void on_inputFileBrowsePushButton_clicked();
     void on_outputFileBrowsePushButton_clicked();
     void on_rateModeComboBox_currentIndexChanged(const QString &arg1);
     void on_rateTargetModeComboBox_currentIndexChanged(const QString &arg1);
-
     void on_streamVideoComboBox_currentIndexChanged(int index);
+    void on_trimStartEndRadioButton_toggled(bool checked);
+    void on_trimStartEndStartChapterComboBox_activated(int index);
+    void on_trimStartEndEndChapterComboBox_activated(int index);
+    void on_trimStartEndStartTimeEdit_editingFinished();
+    void on_trimStartEndEndTimeEdit_editingFinished();
+    void on_cropLeftSpinBox_editingFinished();
+    void on_cropRightSpinBox_editingFinished();
+    void on_cropTopSpinBox_editingFinished();
+    void on_cropBottomSpinBox_editingFinished();
+    void on_resizeWidthSpinBox_editingFinished();
+    void on_resizeHeightSpinBox_editingFinished();
+    void on_actionOpen_triggered();
 
 private:
     Ui::MainWindow *ui;

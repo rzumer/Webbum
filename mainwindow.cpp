@@ -9,12 +9,34 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
+    setAcceptDrops(true);
     av_register_all();
 }
 
 MainWindow::~MainWindow()
 {
-   delete ui;
+    delete ui;
+}
+
+void MainWindow::dropEvent(QDropEvent *ev)
+{
+    // use the first item in a drag&drop event as input file
+    if(!ev->mimeData()->urls().isEmpty())
+    {
+        QUrl url = ev->mimeData()->urls().first();
+        if(url.isLocalFile())
+        {
+            ui->inputFileLineEdit->setText(
+                QDir::toNativeSeparators(
+                    QFileInfo(url.toLocalFile()).canonicalFilePath()));
+        }
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *ev)
+{
+    ev->accept();
 }
 
 bool MainWindow::validateInputFile(QString &inputFilePath)
@@ -79,15 +101,37 @@ void MainWindow::processInputFile(QString &inputFilePath)
 
 void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
 {
+    // ***************DEBUG**********************
+    // input format for the container
+    //qDebug() << formatContext->iformat->name;
+
+    // container metadata
+    /*AVDictionaryEntry *tag = NULL;
+    while(tag = av_dict_get(formatContext->metadata,"",tag,AV_DICT_IGNORE_SUFFIX))
+    {
+        if(strcmp(tag->key,"title") == 0)
+        {
+            // do something with the title
+        }
+
+        // display any other metadata
+        qDebug() << QString::fromStdString(tag->key);
+        qDebug() << QString::fromStdString(tag->value);
+    }*/
+
+    // chapters
+    // -----end debug----
+
     // add audio, video and subtitle streams to their respective combo boxes
     for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
     {
         AVStream *currentStream = formatContext->streams[i];
         if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
         {
-            ui->streamVideoComboBox->addItem(QString("[" + QString::number(i) + "] " +
+            ui->streamVideoComboBox->addItem("[" + QString::number(i) + "] " +
                 QString::fromStdString(currentStream->codec->codec_descriptor->name) + " (" +
-                QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)"));
+                QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)");
+            //qDebug() << currentStream->codec->bit_rate;
             //qDebug() << av_q2d(currentStream->r_frame_rate);
             //qDebug() << av_q2d(currentStream->time_base);
             //duration of the container
@@ -97,13 +141,13 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
         }
         else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
         {
-            ui->streamAudioComboBox->addItem(QString("[" + QString::number(i) + "] " +
-                QString::fromStdString(currentStream->codec->codec_descriptor->name)));
+            ui->streamAudioComboBox->addItem("[" + QString::number(i) + "] " +
+                QString::fromStdString(currentStream->codec->codec_descriptor->name));
         }
         else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
         {
-            ui->streamSubtitlesComboBox->addItem(QString("[" + QString::number(i) + "] " +
-                QString::fromStdString(currentStream->codec->codec_descriptor->name)));
+            ui->streamSubtitlesComboBox->addItem("[" + QString::number(i) + "] " +
+                QString::fromStdString(currentStream->codec->codec_descriptor->name));
         }
     }
 
@@ -127,6 +171,36 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
         if(ui->streamSubtitlesComboBox->currentIndex() == 0)
             ui->streamSubtitlesComboBox->setCurrentIndex(1);
     }
+
+    // populate chapter combo boxes
+    for(int i = 0; (unsigned)i < formatContext->nb_chapters; i++)
+    {
+        AVChapter *currentChapter = formatContext->chapters[i];
+        QString currentChapterTitle;
+
+        AVDictionaryEntry *tag = NULL;
+        while(tag = av_dict_get(currentChapter->metadata,"",tag,AV_DICT_IGNORE_SUFFIX))
+        {
+            if(strcmp(tag->key,"title") == 0)
+                currentChapterTitle = tag->value;
+        }
+
+        QString currentChapterText = "[" + QString::number(i) + "] " + currentChapterTitle;
+        ui->trimStartEndStartChapterComboBox->addItem(currentChapterText.trimmed());
+        ui->trimStartEndEndChapterComboBox->addItem(currentChapterText.trimmed());
+    }
+    int chapterCount = ui->trimStartEndStartChapterComboBox->count() - 1;
+    if(chapterCount > 0)
+    {
+        ui->trimStartEndStartChapterComboBox->setCurrentIndex(1);
+        ui->trimStartEndEndChapterComboBox->setCurrentIndex(chapterCount);
+
+        if(ui->trimStartEndRadioButton->isChecked())
+        {
+            ui->trimStartEndStartChapterComboBox->setEnabled(true);
+            ui->trimStartEndEndChapterComboBox->setEnabled(true);
+        }
+    }
 }
 
 void MainWindow::clearInputFileFormData()
@@ -134,18 +208,34 @@ void MainWindow::clearInputFileFormData()
     // clear generated form fields
     ui->resizeWidthSpinBox->setValue(0);
     ui->resizeHeightSpinBox->setValue(0);
-    ui->trimDurationDurationTimeEdit->setTime(QTime(0,0));
+    ui->trimStartEndStartTimeEdit->setTime(QTime(0,0));
     ui->trimStartEndEndTimeEdit->setTime(QTime(0,0));
+    ui->trimDurationStartTimeEdit->setTime(QTime(0,0));
+    ui->trimDurationDurationTimeEdit->setTime(QTime(0,0));
 
-    // set selected streams to Disabled
+    // restore maximum time on time edits
+    ui->trimStartEndStartTimeEdit->setMaximumTime(QTime(23,59,59,999));
+    ui->trimStartEndEndTimeEdit->setMaximumTime(QTime(23,59,59,999));
+    ui->trimDurationStartTimeEdit->setMaximumTime(QTime(23,59,59,999));
+    ui->trimDurationDurationTimeEdit->setMaximumTime(QTime(23,59,59,999));
+
+    // add "No Chapter" item to chapter combo boxes in case it was removed
+    ui->trimStartEndStartChapterComboBox->insertItem(0,"No Chapter");
+    ui->trimStartEndEndChapterComboBox->insertItem(0,"No Chapter");
+
+    // set selected streams/chapters to Disabled/No Chapter
     ui->streamVideoComboBox->setCurrentIndex(0);
     ui->streamAudioComboBox->setCurrentIndex(0);
     ui->streamSubtitlesComboBox->setCurrentIndex(0);
+    ui->trimStartEndStartChapterComboBox->setCurrentIndex(0);
+    ui->trimStartEndEndChapterComboBox->setCurrentIndex(0);
 
     // disable combo boxes
     ui->streamVideoComboBox->setEnabled(false);
     ui->streamAudioComboBox->setEnabled(false);
     ui->streamSubtitlesComboBox->setEnabled(false);
+    ui->trimStartEndStartChapterComboBox->setEnabled(false);
+    ui->trimStartEndEndChapterComboBox->setEnabled(false);
 
     // clear combo box items
     for(int i = ui->streamVideoComboBox->count() - 1; i > 0; i--)
@@ -160,6 +250,14 @@ void MainWindow::clearInputFileFormData()
     {
         ui->streamSubtitlesComboBox->removeItem(i);
     }
+    for(int i = ui->trimStartEndStartChapterComboBox->count() - 1; i > 0; i--)
+    {
+        ui->trimStartEndStartChapterComboBox->removeItem(i);
+    }
+    for(int i = ui->trimStartEndEndChapterComboBox->count() - 1; i > 0; i--)
+    {
+        ui->trimStartEndEndChapterComboBox->removeItem(i);
+    }
 }
 
 void MainWindow::initializeFormData(AVFormatContext *formatContext)
@@ -173,9 +271,16 @@ void MainWindow::initializeFormData(AVFormatContext *formatContext)
     }
 
     // set default end time and duration based on the container's
-    QTime duration = QTime(0,0).addMSecs((double)formatContext->duration / AV_TIME_BASE * 1000);
+    // duration is rounded for ms accuracy
+    QTime duration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
     ui->trimDurationDurationTimeEdit->setTime(duration);
     ui->trimStartEndEndTimeEdit->setTime(duration);
+
+    // set maximum time to the video duration
+    ui->trimStartEndStartTimeEdit->setMaximumTime(duration);
+    ui->trimStartEndEndTimeEdit->setMaximumTime(duration);
+    ui->trimDurationStartTimeEdit->setMaximumTime(duration);
+    ui->trimDurationDurationTimeEdit->setMaximumTime(duration);
 
     // set default width and height based on the first video stream's
     for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
@@ -228,15 +333,6 @@ void MainWindow::on_outputFileLineEdit_textChanged(const QString &arg1)
         if(ui->streamVideoComboBox->currentIndex() > 0)
             ui->encodePushButton->setEnabled(true);
     }
-}
-
-void MainWindow::on_inputFileBrowsePushButton_clicked()
-{
-    QString inputFilePath = QFileDialog::getOpenFileName(this,"Select Input File",
-                                 QFileInfo(ui->inputFileLineEdit->text().trimmed()).dir().canonicalPath(),
-                                 "All Files (*.*)");
-    if(!inputFilePath.isEmpty())
-        ui->inputFileLineEdit->setText(QDir::toNativeSeparators(inputFilePath));
 }
 
 void MainWindow::on_outputFileBrowsePushButton_clicked()
@@ -326,4 +422,125 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
 
         closeInputFile(formatContext);
     }
+}
+
+void MainWindow::on_trimStartEndRadioButton_toggled(bool checked)
+{
+    if(checked && ui->trimStartEndStartChapterComboBox->count() > 1)
+    {
+        ui->trimStartEndStartChapterComboBox->setEnabled(true);
+        ui->trimStartEndEndChapterComboBox->setEnabled(true);
+    }
+    else
+    {
+        ui->trimStartEndStartChapterComboBox->setEnabled(false);
+        ui->trimStartEndEndChapterComboBox->setEnabled(false);
+    }
+}
+
+void MainWindow::on_trimStartEndStartChapterComboBox_activated(int index)
+{
+    if(index > 0)
+    {
+        int endChapterIndex = ui->trimStartEndEndChapterComboBox->currentIndex();
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        AVChapter *currentChapter = formatContext->chapters[index - 1];
+        ui->trimStartEndStartTimeEdit->setTime(
+            QTime(0,0).addMSecs(((double)currentChapter->start + 500) * av_q2d(currentChapter->time_base) * 1000));
+        if(index > endChapterIndex && endChapterIndex > 0)
+        {
+            ui->trimStartEndEndChapterComboBox->setCurrentIndex(index);
+            ui->trimStartEndEndTimeEdit->setTime(
+                QTime(0,0).addMSecs(((double)currentChapter->end + 500) * av_q2d(currentChapter->time_base) * 1000));
+        }
+        closeInputFile(formatContext);
+    }
+}
+
+void MainWindow::on_trimStartEndEndChapterComboBox_activated(int index)
+{
+    if(index > 0)
+    {
+        int startChapterIndex = ui->trimStartEndStartChapterComboBox->currentIndex();
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        AVChapter *currentChapter = formatContext->chapters[index - 1];
+        ui->trimStartEndEndTimeEdit->setTime(
+            QTime(0,0).addMSecs(((double)currentChapter->end + 500) * av_q2d(currentChapter->time_base) * 1000));
+        if(index < startChapterIndex)
+        {
+            ui->trimStartEndStartChapterComboBox->setCurrentIndex(index);
+            ui->trimStartEndStartTimeEdit->setTime(
+                QTime(0,0).addMSecs(((double)currentChapter->start + 500) * av_q2d(currentChapter->time_base) * 1000));
+        }
+        closeInputFile(formatContext);
+    }
+}
+
+void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
+{
+    ui->trimStartEndStartChapterComboBox->setCurrentIndex(0);
+    QTime startTime = ui->trimStartEndStartTimeEdit->time();
+    QTime endTime = ui->trimStartEndEndTimeEdit->time();
+    if(startTime > endTime)
+        ui->trimStartEndEndTimeEdit->setTime(startTime);
+}
+
+void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
+{
+    ui->trimStartEndEndChapterComboBox->setCurrentIndex(0);
+    QTime startTime = ui->trimStartEndStartTimeEdit->time();
+    QTime endTime = ui->trimStartEndEndTimeEdit->time();
+    if(endTime < startTime)
+        ui->trimStartEndStartTimeEdit->setTime(endTime);
+}
+
+void MainWindow::on_cropLeftSpinBox_editingFinished()
+{
+    int value = ui->cropLeftSpinBox->value();
+    if(value % 2 != 0)
+        ui->cropLeftSpinBox->setValue(value - 1);
+}
+
+void MainWindow::on_cropRightSpinBox_editingFinished()
+{
+    int value = ui->cropRightSpinBox->value();
+    if(value % 2 != 0)
+        ui->cropRightSpinBox->setValue(value - 1);
+}
+
+void MainWindow::on_cropTopSpinBox_editingFinished()
+{
+    int value = ui->cropTopSpinBox->value();
+    if(value % 2 != 0)
+        ui->cropTopSpinBox->setValue(value - 1);
+}
+
+void MainWindow::on_cropBottomSpinBox_editingFinished()
+{
+    int value = ui->cropBottomSpinBox->value();
+    if(value % 2 != 0)
+        ui->cropBottomSpinBox->setValue(value - 1);
+}
+
+void MainWindow::on_resizeWidthSpinBox_editingFinished()
+{
+    int value = ui->resizeWidthSpinBox->value();
+    if(value % 2 != 0)
+        ui->resizeWidthSpinBox->setValue(value - 1);
+}
+
+void MainWindow::on_resizeHeightSpinBox_editingFinished()
+{
+    int value = ui->resizeHeightSpinBox->value();
+    if(value % 2 != 0)
+        ui->resizeHeightSpinBox->setValue(value - 1);
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString inputFilePath = QFileDialog::getOpenFileName(this,"Select Input File",
+                                 QFileInfo(ui->inputFileLineEdit->text().trimmed()).dir().canonicalPath(),
+                                 "All Files (*.*)");
+    if(!inputFilePath.isEmpty())
+        ui->inputFileLineEdit->setText(QDir::toNativeSeparators(inputFilePath));
 }
