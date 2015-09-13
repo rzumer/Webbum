@@ -21,14 +21,14 @@ private slots:
     void on_cropCheckBox_toggled(bool checked);
     void on_trimStartEndRadioButton_toggled(bool checked);
     void on_trimDurationRadioButton_toggled(bool checked);
-    void on_inputFileLineEdit_editingFinished();
-    void on_outputFileLineEdit_editingFinished();
-    void on_inputFileLineEdit_textEdited(const QString &arg1);
-    void on_outputFileLineEdit_textEdited(const QString &arg1);
+    void on_inputFileLineEdit_textChanged(const QString &arg1);
+    void on_outputFileLineEdit_textChanged(const QString &arg1);
     void on_inputFileBrowsePushButton_clicked();
     void on_outputFileBrowsePushButton_clicked();
     void on_rateModeComboBox_currentIndexChanged(const QString &arg1);
     void on_rateTargetModeComboBox_currentIndexChanged(const QString &arg1);
+
+    void on_streamVideoComboBox_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;

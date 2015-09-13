@@ -8,10 +8,9 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Webbum
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/ffmpeg/include
+INCLUDEPATH += $$PWD/ffmpeg/win/x64/include
 
 SOURCES += main.cpp\
         mainwindow.cpp
@@ -20,10 +19,10 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-LIBS += -L$$PWD/ffmpeg/lib\
+LIBS += -L$$PWD/ffmpeg/win/x64/lib\
         -lavcodec\
         -lavformat\
         -lavdevice\
         -lswscale\
         -lavutil\
-        -ldsound\
+        -ldsound
