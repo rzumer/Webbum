@@ -113,29 +113,56 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
 
         if(currentStream->codec->codec_descriptor != NULL)
         {
-            QString streamStr = "[" + QString::number(i) + "] " +
-                QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id));
+            QString streamStr = "[" + QString::number(i) + "] ";
 
-            if(currentStream->codec->codec)
+            // add stream title if available
+            AVDictionaryEntry *title = av_dict_get(currentStream->metadata,"title",NULL,0);
+            if(title)
+                streamStr.append("\"" + QString::fromStdString(title->value) + "\" - ");
+
+            // add codec name
+            streamStr.append(QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id)));
+
+            // add profile name if available
+            if(currentStream->codec->profile != FF_PROFILE_UNKNOWN)
             {
-                const char *profileName = av_get_profile_name(currentStream->codec->codec,currentStream->codec->profile);
-                if(profileName)
-                    streamStr.append(" (" + QString::fromStdString(profileName) + ")");
-            }
-            else
-            {
-                AVCodec *profile = avcodec_find_decoder(currentStream->codec->codec_id);
+                const AVCodec *profile;
+                const char *profileName;
+
+                if(currentStream->codec->codec)
+                    profile = currentStream->codec->codec;
+                else
+                    profile = avcodec_find_decoder(currentStream->codec->codec_id);
+
                 if(profile)
-                {
-                    const char *profileName = av_get_profile_name(profile,currentStream->codec->profile);
-                    if(profileName)
-                        streamStr.append(" (" + QString::fromStdString(profileName) + ")");
-                }
+                    profileName = av_get_profile_name(profile,currentStream->codec->profile);
+
+                if(profileName)
+                    streamStr.append("/" + QString::fromStdString(profileName) + "");
             }
 
-            streamStr.append(lang ? " (" + QString::fromStdString(lang->value) + ")" : QString());
-            if(currentStream->disposition & AV_DISPOSITION_DEFAULT)
-                streamStr.append(" [default]");
+            // add bitrate and channels to audio streams
+            if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+            {
+                streamStr.append(" (");
+
+                int bitsPerSample = av_get_bits_per_sample(currentStream->codec->codec_id);
+                int bitRate = bitsPerSample ? currentStream->codec->sample_rate *
+                                              currentStream->codec->channels *
+                                              bitsPerSample : currentStream->codec->bit_rate;
+                if(bitRate != 0)
+                    streamStr.append(QString::number((double)bitRate / 1000) + "kbps/");
+
+                char buf[256];
+                av_get_channel_layout_string(buf,sizeof(buf),
+                    currentStream->codec->channels,currentStream->codec->channel_layout);
+                streamStr.append(QString::fromStdString(buf) + ")");
+            }
+
+            if(lang)
+                streamStr.append(" (" + QString::fromStdString(lang->value) + ")");
+            /*if(currentStream->disposition & AV_DISPOSITION_DEFAULT)
+                streamStr.append(" [default]");*/
 
             if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
             {
@@ -178,9 +205,11 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
     {
         AVChapter *currentChapter = formatContext->chapters[i];
         AVDictionaryEntry *title = av_dict_get(currentChapter->metadata,"title",NULL,0);
-        QString currentChapterTitle = title ? title->value : QString(); // use chapter title if it exists
 
-        QString currentChapterText = "[" + QString::number(i) + "] " + currentChapterTitle;
+        QString currentChapterText = "[" + QString::number(i) + "] ";
+        if(title)
+            currentChapterText.append(QString::fromStdString(title->value)); // use chapter title if it exists
+
         ui->trimStartEndStartChapterComboBox->addItem(currentChapterText.trimmed());
         ui->trimStartEndEndChapterComboBox->addItem(currentChapterText.trimmed());
     }
