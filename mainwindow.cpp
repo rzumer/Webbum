@@ -32,7 +32,8 @@ bool MainWindow::validateInputFile(QString &inputFilePath)
 bool MainWindow::validateOutputFile(QString &outputFilePath)
 {
     // Checks whether the directory chosen for output exists
-    return QDir(QFileInfo(outputFilePath).dir()).exists();
+    return QFileInfo(outputFilePath).dir().exists() &&
+            !QFileInfo(outputFilePath).baseName().isEmpty();
 }
 
 void MainWindow::refreshTargetMode(QString &currentTargetMode)
@@ -52,7 +53,6 @@ void MainWindow::refreshTargetMode(QString &currentTargetMode)
 
 void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
 {
-    if(inputFilePath.trimmed().isEmpty()) return;
     AVFormatContext *pFormatCtx = NULL;
     if(avformat_open_input(&pFormatCtx,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
     {
@@ -68,7 +68,10 @@ void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
                                                              QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)"));
                     //qDebug() << av_q2d(currentStream->r_frame_rate);
                     //qDebug() << av_q2d(currentStream->time_base);
-                    //qDebug() << (unsigned long) (currentStream->duration * (av_q2d(currentStream->r_frame_rate) * av_q2d(currentStream->time_base)));
+                    //duration of the container
+                    //qDebug() << pFormatCtx->duration / AV_TIME_BASE;
+                    //qDebug() << currentStream->codec->bits_per_raw_sample;
+                    //qDebug() << currentStream->codec->sample_fmt;
                 }
                 else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
                 {
@@ -81,6 +84,8 @@ void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
             }
         }
     }
+    avformat_close_input(&pFormatCtx);
+
     if(ui->streamVideoComboBox->count() > 1)
     {
         ui->streamVideoComboBox->setEnabled(true); // enable the video stream combo box if video streams are found
