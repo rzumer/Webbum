@@ -59,6 +59,7 @@ private:
     void closeInputFile(AVFormatContext *MainWindowformatContext);
     void populateStreamComboBoxes(AVFormatContext *formatContext);
     void initializeFormData(AVFormatContext *formatContext);
+    double calculateFileSize(int bitRate, QTime duration);
 };
 
 #endif // MAINWINDOW_H

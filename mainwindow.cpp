@@ -102,6 +102,8 @@ void MainWindow::processInputFile(QString &inputFilePath)
 void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
 {
     // ***************DEBUG**********************
+    const char *inputFileName = ui->inputFileLineEdit->text().trimmed().toStdString().c_str();
+    av_dump_format(formatContext,0,inputFileName,false);
     // input format for the container
     //qDebug() << formatContext->iformat->name;
 
@@ -221,6 +223,8 @@ void MainWindow::clearInputFileFormData()
     ui->trimStartEndEndTimeEdit->setTime(QTime(0,0));
     ui->trimDurationStartTimeEdit->setTime(QTime(0,0));
     ui->trimDurationDurationTimeEdit->setTime(QTime(0,0));
+    ui->rateTargetBitRateSpinBox->setValue(0);
+    ui->rateTargetFileSizeDoubleSpinBox->setValue(0);
 
     // restore maximum time on time edits
     ui->trimStartEndStartTimeEdit->setMaximumTime(QTime(23,59,59,999));
@@ -302,6 +306,20 @@ void MainWindow::initializeFormData(AVFormatContext *formatContext)
             break;
         }
     }
+
+    // set default target bitrate and file size based on the container's
+    int bitRate = (formatContext->bit_rate + 500) / 1000; // in kilobits = 1000 bits
+    ui->rateTargetBitRateSpinBox->setValue(bitRate);
+    double fileSize = calculateFileSize(bitRate, duration); // in megabytes = 1024 kilobytes
+    ui->rateTargetFileSizeDoubleSpinBox->setValue(fileSize);
+}
+
+// bitRate is in KILOBITS per second
+// file size returned is in MEGABYTES
+// this could be remade for better usability
+double MainWindow::calculateFileSize(int bitRate, QTime duration)
+{
+    return bitRate * (((double)QTime(0,0).msecsTo(duration)) / 1024) / 1024 / 8;
 }
 
 void MainWindow::on_actionAbout_triggered()
