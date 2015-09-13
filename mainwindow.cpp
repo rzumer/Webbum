@@ -101,63 +101,53 @@ void MainWindow::processInputFile(QString &inputFilePath)
 
 void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
 {
-    // ***************DEBUG**********************
-    const char *inputFileName = ui->inputFileLineEdit->text().trimmed().toStdString().c_str();
-    av_dump_format(formatContext,0,inputFileName,false);
-    // input format for the container
-    //qDebug() << formatContext->iformat->name;
-
-    // container metadata
-    /*AVDictionaryEntry *tag = NULL;
-    while(tag = av_dict_get(formatContext->metadata,"",tag,AV_DICT_IGNORE_SUFFIX))
-    {
-        if(strcmp(tag->key,"title") == 0)
-        {
-            // do something with the title
-        }
-
-        // display any other metadata
-        qDebug() << QString::fromStdString(tag->key);
-        qDebug() << QString::fromStdString(tag->value);
-    }*/
-
-    // chapters
-    // -----end debug----
+    // uncomment below to dump stream information to stderr
+    //const char *inputFileName = ui->inputFileLineEdit->text().trimmed().toStdString().c_str();
+    //av_dump_format(formatContext,0,inputFileName,false);
 
     // add audio, video and subtitle streams to their respective combo boxes
     for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
     {
         AVStream *currentStream = formatContext->streams[i];
-        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        AVDictionaryEntry *lang = av_dict_get(currentStream->metadata,"language",NULL,0);
+
+        if(currentStream->codec->codec_descriptor != NULL)
         {
-            if(currentStream->codec->codec_descriptor != NULL)
+            QString streamStr = "[" + QString::number(i) + "] " +
+                QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id));
+
+            if(currentStream->codec->codec)
             {
-                ui->streamVideoComboBox->addItem("[" + QString::number(i) + "] " +
-                    QString::fromStdString(currentStream->codec->codec_descriptor->name) + " (" +
-                    QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)");
-                //qDebug() << currentStream->codec->bit_rate;
-                //qDebug() << av_q2d(currentStream->r_frame_rate);
-                //qDebug() << av_q2d(currentStream->time_base);
-                //duration of the container
-                //qDebug() << formatContext->duration / AV_TIME_BASE;
-                //qDebug() << currentStream->codec->bits_per_raw_sample;
-                //qDebug() << currentStream->codec->sample_fmt;
+                const char *profileName = av_get_profile_name(currentStream->codec->codec,currentStream->codec->profile);
+                if(profileName)
+                    streamStr.append(" (" + QString::fromStdString(profileName) + ")");
             }
-        }
-        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
-        {
-            if(currentStream->codec->codec_descriptor != NULL)
+            else
             {
-                ui->streamAudioComboBox->addItem("[" + QString::number(i) + "] " +
-                    QString::fromStdString(currentStream->codec->codec_descriptor->name));
+                AVCodec *profile = avcodec_find_decoder(currentStream->codec->codec_id);
+                if(profile)
+                {
+                    const char *profileName = av_get_profile_name(profile,currentStream->codec->profile);
+                    if(profileName)
+                        streamStr.append(" (" + QString::fromStdString(profileName) + ")");
+                }
             }
-        }
-        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
-        {
-            if(currentStream->codec->codec_descriptor != NULL)
+
+            streamStr.append(lang ? " (" + QString::fromStdString(lang->value) + ")" : QString());
+            if(currentStream->disposition & AV_DISPOSITION_DEFAULT)
+                streamStr.append(" [default]");
+
+            if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
             {
-                ui->streamSubtitlesComboBox->addItem("[" + QString::number(i) + "] " +
-                    QString::fromStdString(currentStream->codec->codec_descriptor->name));
+                ui->streamVideoComboBox->addItem(streamStr);
+            }
+            else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+            {
+                ui->streamAudioComboBox->addItem(streamStr);
+            }
+            else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
+            {
+                ui->streamSubtitlesComboBox->addItem(streamStr);
             }
         }
     }
@@ -187,14 +177,8 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
     for(int i = 0; (unsigned)i < formatContext->nb_chapters; i++)
     {
         AVChapter *currentChapter = formatContext->chapters[i];
-        QString currentChapterTitle;
-
-        AVDictionaryEntry *tag = NULL;
-        while(tag = av_dict_get(currentChapter->metadata,"",tag,AV_DICT_IGNORE_SUFFIX))
-        {
-            if(strcmp(tag->key,"title") == 0)
-                currentChapterTitle = tag->value;
-        }
+        AVDictionaryEntry *title = av_dict_get(currentChapter->metadata,"title",NULL,0);
+        QString currentChapterTitle = title ? title->value : QString(); // use chapter title if it exists
 
         QString currentChapterText = "[" + QString::number(i) + "] " + currentChapterTitle;
         ui->trimStartEndStartChapterComboBox->addItem(currentChapterText.trimmed());
