@@ -128,26 +128,35 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
         AVStream *currentStream = formatContext->streams[i];
         if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
         {
-            ui->streamVideoComboBox->addItem("[" + QString::number(i) + "] " +
-                QString::fromStdString(currentStream->codec->codec_descriptor->name) + " (" +
-                QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)");
-            //qDebug() << currentStream->codec->bit_rate;
-            //qDebug() << av_q2d(currentStream->r_frame_rate);
-            //qDebug() << av_q2d(currentStream->time_base);
-            //duration of the container
-            //qDebug() << formatContext->duration / AV_TIME_BASE;
-            //qDebug() << currentStream->codec->bits_per_raw_sample;
-            //qDebug() << currentStream->codec->sample_fmt;
+            if(currentStream->codec->codec_descriptor != NULL)
+            {
+                ui->streamVideoComboBox->addItem("[" + QString::number(i) + "] " +
+                    QString::fromStdString(currentStream->codec->codec_descriptor->name) + " (" +
+                    QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)");
+                //qDebug() << currentStream->codec->bit_rate;
+                //qDebug() << av_q2d(currentStream->r_frame_rate);
+                //qDebug() << av_q2d(currentStream->time_base);
+                //duration of the container
+                //qDebug() << formatContext->duration / AV_TIME_BASE;
+                //qDebug() << currentStream->codec->bits_per_raw_sample;
+                //qDebug() << currentStream->codec->sample_fmt;
+            }
         }
         else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
         {
-            ui->streamAudioComboBox->addItem("[" + QString::number(i) + "] " +
-                QString::fromStdString(currentStream->codec->codec_descriptor->name));
+            if(currentStream->codec->codec_descriptor != NULL)
+            {
+                ui->streamAudioComboBox->addItem("[" + QString::number(i) + "] " +
+                    QString::fromStdString(currentStream->codec->codec_descriptor->name));
+            }
         }
         else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
         {
-            ui->streamSubtitlesComboBox->addItem("[" + QString::number(i) + "] " +
-                QString::fromStdString(currentStream->codec->codec_descriptor->name));
+            if(currentStream->codec->codec_descriptor != NULL)
+            {
+                ui->streamSubtitlesComboBox->addItem("[" + QString::number(i) + "] " +
+                    QString::fromStdString(currentStream->codec->codec_descriptor->name));
+            }
         }
     }
 
