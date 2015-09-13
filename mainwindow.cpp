@@ -4,12 +4,6 @@
 #include <QtWidgets>
 #include <QDebug>
 
-extern "C"
-{
-    #include "libavcodec/avcodec.h"
-    #include "libavformat/avformat.h"
-}
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -42,55 +36,84 @@ void MainWindow::refreshTargetMode(QString &currentTargetMode)
     if(currentTargetMode == "Bit Rate")
     {
         ui->rateTargetBitRateSpinBox->setEnabled(true);
-        ui->rateTargetFileSizeSpinBox->setEnabled(false);
+        ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
     else if(currentTargetMode == "File Size")
     {
-        ui->rateTargetFileSizeSpinBox->setEnabled(true);
+        ui->rateTargetFileSizeDoubleSpinBox->setEnabled(true);
         ui->rateTargetBitRateSpinBox->setEnabled(false);
     }
 }
 
-void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
+AVFormatContext *MainWindow::openInputFile(QString &inputFilePath)
 {
-    AVFormatContext *pFormatCtx = NULL;
-    if(avformat_open_input(&pFormatCtx,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
+    AVFormatContext *formatContext = NULL;
+    if(avformat_open_input(&formatContext,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
     {
-        if(avformat_find_stream_info(pFormatCtx,NULL) >= 0)
+        if(avformat_find_stream_info(formatContext,NULL) >= 0)
         {
-            for(int i = 0; (unsigned)i < pFormatCtx->nb_streams; i++)
-            {
-                AVStream * currentStream = pFormatCtx->streams[i];
-                if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
-                {
-                    ui->streamVideoComboBox->addItem(QString("[" + QString::number(i) + "] " +
-                                                             QString::fromStdString(currentStream->codec->codec_descriptor->name) + " (" +
-                                                             QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)"));
-                    //qDebug() << av_q2d(currentStream->r_frame_rate);
-                    //qDebug() << av_q2d(currentStream->time_base);
-                    //duration of the container
-                    //qDebug() << pFormatCtx->duration / AV_TIME_BASE;
-                    //qDebug() << currentStream->codec->bits_per_raw_sample;
-                    //qDebug() << currentStream->codec->sample_fmt;
-                }
-                else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
-                {
-                    ui->streamAudioComboBox->addItem(QString("[" + QString::number(i) + "] " + QString::fromStdString(currentStream->codec->codec_descriptor->name)));
-                }
-                else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
-                {
-                    ui->streamSubtitlesComboBox->addItem(QString("[" + QString::number(i) + "] " + QString::fromStdString(currentStream->codec->codec_descriptor->name)));
-                }
-            }
+            return formatContext;
         }
     }
-    avformat_close_input(&pFormatCtx);
+    // close the file and return NULL if the input file has no streams to be found
+    avformat_close_input(&formatContext);
+    return NULL;
+}
 
+void MainWindow::closeInputFile(AVFormatContext *formatContext)
+{
+    avformat_close_input(&formatContext);
+}
+
+void MainWindow::processInputFile(QString &inputFilePath)
+{
+    AVFormatContext *formatContext = openInputFile(inputFilePath);
+
+    if(formatContext != NULL)
+    {
+        populateStreamComboBoxes(formatContext);
+        initializeFormData(formatContext);
+        closeInputFile(formatContext);
+    }
+}
+
+void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
+{
+    // add audio, video and subtitle streams to their respective combo boxes
+    for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+    {
+        AVStream *currentStream = formatContext->streams[i];
+        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        {
+            ui->streamVideoComboBox->addItem(QString("[" + QString::number(i) + "] " +
+                QString::fromStdString(currentStream->codec->codec_descriptor->name) + " (" +
+                QString::number(av_q2d(currentStream->r_frame_rate)) + "fps)"));
+            //qDebug() << av_q2d(currentStream->r_frame_rate);
+            //qDebug() << av_q2d(currentStream->time_base);
+            //duration of the container
+            //qDebug() << formatContext->duration / AV_TIME_BASE;
+            //qDebug() << currentStream->codec->bits_per_raw_sample;
+            //qDebug() << currentStream->codec->sample_fmt;
+        }
+        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+        {
+            ui->streamAudioComboBox->addItem(QString("[" + QString::number(i) + "] " +
+                QString::fromStdString(currentStream->codec->codec_descriptor->name)));
+        }
+        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
+        {
+            ui->streamSubtitlesComboBox->addItem(QString("[" + QString::number(i) + "] " +
+                QString::fromStdString(currentStream->codec->codec_descriptor->name)));
+        }
+    }
+
+    // enable combo boxes if at least one stream of that type is found,
+    // then automatically select the first one
     if(ui->streamVideoComboBox->count() > 1)
     {
-        ui->streamVideoComboBox->setEnabled(true); // enable the video stream combo box if video streams are found
+        ui->streamVideoComboBox->setEnabled(true);
         if(ui->streamVideoComboBox->currentIndex() == 0)
-            ui->streamVideoComboBox->setCurrentIndex(1); // select the first video stream instead of leaving it disabled
+            ui->streamVideoComboBox->setCurrentIndex(1);
     }
     if(ui->streamAudioComboBox->count() > 1)
     {
@@ -106,8 +129,14 @@ void MainWindow::initializeStreamComboBoxes(QString &inputFilePath)
     }
 }
 
-void MainWindow::clearStreamComboBoxes()
+void MainWindow::clearInputFileFormData()
 {
+    // clear generated form fields
+    ui->resizeWidthSpinBox->setValue(0);
+    ui->resizeHeightSpinBox->setValue(0);
+    ui->trimDurationDurationTimeEdit->setTime(QTime(0,0));
+    ui->trimStartEndEndTimeEdit->setTime(QTime(0,0));
+
     // set selected streams to Disabled
     ui->streamVideoComboBox->setCurrentIndex(0);
     ui->streamAudioComboBox->setCurrentIndex(0);
@@ -133,6 +162,34 @@ void MainWindow::clearStreamComboBoxes()
     }
 }
 
+void MainWindow::initializeFormData(AVFormatContext *formatContext)
+{
+    if(!validateOutputFile(ui->outputFileLineEdit->text().trimmed()))
+    {
+        // set output file name based on the input's
+        QFileInfo inputFile = QFileInfo(ui->inputFileLineEdit->text().trimmed());
+        ui->outputFileLineEdit->setText(QDir::toNativeSeparators(inputFile.dir().canonicalPath() + "/") +
+                                    inputFile.completeBaseName() + ".webm");
+    }
+
+    // set default end time and duration based on the container's
+    QTime duration = QTime(0,0).addMSecs((double)formatContext->duration / AV_TIME_BASE * 1000);
+    ui->trimDurationDurationTimeEdit->setTime(duration);
+    ui->trimStartEndEndTimeEdit->setTime(duration);
+
+    // set default width and height based on the first video stream's
+    for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+    {
+        AVStream *currentStream = formatContext->streams[i];
+        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        {
+            ui->resizeWidthSpinBox->setValue(currentStream->codec->width);
+            ui->resizeHeightSpinBox->setValue(currentStream->codec->height);
+            break;
+        }
+    }
+}
+
 void MainWindow::on_actionAbout_triggered()
 {
     // About dialog box
@@ -141,7 +198,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
 {
-    clearStreamComboBoxes();
+    clearInputFileFormData();
     ui->encodePushButton->setEnabled(false);
 
     QString inputFilePath = arg1.trimmed();
@@ -149,7 +206,7 @@ void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
 
     if(validateInputFile(inputFilePath))
     {
-        initializeStreamComboBoxes(inputFilePath);
+        processInputFile(inputFilePath);
         if(validateOutputFile(outputFilePath))
         {
             if(ui->streamVideoComboBox->currentIndex() > 0)
@@ -185,7 +242,7 @@ void MainWindow::on_inputFileBrowsePushButton_clicked()
 void MainWindow::on_outputFileBrowsePushButton_clicked()
 {
     QString outputFilePath = QFileDialog::getSaveFileName(this,"Select Output File",
-                                QFileInfo(ui->outputFileLineEdit->text().trimmed()).dir().canonicalPath(),
+                                ui->outputFileLineEdit->text().trimmed(),
                                 "WebM (*.webm)");
     if(!outputFilePath.isEmpty())
         ui->outputFileLineEdit->setText(QDir::toNativeSeparators(outputFilePath));
@@ -219,7 +276,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
         ui->rateCRFSpinBox->setEnabled(true);
         ui->rateTargetModeComboBox->setEnabled(false);
         ui->rateTargetBitRateSpinBox->setEnabled(false);
-        ui->rateTargetFileSizeSpinBox->setEnabled(false);
+        ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
     else
     {
@@ -227,7 +284,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
         ui->rateCRFSpinBox->setEnabled(false);
         ui->rateTargetModeComboBox->setEnabled(false);
         ui->rateTargetBitRateSpinBox->setEnabled(false);
-        ui->rateTargetFileSizeSpinBox->setEnabled(false);
+        ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
 }
 

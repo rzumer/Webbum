@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+extern "C"
+{
+    #include "libavcodec/avcodec.h"
+    #include "libavformat/avformat.h"
+}
 
 namespace Ui {
 class MainWindow;
@@ -31,8 +36,12 @@ private:
     bool validateInputFile(QString &inputFilePath);
     bool validateOutputFile(QString &outputFilePath);
     void refreshTargetMode(QString &currentTargetMode);
-    void initializeStreamComboBoxes(QString &inputFilePath);
-    void clearStreamComboBoxes();
+    void processInputFile(QString &inputFilePath);
+    void clearInputFileFormData();
+    AVFormatContext *openInputFile(QString &inputFilePath);
+    void closeInputFile(AVFormatContext *MainWindowformatContext);
+    void populateStreamComboBoxes(AVFormatContext *formatContext);
+    void initializeFormData(AVFormatContext *formatContext);
 };
 
 #endif // MAINWINDOW_H
