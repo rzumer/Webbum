@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>682</width>
-    <height>449</height>
+    <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,7 +69,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-328</y>
+         <y>0</y>
          <width>645</width>
          <height>687</height>
         </rect>
@@ -242,12 +242,18 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
                </widget>
               </item>
               <item row="4" column="2">
                <widget class="QSpinBox" name="cropRightSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
                 </property>
                </widget>
               </item>
@@ -256,12 +262,18 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
                </widget>
               </item>
               <item row="6" column="1">
                <widget class="QSpinBox" name="cropTopSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
                 </property>
                </widget>
               </item>
@@ -312,12 +324,18 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
                </widget>
               </item>
               <item row="2" column="2">
                <widget class="QSpinBox" name="resizeHeightSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
                 </property>
                </widget>
               </item>
@@ -360,6 +378,15 @@
                 </property>
                 <property name="decimals">
                  <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>4.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>63.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>10.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -442,10 +469,23 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="minimum">
+                 <number>0</number>
+                </property>
+                <property name="maximum">
+                 <number>9999999</number>
+                </property>
+                <property name="value">
+                 <number>0</number>
+                </property>
                </widget>
               </item>
               <item row="1" column="4">
-               <widget class="QSpinBox" name="rateTargetBitRateSpinBox"/>
+               <widget class="QSpinBox" name="rateTargetBitRateSpinBox">
+                <property name="maximum">
+                 <number>99999</number>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -575,6 +615,200 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>inputFileLineEdit</tabstop>
+  <tabstop>inputFileBrowsePushButton</tabstop>
+  <tabstop>outputFileLineEdit</tabstop>
+  <tabstop>outputFileBrowsePushButton</tabstop>
+  <tabstop>trimNoneRadioButton</tabstop>
+  <tabstop>trimStartEndRadioButton</tabstop>
+  <tabstop>trimStartEndStartTimeEdit</tabstop>
+  <tabstop>trimStartEndEndTimeEdit</tabstop>
+  <tabstop>trimDurationRadioButton</tabstop>
+  <tabstop>trimDurationStartTimeEdit</tabstop>
+  <tabstop>trimDurationDurationTimeEdit</tabstop>
+  <tabstop>resizeCheckBox</tabstop>
+  <tabstop>resizeWidthSpinBox</tabstop>
+  <tabstop>resizeHeightSpinBox</tabstop>
+  <tabstop>cropCheckBox</tabstop>
+  <tabstop>cropLeftSpinBox</tabstop>
+  <tabstop>cropRightSpinBox</tabstop>
+  <tabstop>cropTopSpinBox</tabstop>
+  <tabstop>cropBottomSpinBox</tabstop>
+  <tabstop>rateModeComboBox</tabstop>
+  <tabstop>rateTargetModeComboBox</tabstop>
+  <tabstop>rateCRFSpinBox</tabstop>
+  <tabstop>rateTargetFileSizeSpinBox</tabstop>
+  <tabstop>rateTargetBitRateSpinBox</tabstop>
+  <tabstop>streamVideoComboBox</tabstop>
+  <tabstop>streamAudioComboBox</tabstop>
+  <tabstop>streamSubtitlesComboBox</tabstop>
+  <tabstop>customEncoderParametersLineEdit</tabstop>
+  <tabstop>encodePushButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>trimStartEndRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>trimStartEndStartTimeEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>-33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>-27</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>trimStartEndRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>trimStartEndEndTimeEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>-33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>492</x>
+     <y>-27</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>trimDurationRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>trimDurationStartTimeEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>-5</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>295</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>trimDurationRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>trimDurationDurationTimeEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>-4</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>489</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resizeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>resizeWidthSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resizeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>resizeHeightSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cropCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cropLeftSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>126</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cropCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cropRightSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cropCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cropTopSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>275</x>
+     <y>178</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cropCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cropBottomSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>133</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>462</x>
+     <y>178</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

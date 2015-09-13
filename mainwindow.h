@@ -17,10 +17,6 @@ public:
 
 private slots:
     void on_actionAbout_triggered();
-    void on_resizeCheckBox_toggled(bool checked);
-    void on_cropCheckBox_toggled(bool checked);
-    void on_trimStartEndRadioButton_toggled(bool checked);
-    void on_trimDurationRadioButton_toggled(bool checked);
     void on_inputFileLineEdit_textChanged(const QString &arg1);
     void on_outputFileLineEdit_textChanged(const QString &arg1);
     void on_inputFileBrowsePushButton_clicked();
