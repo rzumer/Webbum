@@ -297,9 +297,33 @@ void MainWindow::on_rateTargetModeComboBox_currentIndexChanged(const QString &ar
 
 void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
 {
-    // disable encode button if no video stream is selected
+    // disable encode button and reset resolution fields if no video stream is selected
     if(index == 0)
     {
         ui->encodePushButton->setEnabled(false);
+        ui->resizeWidthSpinBox->setValue(0);
+        ui->resizeHeightSpinBox->setValue(0);
+    }
+    // change resolution fields based on the selected stream
+    else
+    {
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+
+        int videoStreamIndex = 0;
+        for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+        {
+            AVStream *currentStream = formatContext->streams[i];
+            if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+            {
+                videoStreamIndex++;
+                if(videoStreamIndex == index)
+                {
+                    ui->resizeWidthSpinBox->setValue(currentStream->codec->width);
+                    ui->resizeHeightSpinBox->setValue(currentStream->codec->height);
+                }
+            }
+        }
+
+        closeInputFile(formatContext);
     }
 }
