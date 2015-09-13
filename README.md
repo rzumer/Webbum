@@ -1,2 +1,2 @@
 # Webbum
-A VP8 WebM video encoder.
+A VP9 WebM video encoder.
