@@ -61,7 +61,7 @@ private:
     void populateStreamComboBoxes(AVFormatContext *formatContext);
     void initializeFormData(AVFormatContext *formatContext);
     double calculateFileSize(int bitRate, QTime duration);
-    QStringList &generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, double crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters);
+    QStringList generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, double crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters);
     void encodePass(QStringList &encodingParameters);
 };
 
