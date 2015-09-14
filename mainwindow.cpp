@@ -353,20 +353,25 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 void MainWindow::encodePass(QStringList &encodingParameters)
 {
     //Code crashes currently.
-    /*QProcess ffmpegProcess(this);
-    QString processName = "ffmpeg";
-
-    ffmpegProcess.start(processName);
+    QProcess ffmpegProcess;
+    ffmpegProcess.start("ffmpeg");//,encodingParameters);
 
     ffmpegProcess.waitForFinished();
+
+    qDebug() << "ffmpeg output: " << ffmpegProcess.readAllStandardError();
+    qDebug() << "ffmpeg exit code: " << QString::number(ffmpegProcess.exitCode());
+
+    /*ffmpegProcess.waitForFinished();
 
     if(ffmpegProcess.exitCode() != 0)
     {
         QMessageBox::warning(this,"Warning","ffmpeg returned an exit code of " +
                              QString::number(ffmpegProcess.exitCode()) +
                              ". There may have been errors.",QMessageBox::Ok);
-    }
-    qDebug() << "ffmpeg output: " << ffmpegProcess.readAll();*/
+    }*/
+
+    //int i = system("ffmpeg");
+    //qDebug() << "ffmpeg returned: " << QString::number(i);
 }
 
 void MainWindow::on_actionAbout_triggered()
