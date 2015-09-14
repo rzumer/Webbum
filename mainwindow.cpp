@@ -288,7 +288,8 @@ void MainWindow::clearInputFileFormData()
 
 void MainWindow::initializeFormData(AVFormatContext *formatContext)
 {
-    if(!validateOutputFile(ui->outputFileLineEdit->text().trimmed()))
+    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
+    if(!validateOutputFile(outputFilePath))
     {
         // set output file name based on the input's
         QFileInfo inputFile = QFileInfo(ui->inputFileLineEdit->text().trimmed());
@@ -335,7 +336,7 @@ double MainWindow::calculateFileSize(int bitRate, QTime duration)
     return bitRate * (((double)QTime(0,0).msecsTo(duration)) / 1024) / 1024 / 8;
 }
 
-QStringList &MainWindow::generatePass(int passNumber,QString &inputFilePath,
+QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
                                  QString &outputFilePath,int videoStreamId,
                                  int audioStreamId, int subtitleStreamId,
                                  QTime startTime,QTime endTime,QTime duration,
@@ -345,7 +346,8 @@ QStringList &MainWindow::generatePass(int passNumber,QString &inputFilePath,
                                  bool cbr,QString customParameters)
 {
     //QString passString = "-i " + inputFilePath +
-    return QStringList();
+    QStringList passString = QStringList();
+    return passString;
 }
 
 void MainWindow::encodePass(QStringList &encodingParameters)
@@ -420,23 +422,14 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
 {
     QString currentMode = arg1;
 
-    if(currentMode == "VBR")
+    if(currentMode == "VBR" || currentMode == "CBR")
     {
         // Disable CRF selection, enable target mode/bit rate/file size selection
         ui->rateCRFDoubleSpinBox->setEnabled(false);
-
-        QComboBox * targetModeComboBox = ui->rateTargetModeComboBox;
+        QComboBox *targetModeComboBox = ui->rateTargetModeComboBox;
+        QString currentModeText = targetModeComboBox->currentText();
         targetModeComboBox->setEnabled(true);
-        refreshTargetMode(targetModeComboBox->currentText());
-    }
-    else if(currentMode == "CBR")
-    {
-        // Disable CRF selection, enable target mode/bit rate/file size selection
-        ui->rateCRFDoubleSpinBox->setEnabled(false);
-
-        QComboBox * targetModeComboBox = ui->rateTargetModeComboBox;
-        targetModeComboBox->setEnabled(true);
-        refreshTargetMode(targetModeComboBox->currentText());
+        refreshTargetMode(currentModeText);
     }
     else if(currentMode == "CRF")
     {
@@ -475,7 +468,8 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
     // change resolution fields based on the selected stream
     else
     {
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
 
         int videoStreamIndex = 0;
         for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
@@ -515,7 +509,8 @@ void MainWindow::on_trimStartEndStartChapterComboBox_activated(int index)
     if(index > 0)
     {
         int endChapterIndex = ui->trimStartEndEndChapterComboBox->currentIndex();
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         AVChapter *currentChapter = formatContext->chapters[index - 1];
         ui->trimStartEndStartTimeEdit->setTime(
             QTime(0,0).addMSecs(((double)currentChapter->start + 500) * av_q2d(currentChapter->time_base) * 1000));
@@ -534,7 +529,8 @@ void MainWindow::on_trimStartEndEndChapterComboBox_activated(int index)
     if(index > 0)
     {
         int startChapterIndex = ui->trimStartEndStartChapterComboBox->currentIndex();
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         AVChapter *currentChapter = formatContext->chapters[index - 1];
         ui->trimStartEndEndTimeEdit->setTime(
             QTime(0,0).addMSecs(((double)currentChapter->end + 500) * av_q2d(currentChapter->time_base) * 1000));

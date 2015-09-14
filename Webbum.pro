@@ -10,7 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/ffmpeg/win/x64/include
+win32: INCLUDEPATH += $$PWD/ffmpeg/win/x64/include
+unix: INCLUDEPATH += usr/include
 
 SOURCES += main.cpp\
         mainwindow.cpp
@@ -19,10 +20,24 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-LIBS += -L$$PWD/ffmpeg/win/x64/lib\
-        -lavcodec\
-        -lavformat\
-        -lavdevice\
-        -lswscale\
+win32
+{
+    LIBS += -L$$PWD/ffmpeg/win/x64/lib\
+            -lavutil\
+            -lavformat\
+            -lavcodec\
+            #-lavdevice\
+            #-lswscale\
+            #-ldsound
+}
+
+unix
+{
+    LIBS += -L/usr/lib/ffmpeg\
         -lavutil\
-        -ldsound
+        -lavformat\
+        -lavcodec\
+        #-lavdevice\
+        #-lswscale\
+        #-ldsound
+}
