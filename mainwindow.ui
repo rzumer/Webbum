@@ -201,7 +201,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="currentSection">
-                 <enum>QDateTimeEdit::MinuteSection</enum>
+                 <enum>QDateTimeEdit::HourSection</enum>
                 </property>
                 <property name="displayFormat">
                  <string>hh:mm:ss.zzz</string>
@@ -235,7 +235,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="currentSection">
-                 <enum>QDateTimeEdit::MinuteSection</enum>
+                 <enum>QDateTimeEdit::HourSection</enum>
                 </property>
                 <property name="displayFormat">
                  <string>hh:mm:ss.zzz</string>
@@ -254,7 +254,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="currentSection">
-                 <enum>QDateTimeEdit::MinuteSection</enum>
+                 <enum>QDateTimeEdit::HourSection</enum>
                 </property>
                 <property name="displayFormat">
                  <string>hh:mm:ss.zzz</string>
@@ -273,7 +273,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="currentSection">
-                 <enum>QDateTimeEdit::MinuteSection</enum>
+                 <enum>QDateTimeEdit::HourSection</enum>
                 </property>
                 <property name="displayFormat">
                  <string>hh:mm:ss.zzz</string>
@@ -474,7 +474,7 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
               <item row="1" column="2">
-               <widget class="QDoubleSpinBox" name="rateCRFSpinBox">
+               <widget class="QDoubleSpinBox" name="rateCRFDoubleSpinBox">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
@@ -778,7 +778,7 @@
   <tabstop>resizeHeightSpinBox</tabstop>
   <tabstop>rateModeComboBox</tabstop>
   <tabstop>rateTargetModeComboBox</tabstop>
-  <tabstop>rateCRFSpinBox</tabstop>
+  <tabstop>rateCRFDoubleSpinBox</tabstop>
   <tabstop>rateTargetFileSizeDoubleSpinBox</tabstop>
   <tabstop>rateTargetBitRateSpinBox</tabstop>
   <tabstop>streamVideoComboBox</tabstop>

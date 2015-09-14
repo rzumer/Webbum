@@ -335,6 +335,38 @@ double MainWindow::calculateFileSize(int bitRate, QTime duration)
     return bitRate * (((double)QTime(0,0).msecsTo(duration)) / 1024) / 1024 / 8;
 }
 
+QStringList &MainWindow::generatePass(int passNumber,QString &inputFilePath,
+                                 QString &outputFilePath,int videoStreamId,
+                                 int audioStreamId, int subtitleStreamId,
+                                 QTime startTime,QTime endTime,QTime duration,
+                                 int cropLeft,int cropRight,int cropTop,
+                                 int cropBottom,int width,int height,double crf,
+                                 double targetFileSize,double targetBitRate,
+                                 bool cbr,QString customParameters)
+{
+    //QString passString = "-i " + inputFilePath +
+    return QStringList();
+}
+
+void MainWindow::encodePass(QStringList &encodingParameters)
+{
+    //Code crashes currently.
+    /*QProcess ffmpegProcess(this);
+    QString processName = "ffmpeg";
+
+    ffmpegProcess.start(processName);
+
+    ffmpegProcess.waitForFinished();
+
+    if(ffmpegProcess.exitCode() != 0)
+    {
+        QMessageBox::warning(this,"Warning","ffmpeg returned an exit code of " +
+                             QString::number(ffmpegProcess.exitCode()) +
+                             ". There may have been errors.",QMessageBox::Ok);
+    }
+    qDebug() << "ffmpeg output: " << ffmpegProcess.readAll();*/
+}
+
 void MainWindow::on_actionAbout_triggered()
 {
     // About dialog box
@@ -391,7 +423,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
     if(currentMode == "VBR")
     {
         // Disable CRF selection, enable target mode/bit rate/file size selection
-        ui->rateCRFSpinBox->setEnabled(false);
+        ui->rateCRFDoubleSpinBox->setEnabled(false);
 
         QComboBox * targetModeComboBox = ui->rateTargetModeComboBox;
         targetModeComboBox->setEnabled(true);
@@ -400,7 +432,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
     else if(currentMode == "CBR")
     {
         // Disable CRF selection, enable target mode/bit rate/file size selection
-        ui->rateCRFSpinBox->setEnabled(false);
+        ui->rateCRFDoubleSpinBox->setEnabled(false);
 
         QComboBox * targetModeComboBox = ui->rateTargetModeComboBox;
         targetModeComboBox->setEnabled(true);
@@ -409,7 +441,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
     else if(currentMode == "CRF")
     {
         // Enable CRF selection, disable target mode/bit rate/file size selection
-        ui->rateCRFSpinBox->setEnabled(true);
+        ui->rateCRFDoubleSpinBox->setEnabled(true);
         ui->rateTargetModeComboBox->setEnabled(false);
         ui->rateTargetBitRateSpinBox->setEnabled(false);
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
@@ -417,7 +449,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
     else
     {
         // Invalid mode selected, disable all controls
-        ui->rateCRFSpinBox->setEnabled(false);
+        ui->rateCRFDoubleSpinBox->setEnabled(false);
         ui->rateTargetModeComboBox->setEnabled(false);
         ui->rateTargetBitRateSpinBox->setEnabled(false);
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
@@ -583,4 +615,139 @@ void MainWindow::on_actionOpen_triggered()
                                  "All Files (*.*)");
     if(!inputFilePath.isEmpty())
         ui->inputFileLineEdit->setText(QDir::toNativeSeparators(inputFilePath));
+}
+
+void MainWindow::on_encodePushButton_clicked()
+{
+    this->setEnabled(false);
+
+    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
+
+    // get stream IDs
+    int videoStreamId, audioStreamId, subtitleStreamId;
+    AVFormatContext *formatContext = openInputFile(inputFilePath);
+    int videoStreamIndex = 0;
+    int audioStreamIndex = 0;
+    int subtitleStreamIndex = 0;
+    for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+    {
+        AVStream *currentStream = formatContext->streams[i];
+        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        {
+            videoStreamIndex++;
+            if(videoStreamIndex == ui->streamVideoComboBox->currentIndex())
+                videoStreamId = i;
+        }
+        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+        {
+            audioStreamIndex++;
+            if(audioStreamIndex == ui->streamAudioComboBox->currentIndex())
+                audioStreamId = i;
+        }
+        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
+        {
+            subtitleStreamIndex++;
+            if(subtitleStreamIndex == ui->streamSubtitlesComboBox->currentIndex())
+                subtitleStreamId = i;
+        }
+    }
+    closeInputFile(formatContext);
+
+    QTime startTime, endTime, duration;
+    if(ui->trimStartEndRadioButton->isChecked())
+    {
+        startTime = ui->trimStartEndStartTimeEdit->time();
+        endTime = ui->trimStartEndEndTimeEdit->time();
+    }
+    else if(ui->trimDurationRadioButton->isChecked())
+    {
+        startTime = ui->trimDurationStartTimeEdit->time();
+        duration = ui->trimDurationDurationTimeEdit->time();
+    }
+
+    int cropLeft, cropRight, cropTop, cropBottom, width, height;
+    if(ui->cropCheckBox->isChecked())
+    {
+        cropLeft = ui->cropLeftSpinBox->value();
+        cropRight = ui->cropRightSpinBox->value();
+        cropTop = ui->cropTopSpinBox->value();
+        cropBottom = ui->cropBottomSpinBox->value();
+    }
+    if(ui->resizeCheckBox->isChecked())
+    {
+        width = ui->resizeWidthSpinBox->value();
+        height = ui->resizeHeightSpinBox->value();
+        if(width == 0) width = -1;
+        if(height == 0) height = -1;
+    }
+
+    double crf = -1;
+    double targetFileSize;
+    int targetBitRate;
+    bool cbr;
+    QString rateMode = ui->rateModeComboBox->currentText();
+    if(rateMode == "CBR")
+    {
+        cbr = true;
+    }
+    if(rateMode == "CBR" || rateMode == "VBR")
+    {
+        if(ui->rateTargetModeComboBox->currentText() == "File Size")
+        {
+            targetFileSize = ui->rateTargetFileSizeDoubleSpinBox->value();
+        }
+        else if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+        {
+            targetBitRate = ui->rateTargetBitRateSpinBox->value();
+        }
+    }
+    else if(rateMode == "CRF")
+    {
+        crf = ui->rateCRFDoubleSpinBox->value();
+    }
+
+    QString customParameters = ui->customEncoderParametersLineEdit->text().trimmed();
+
+    QStringList firstPass,secondPass;
+
+    firstPass = generatePass(1,inputFilePath,outputFilePath,videoStreamId,
+                                    audioStreamId,subtitleStreamId,startTime,
+                                    endTime,duration,cropLeft,cropRight,cropTop,
+                                    cropBottom,width,height,crf,targetFileSize,
+                                    targetBitRate,cbr,customParameters);
+
+    if(crf == -1)
+    {
+        secondPass = generatePass(2,inputFilePath,outputFilePath,videoStreamId,
+                                        audioStreamId,subtitleStreamId,startTime,
+                                        endTime,duration,cropLeft,cropRight,cropTop,
+                                        cropBottom,width,height,crf,targetFileSize,
+                                        targetBitRate,cbr,customParameters);
+    }
+
+    ui->progressBar->setValue(10);
+
+    if(secondPass.isEmpty())
+    {
+        encodePass(firstPass);
+    }
+    else
+    {
+        QDir outputDirectory = QFileInfo(outputFilePath).dir();
+        QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
+
+        encodePass(firstPass);
+        ui->progressBar->setValue(50);
+        encodePass(secondPass);
+
+        if(tempDirectory.exists())
+            tempDirectory.removeRecursively();
+    }
+    ui->progressBar->setValue(100);
+    QMessageBox::information(this,"Success","Encode successful.",
+                             QMessageBox::Ok);
+
+    ui->progressBar->setValue(0);
+    this->setEnabled(true);
 }

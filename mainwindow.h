@@ -47,6 +47,7 @@ private slots:
     void on_resizeWidthSpinBox_editingFinished();
     void on_resizeHeightSpinBox_editingFinished();
     void on_actionOpen_triggered();
+    void on_encodePushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -60,6 +61,8 @@ private:
     void populateStreamComboBoxes(AVFormatContext *formatContext);
     void initializeFormData(AVFormatContext *formatContext);
     double calculateFileSize(int bitRate, QTime duration);
+    QStringList &generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, double crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters);
+    void encodePass(QStringList &encodingParameters);
 };
 
 #endif // MAINWINDOW_H
