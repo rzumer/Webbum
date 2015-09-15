@@ -7,7 +7,8 @@ Some indications to anyone trying to use it at this point:
 * May be buggy or have lower quality output than expected  
 * Very messy code (set for refactoring)  
 * Missing some features (subtitle support)
-* Currently in VP8 mode, so VP9 modes will not function (Constrained Quality + Lossless)  
+* Currently only supports VP8 encoding
+* 64kbps Opus audio only
 * Incomplete UI, freezes while encoding  
 * Some "hidden" features (e.g. specify a width or height of 0 to scale automatically on aspect ratio)
 
