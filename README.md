@@ -1,7 +1,9 @@
 # Webbum
 A VP8 (and possibly VP9) WebM video encoder.
 
-Some indications to anyone trying to use this at this point:  
+It is an interface for ffmpeg.
+
+Some indications to anyone trying to use it at this point:  
 * May be buggy or have lower quality output than expected  
 * Very messy code (set for refactoring)  
 * Missing some features (subtitle support)
