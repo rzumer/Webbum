@@ -2,7 +2,7 @@ This is a FFmpeg Win32 shared build by Kyle Schwarz.
 
 Zeranoe's FFmpeg Builds Home Page: <http://ffmpeg.zeranoe.com/builds/>
 
-FFmpeg version: 2015-09-11 git-314bc20
+FFmpeg version: 2015-09-15 git-8e92462
   libavutil      54. 30.100 / 54. 30.100
   libavcodec     56. 57.100 / 56. 57.100
   libavformat    56. 40.101 / 56. 40.101
@@ -58,7 +58,6 @@ This FFmpeg build was configured with:
   --enable-libxvid
   --enable-lzma
   --enable-decklink
-  --enable-opencl
   --enable-zlib
 
 This build was compiled with the following external libraries:
@@ -99,12 +98,11 @@ This build was compiled with the following external libraries:
   XAVS svn-r55 <http://xavs.sourceforge.net/>
   Xvid 1.3.3 <http://xvid.org/>
   XZ Utils 5.2.1 <http://tukaani.org/xz>
-  OpenCL 1.2.11.0 <https://www.khronos.org/opencl/>
   zlib 1.2.8 <http://zlib.net/>
 
 The source code for this FFmpeg build can be found at: <http://ffmpeg.zeranoe.com/builds/source/>
 
-This build was compiled on Debian 8.1 (64-bit): <http://www.debian.org/>
+This build was compiled on Debian 8.2 (64-bit): <http://www.debian.org/>
 
 GCC 4.9.3 was used to compile this FFmpeg build: <http://gcc.gnu.org/>
 

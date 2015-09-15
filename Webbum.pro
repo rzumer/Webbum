@@ -10,7 +10,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
 
-win32: INCLUDEPATH += $$PWD/ffmpeg/x64/include
+win32
+{
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        INCLUDEPATH += $$PWD/ffmpeg/x86/include
+    } else {
+        INCLUDEPATH += $$PWD/ffmpeg/x64/include
+    }
+}
 unix: INCLUDEPATH += usr/include
 
 SOURCES += main.cpp\
@@ -22,17 +29,30 @@ FORMS    += mainwindow.ui
 
 win32
 {
-    LIBS += -L$$PWD/ffmpeg/x64/lib\
-            -lavutil\
-            -lavformat\
-            -lavcodec\
-            #-lavdevice\
-            #-lswscale\
-            #-ldsound
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        message("x86 build")
+
+        LIBS += -L$$PWD/ffmpeg/x86/lib\
+                -lavutil\
+                -lavformat\
+                -lavcodec\
+                #-lavdevice\
+                #-lswscale\
+                #-ldsound
+    } else {
+        message("x86_64 build")
+
+        LIBS += -L$$PWD/ffmpeg/x64/lib\
+                -lavutil\
+                -lavformat\
+                -lavcodec\
+                #-lavdevice\
+                #-lswscale\
+                #-ldsound
+    }
 }
 
-unix
-{
+unix {
     LIBS += -L/usr/lib/ffmpeg\
         -lavutil\
         -lavformat\
