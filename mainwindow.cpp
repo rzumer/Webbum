@@ -1013,6 +1013,7 @@ void MainWindow::on_encodePushButton_clicked()
 
     QDir outputDirectory = QFileInfo(outputFilePath).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
+    QFile logFile = QFile("ffmpeg2pass-0.log");
 
     if(!tempDirectory.exists())
         QDir().mkdir(tempDirectory.absolutePath());
@@ -1023,6 +1024,8 @@ void MainWindow::on_encodePushButton_clicked()
 
     if(tempDirectory.exists())
         tempDirectory.removeRecursively();
+    if(logFile.exists())
+        logFile.remove();
 
     ui->progressBar->setValue(100);
     QMessageBox::information(this,"Success","Encode successful.",
