@@ -7,8 +7,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    // remove vp9 rate control options
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constrained Quality"));
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
+
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
+
     setAcceptDrops(true);
+
     av_register_all();
 }
 
