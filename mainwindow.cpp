@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-//#include <QDebug>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     // remove vp9 rate control options
-    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constrained Quality"));
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
 
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
@@ -407,7 +407,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
         else // else, duration is the entire video (using container duration)
             computedDuration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
     }
-    double bitRate = targetFileSize ? calculateBitRate(targetFileSize,computedDuration) : targetBitRate;
+    double bitRate = targetFileSize > -1 ? calculateBitRate(targetFileSize,computedDuration) : targetBitRate;
     if(audioStreamId > -1 && bitRate > 64)
         bitRate -= 64;
 
@@ -417,7 +417,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     int cropY = cropTop;
 
     // lossless shortcut
-    bool lossless = bitRate == 0 && crf == -1;
+    bool lossless = bitRate == -1 && crf == -1;
 
     // input
     passStringList << "-i" << inputFilePath;
@@ -453,7 +453,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     }
 
     // cbr
-    if(cbr)
+    if(cbr && bitRate > 0)
     {
         passStringList << "-minrate" << QString::number(bitRate).append("K");
         passStringList << "-maxrate" << QString::number(bitRate).append("K");
@@ -466,7 +466,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     }
 
     // target bit rate
-    if(!lossless)
+    if(!lossless && bitRate > 0)
     {
         passStringList << "-b:v" << QString::number(bitRate).append("K");
     }
@@ -570,7 +570,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
     closeInputFile(formatContext);
 
-    //qDebug() << passStringList;
+    qDebug() << passStringList;
     //QStringList dummy;
     //return dummy;
     return passStringList;
@@ -592,7 +592,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
 
         while(ffmpegProcess.waitForReadyRead())
         {
-            //qDebug() << ffmpegProcess.readAllStandardError();
+            qDebug() << ffmpegProcess.readAllStandardError();
             //updateProgressBar(ffmpegProcess.readAllStandardError(),frameRate,duration);
         }
     }
@@ -969,8 +969,8 @@ void MainWindow::on_encodePushButton_clicked()
     }
 
     int crf = -1;
-    double targetFileSize;
-    int targetBitRate;
+    double targetFileSize = -1;
+    int targetBitRate = -1;
     bool cbr = false;
     QString rateMode = ui->rateModeComboBox->currentText();
     if(rateMode == "Constant Bit Rate")
@@ -1013,7 +1013,7 @@ void MainWindow::on_encodePushButton_clicked()
 
     QDir outputDirectory = QFileInfo(outputFilePath).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
-    QFile logFile = QFile("ffmpeg2pass-0.log");
+    QFile logFile("ffmpeg2pass-0.log");
 
     if(!tempDirectory.exists())
         QDir().mkdir(tempDirectory.absolutePath());
@@ -1033,6 +1033,7 @@ void MainWindow::on_encodePushButton_clicked()
 
     ui->progressBar->setValue(0);
     ui->encodePushButton->setEnabled(false); // output file name conflict
+
     this->setEnabled(true);
 }
 
