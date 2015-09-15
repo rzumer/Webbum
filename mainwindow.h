@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDropEvent>
 #include <QUrl>
+#include <QProcess>
 
 extern "C"
 {
@@ -48,6 +49,9 @@ private slots:
     void on_resizeHeightSpinBox_editingFinished();
     void on_actionOpen_triggered();
     void on_encodePushButton_clicked();
+    void on_cancelPushButton_clicked();
+    void on_rateTargetFileSizeDoubleSpinBox_editingFinished();
+    void on_rateTargetBitRateSpinBox_editingFinished();
 
 private:
     Ui::MainWindow *ui;
@@ -61,8 +65,13 @@ private:
     void populateStreamComboBoxes(AVFormatContext *formatContext);
     void initializeFormData(AVFormatContext *formatContext);
     double calculateFileSize(int bitRate, QTime duration);
-    QStringList generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, double crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters);
+    QStringList generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, int crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters, bool twoPass);
     void encodePass(QStringList &encodingParameters);
+    int calculateBitRate(double fileSize, QTime duration);
+    bool validateFormFields();
+    void updateProgressBar(QByteArray &standardError, double frameRate, QTime duration);
+    double getFrameRate(QString &inputFileName, int videoStreamId);
+    QTime getDuration(QString &inputFileName);
 };
 
 #endif // MAINWINDOW_H
