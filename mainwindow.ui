@@ -69,7 +69,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-113</y>
          <width>645</width>
          <height>713</height>
         </rect>
@@ -539,12 +539,12 @@
                 </property>
                 <item>
                  <property name="text">
-                  <string>File Size</string>
+                  <string>Bit Rate</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>Bit Rate</string>
+                  <string>File Size</string>
                  </property>
                 </item>
                </widget>
@@ -566,7 +566,7 @@
               <item row="1" column="4">
                <widget class="QSpinBox" name="rateTargetBitRateSpinBox">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
@@ -579,7 +579,7 @@
               <item row="1" column="3">
                <widget class="QDoubleSpinBox" name="rateTargetFileSizeDoubleSpinBox">
                 <property name="enabled">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
@@ -605,6 +605,9 @@
                 </property>
                 <property name="wrapping">
                  <bool>true</bool>
+                </property>
+                <property name="minimum">
+                 <number>4</number>
                 </property>
                 <property name="maximum">
                  <number>63</number>
@@ -801,12 +804,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>100</x>
-     <y>222</y>
+     <x>129</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
-     <y>221</y>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -817,12 +820,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>144</x>
-     <y>222</y>
+     <x>173</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>625</x>
-     <y>221</y>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -833,12 +836,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>93</x>
-     <y>274</y>
+     <x>122</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
-     <y>273</y>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -849,12 +852,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>274</y>
+     <x>178</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
      <x>625</x>
-     <y>273</y>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -865,12 +868,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>442</y>
+     <x>140</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
-     <y>468</y>
+     <y>334</y>
     </hint>
    </hints>
   </connection>
@@ -881,12 +884,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>442</y>
+     <x>193</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
      <x>625</x>
-     <y>468</y>
+     <y>334</y>
     </hint>
    </hints>
   </connection>
@@ -897,12 +900,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>96</x>
-     <y>348</y>
+     <x>125</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
-     <y>374</y>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
@@ -913,12 +916,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>202</x>
-     <y>348</y>
+     <x>230</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>625</x>
-     <y>374</y>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
@@ -929,12 +932,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>348</y>
+     <x>169</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
-     <y>419</y>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
@@ -945,12 +948,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>348</y>
+     <x>191</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>625</x>
-     <y>419</y>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
