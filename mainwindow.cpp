@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QtCore>
-#include <QtWidgets>
-#include <QDebug>
+//#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -566,7 +564,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
     closeInputFile(formatContext);
 
-    qDebug() << passStringList;
+    //qDebug() << passStringList;
     //QStringList dummy;
     //return dummy;
     return passStringList;
@@ -588,7 +586,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
 
         while(ffmpegProcess.waitForReadyRead())
         {
-            qDebug() << ffmpegProcess.readAllStandardError();
+            //qDebug() << ffmpegProcess.readAllStandardError();
             //updateProgressBar(ffmpegProcess.readAllStandardError(),frameRate,duration);
         }
     }

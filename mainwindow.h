@@ -2,9 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QDropEvent>
-#include <QUrl>
-#include <QProcess>
+#include <QtCore>
+#include <QtWidgets>
 
 extern "C"
 {
