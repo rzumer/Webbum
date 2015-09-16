@@ -69,9 +69,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-158</y>
-         <width>645</width>
-         <height>758</height>
+         <y>-317</y>
+         <width>670</width>
+         <height>945</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -607,7 +607,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="minimum">
-                 <number>4</number>
+                 <number>0</number>
                 </property>
                 <property name="maximum">
                  <number>63</number>
@@ -690,6 +690,69 @@
                 <property name="text">
                  <string>Subtitles:</string>
                 </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_9">
+             <property name="title">
+              <string>Codecs</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_8">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_21">
+                <property name="text">
+                 <string>Video:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QComboBox" name="codecVideoComboBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>VP8</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VP9</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_22">
+                <property name="text">
+                 <string>Audio:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="codecAudioComboBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Opus</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Vorbis</string>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -801,6 +864,8 @@
   <tabstop>streamVideoComboBox</tabstop>
   <tabstop>streamAudioComboBox</tabstop>
   <tabstop>streamSubtitlesComboBox</tabstop>
+  <tabstop>codecVideoComboBox</tabstop>
+  <tabstop>codecAudioComboBox</tabstop>
   <tabstop>customFiltersLineEdit</tabstop>
   <tabstop>customEncodingParametersLineEdit</tabstop>
   <tabstop>encodePushButton</tabstop>
@@ -815,12 +880,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>129</x>
-     <y>104</y>
+     <x>172</x>
+     <y>-80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>106</y>
+     <x>450</x>
+     <y>-77</y>
     </hint>
    </hints>
   </connection>
@@ -831,12 +896,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>104</y>
+     <x>216</x>
+     <y>-80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>625</x>
-     <y>106</y>
+     <x>652</x>
+     <y>-77</y>
     </hint>
    </hints>
   </connection>
@@ -847,12 +912,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>156</y>
+     <x>165</x>
+     <y>-18</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>158</y>
+     <x>450</x>
+     <y>-15</y>
     </hint>
    </hints>
   </connection>
@@ -863,12 +928,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>156</y>
+     <x>221</x>
+     <y>-18</y>
     </hint>
     <hint type="destinationlabel">
-     <x>625</x>
-     <y>158</y>
+     <x>652</x>
+     <y>-15</y>
     </hint>
    </hints>
   </connection>
@@ -879,12 +944,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>308</y>
+     <x>183</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>334</y>
+     <x>450</x>
+     <y>187</y>
     </hint>
    </hints>
   </connection>
@@ -895,12 +960,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>193</x>
-     <y>308</y>
+     <x>236</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel">
-     <x>625</x>
-     <y>334</y>
+     <x>652</x>
+     <y>187</y>
     </hint>
    </hints>
   </connection>
@@ -911,12 +976,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>125</x>
-     <y>214</y>
+     <x>168</x>
+     <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>240</y>
+     <x>450</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -927,12 +992,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>230</x>
-     <y>214</y>
+     <x>248</x>
+     <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>625</x>
-     <y>240</y>
+     <x>652</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -943,12 +1008,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>169</x>
-     <y>214</y>
+     <x>212</x>
+     <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>285</y>
+     <x>450</x>
+     <y>130</y>
     </hint>
    </hints>
   </connection>
@@ -959,12 +1024,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>191</x>
-     <y>214</y>
+     <x>234</x>
+     <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>625</x>
-     <y>285</y>
+     <x>652</x>
+     <y>130</y>
     </hint>
    </hints>
   </connection>

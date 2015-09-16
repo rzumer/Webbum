@@ -21,9 +21,15 @@ win32
 unix: INCLUDEPATH += usr/include
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    outputfile.cpp \
+    inputfile.cpp \
+    unittest.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    outputfile.h \
+    inputfile.h \
+    unittest.h
 
 FORMS    += mainwindow.ui
 

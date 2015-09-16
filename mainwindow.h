@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QtCore>
 #include <QtWidgets>
+#include "inputfile.h"
+#include "outputfile.h"
 
 extern "C"
 {
@@ -75,6 +77,7 @@ private:
     double getFrameRate(QString &inputFileName, int videoStreamId);
     QTime getDuration(QString &inputFileName);
     QTime getOutputDuration(int64_t inputDuration);
+    void connectSignalsAndSlots(InputFile &inputFile);
 };
 
 #endif // MAINWINDOW_H
