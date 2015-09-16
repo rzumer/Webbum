@@ -879,7 +879,8 @@ void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
 
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
     {
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
                     calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
         closeInputFile(formatContext);
@@ -896,7 +897,8 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
 
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
     {
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
                     calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
         closeInputFile(formatContext);
@@ -1130,7 +1132,8 @@ void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
     {
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
                     calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
         closeInputFile(formatContext);
@@ -1141,7 +1144,8 @@ void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
     {
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
                     calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
         closeInputFile(formatContext);
@@ -1152,7 +1156,8 @@ void MainWindow::on_trimNoneRadioButton_clicked()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
     {
-        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
+        AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
                     calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
         closeInputFile(formatContext);
