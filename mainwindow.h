@@ -52,6 +52,12 @@ private slots:
     void on_rateTargetFileSizeDoubleSpinBox_editingFinished();
     void on_rateTargetBitRateSpinBox_editingFinished();
 
+    void on_trimDurationStartTimeEdit_editingFinished();
+
+    void on_trimDurationDurationTimeEdit_editingFinished();
+
+    void on_trimNoneRadioButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool validateInputFile(QString &inputFilePath);
@@ -71,6 +77,7 @@ private:
     void updateProgressBar(QByteArray &standardError, double frameRate, QTime duration);
     double getFrameRate(QString &inputFileName, int videoStreamId);
     QTime getDuration(QString &inputFileName);
+    QTime getOutputDuration(int64_t inputDuration);
 };
 
 #endif // MAINWINDOW_H
