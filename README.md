@@ -20,7 +20,7 @@ On Linux, the following packages are required (tested on Debian Jessie):
 On Windows, all dependencies should be provided in the source code.
 
 # Releases
-On Linux, the `ffmpeg` package is required to run Webbum, and the `fontconfig` package is required for proper subtitle support.
+On Linux, the `ffmpeg` and `qt5` packages are required to run Webbum, and the `fontconfig` package is required for proper subtitle support.
 
 On Windows, release builds include Microsoft Visual C++ Redistributable packages, which are required to run Webbum.
 
