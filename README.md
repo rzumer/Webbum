@@ -16,11 +16,13 @@ Any feedback is appreciated. Please use the Issues system to leave any construct
 
 # Compilation
 On Linux, the following packages are required (tested on Debian Jessie):  
-ffmpeg, libavutil-dev, libavfilter-dev, libavcodec-dev
+`libavutil-dev`, `libavfilter-dev`, `libavcodec-dev`
 
 On Windows, all dependencies should be provided in the source code.
 
 # Releases
-Windows release builds include Microsoft Visual C++ Redistributable packages, required to run Webbum.
+On Linux, the `ffmpeg` package is required to run Webbum.
+
+On Windows, release builds include Microsoft Visual C++ Redistributable packages, which is required to run Webbum.
 
 All other libraries and dependencies should be provided.
