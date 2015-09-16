@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     // remove vp9 rate control options
+    ui->rateCRFSpinBox->setMinimum(4);
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
 
@@ -40,6 +41,11 @@ void MainWindow::dropEvent(QDropEvent *ev)
 void MainWindow::dragEnterEvent(QDragEnterEvent *ev)
 {
     ev->accept();
+}
+
+void MainWindow::connectSignalsAndSlots(InputFile &inputFile)
+{
+    // do stuff
 }
 
 bool MainWindow::validateInputFile(QString &inputFilePath)
@@ -487,16 +493,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     }
 
     // threads/speed
-    if(twoPass && passNumber == 1)
-    {
-        passStringList << "-threads" << QString::number(8);
-        passStringList << "-speed" << QString::number(4);
-    }
-    else
-    {
-        passStringList << "-threads" << QString::number(8);
-        passStringList << "-speed" << QString::number(1);
-    }
+    passStringList << "-threads" << QString::number(1);
 
     // tile columns/frame parallel, vp9 only
     //passStringList << "-tile-columns" << QString::number(6);
@@ -509,7 +506,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
         passStringList << "-lag-in-frames" << QString::number(25);
     }
 
-    // g/aq mode
+    // g/aq mode - vp9 specific
     //passStringList << "-g" << QString::number(9999);
     //passStringList << "-aq-mode" << QString::number(0);
 
