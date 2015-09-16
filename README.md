@@ -4,9 +4,8 @@ A VP8 (and possibly VP9) WebM video encoder.
 It is an interface for ffmpeg.
 
 Some indications to anyone trying to use it at this point:  
-* May be buggy or have lower quality output than expected  
+* May be buggy  
 * Very messy code (set for refactoring)  
-* Missing some features (subtitle support)
 * Currently only supports VP8 encoding
 * 64kbps Opus audio only
 * Incomplete UI, freezes while encoding  
@@ -21,8 +20,8 @@ On Linux, the following packages are required (tested on Debian Jessie):
 On Windows, all dependencies should be provided in the source code.
 
 # Releases
-On Linux, the `ffmpeg` package is required to run Webbum.
+On Linux, the `ffmpeg` package is required to run Webbum, and the `fontconfig` package is required for proper subtitle support.
 
-On Windows, release builds include Microsoft Visual C++ Redistributable packages, which is required to run Webbum.
+On Windows, release builds include Microsoft Visual C++ Redistributable packages, which are required to run Webbum.
 
 All other libraries and dependencies should be provided.
