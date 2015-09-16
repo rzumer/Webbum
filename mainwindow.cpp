@@ -532,6 +532,25 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
+    if(subtitleStreamId > -1)
+    {
+        if(!filterChain.isEmpty())
+            filterChain.append(",");
+
+        int subtitleStreamNumber = 0;
+        for(int i = 0; i < subtitleStreamId; i++)
+        {
+            AVStream *currentStream = formatContext->streams[i];
+            if(currentStream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
+            {
+                subtitleStreamNumber++;
+            }
+        }
+        filterChain.append(QString("subtitles='" + QFileInfo(inputFilePath).canonicalFilePath()
+                                   .replace(":","\\:") + "':si=" + QString::number(subtitleStreamNumber))
+                           .replace("'","\\'").replace("[","\\[").replace("]","\\]")
+                           .replace(",","\\,").replace(";","\\;"));
+    }
     QString customFilters = ui->customFiltersLineEdit->text().trimmed();
     if(!customFilters.isEmpty())
     {
@@ -613,7 +632,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
         double frameRate = getFrameRate(inputFileName,videoStreamId);
         QTime duration = getDuration(inputFileName);*/
 
-        while(ffmpegProcess.waitForReadyRead())
+        while(ffmpegProcess.waitForReadyRead(120000))
         {
             qDebug() << ffmpegProcess.readAllStandardError();
             //updateProgressBar(ffmpegProcess.readAllStandardError(),frameRate,duration);
