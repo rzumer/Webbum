@@ -69,9 +69,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-113</y>
+         <y>-158</y>
          <width>645</width>
-         <height>713</height>
+         <height>758</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -701,15 +701,25 @@
               <string>Custom</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_7">
-              <item row="0" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="label_20">
                 <property name="text">
-                 <string>Custom Encoder Parameters:</string>
+                 <string>Custom Encoding Parameters:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLineEdit" name="customEncodingParametersLineEdit"/>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Custom Filters:</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QLineEdit" name="customEncoderParametersLineEdit"/>
+               <widget class="QLineEdit" name="customFiltersLineEdit"/>
               </item>
              </layout>
             </widget>
@@ -791,7 +801,8 @@
   <tabstop>streamVideoComboBox</tabstop>
   <tabstop>streamAudioComboBox</tabstop>
   <tabstop>streamSubtitlesComboBox</tabstop>
-  <tabstop>customEncoderParametersLineEdit</tabstop>
+  <tabstop>customFiltersLineEdit</tabstop>
+  <tabstop>customEncodingParametersLineEdit</tabstop>
   <tabstop>encodePushButton</tabstop>
   <tabstop>cancelPushButton</tabstop>
  </tabstops>

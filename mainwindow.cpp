@@ -532,6 +532,14 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
+    QString customFilters = ui->customFiltersLineEdit->text().trimmed();
+    if(!customFilters.isEmpty())
+    {
+        if(!filterChain.isEmpty())
+            filterChain.append(",");
+
+        filterChain.append(customFilters);
+    }
 
     if(!filterChain.isEmpty())
     {
@@ -1024,7 +1032,7 @@ void MainWindow::on_encodePushButton_clicked()
         crf = ui->rateCRFSpinBox->value();
     }
 
-    QString customParameters = ui->customEncoderParametersLineEdit->text().trimmed();
+    QString customParameters = ui->customEncodingParametersLineEdit->text().trimmed();
 
     // two pass encode
     bool twoPass = true;
