@@ -377,6 +377,29 @@ int MainWindow::calculateBitRate(double fileSize, QTime duration)
     return (fileSize + 0.0005) * 1024 * 8 / QTime(0,0).msecsTo(duration) * 1000;
 }
 
+QTime MainWindow::getOutputDuration(int64_t inputDuration)
+{
+    QTime duration = ui->trimDurationDurationTimeEdit->time();
+    QTime startTime;
+    if(QTime(0,0).msecsTo(ui->trimStartEndStartTimeEdit->time()) == 0)
+        startTime = ui->trimDurationStartTimeEdit->time();
+    else
+        startTime = ui->trimStartEndStartTimeEdit->time();
+    QTime endTime = ui->trimStartEndEndTimeEdit->time();
+
+    int durationInMSecs = QTime(0,0).msecsTo(duration);
+    QTime computedDuration = QTime(0,0).addMSecs(durationInMSecs);
+
+    if(!ui->trimDurationRadioButton->isChecked()) // if trimmed by duration, use the current value
+    {
+        if(ui->trimStartEndRadioButton->isChecked()) // if trimmed by start/end time, duration is end - start
+            computedDuration = QTime(0,0).addMSecs(startTime.msecsTo(endTime));
+        else // else, duration is the entire video (using container duration)
+            computedDuration = QTime(0,0).addMSecs((double)(inputDuration + 500) / AV_TIME_BASE * 1000);
+    }
+    return computedDuration;
+}
+
 QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
                                  QString &outputFilePath,int videoStreamId,
                                  int audioStreamId, int subtitleStreamId,
@@ -398,15 +421,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     if(subtitleStreamId > -1) subtitleStream = formatContext->streams[subtitleStreamId];
 
     // calculate target bitrate and cropping if needed
-    int durationInMSecs = QTime(0,0).msecsTo(duration);
-    QTime computedDuration = QTime(0,0).addMSecs(durationInMSecs);
-    if(durationInMSecs == 0) // if trimmed by duration, use the current value
-    {
-        if(endTime.isValid()) // if trimmed by start/end time, duration is end - start
-            computedDuration = QTime(0,0).addMSecs(startTime.msecsTo(endTime));
-        else // else, duration is the entire video (using container duration)
-            computedDuration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
-    }
+    QTime computedDuration = getOutputDuration(formatContext->duration);
     double bitRate = targetFileSize > -1 ? calculateBitRate(targetFileSize,computedDuration) : targetBitRate;
     if(audioStreamId > -1 && bitRate > 64)
         bitRate -= 64;
@@ -834,6 +849,14 @@ void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
     QTime endTime = ui->trimStartEndEndTimeEdit->time();
     if(startTime > endTime)
         ui->trimStartEndEndTimeEdit->setTime(startTime);
+
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+    {
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+        closeInputFile(formatContext);
+    }
 }
 
 void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
@@ -843,6 +866,14 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
     QTime endTime = ui->trimStartEndEndTimeEdit->time();
     if(endTime < startTime)
         ui->trimStartEndStartTimeEdit->setTime(endTime);
+
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+    {
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+        closeInputFile(formatContext);
+    }
 }
 
 void MainWindow::on_cropLeftSpinBox_editingFinished()
@@ -1054,11 +1085,49 @@ void MainWindow::on_rateTargetFileSizeDoubleSpinBox_editingFinished()
 }
 
 void MainWindow::on_rateTargetBitRateSpinBox_editingFinished()
-{
+{   
     QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
     QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
     if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath) && validateFormFields())
         ui->encodePushButton->setEnabled(true);
     else
         ui->encodePushButton->setEnabled(false);
+
+    AVFormatContext *formatContext = openInputFile(inputFilePath);
+    ui->rateTargetFileSizeDoubleSpinBox->setValue(
+                calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+    closeInputFile(formatContext);
+}
+
+void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+    {
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+        closeInputFile(formatContext);
+    }
+}
+
+void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+    {
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+        closeInputFile(formatContext);
+    }
+}
+
+void MainWindow::on_trimNoneRadioButton_clicked()
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+    {
+        AVFormatContext *formatContext = openInputFile(ui->inputFileLineEdit->text().trimmed());
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+        closeInputFile(formatContext);
+    }
 }
