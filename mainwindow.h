@@ -51,11 +51,8 @@ private slots:
     void on_cancelPushButton_clicked();
     void on_rateTargetFileSizeDoubleSpinBox_editingFinished();
     void on_rateTargetBitRateSpinBox_editingFinished();
-
     void on_trimDurationStartTimeEdit_editingFinished();
-
     void on_trimDurationDurationTimeEdit_editingFinished();
-
     void on_trimNoneRadioButton_clicked();
 
 private:
