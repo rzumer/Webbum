@@ -22,14 +22,12 @@ unix: INCLUDEPATH += usr/include
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    outputfile.cpp \
     inputfile.cpp \
-    unittest.cpp
+    outputfile.cpp
 
 HEADERS  += mainwindow.h \
     outputfile.h \
-    inputfile.h \
-    unittest.h
+    inputfile.h
 
 FORMS    += mainwindow.ui
 
