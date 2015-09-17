@@ -19,6 +19,7 @@ private:
     QString _filePath;
 
 signals:
+    void filePathChanged(QString filePath);
 
 public slots:
     void filePath(QString &filePath);
