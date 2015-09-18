@@ -11,7 +11,7 @@ bool InputFile::isValid()
     return file.exists() && file.isReadable();
 }
 
-void InputFile::filePath(QString &filePath)
+void InputFile::setFilePath(QString &filePath)
 {
     _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath();
     emit filePathChanged(_filePath);

@@ -23,11 +23,15 @@ unix: INCLUDEPATH += usr/include
 SOURCES += main.cpp\
         mainwindow.cpp \
     inputfile.cpp \
-    outputfile.cpp
+    outputfile.cpp \
+    inputstream.cpp \
+    inputchapter.cpp
 
 HEADERS  += mainwindow.h \
     outputfile.h \
-    inputfile.h
+    inputfile.h \
+    inputstream.h \
+    inputchapter.h
 
 FORMS    += mainwindow.ui
 
