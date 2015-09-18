@@ -12,7 +12,7 @@ bool OutputFile::isValid()
     return !file.exists() && directory.exists() && directory.isWritable();
 }
 
-void OutputFile::filePath(QString &filePath)
+void OutputFile::setFilePath(QString &filePath)
 {
     _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath();
     emit filePathChanged(_filePath);

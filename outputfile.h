@@ -8,7 +8,7 @@ class OutputFile : public QObject
 {
     Q_OBJECT
 public:
-    explicit OutputFile(QObject *parent = 0,QString outputFilePath = QString());
+    explicit OutputFile(QObject *parent = 0, QString outputFilePath = QString());
 
     // getters
     QString filePath() const { return _filePath; }
@@ -22,7 +22,7 @@ signals:
     void filePathChanged(QString filePath);
 
 public slots:
-    void filePath(QString &filePath);
+    void setFilePath(QString &filePath);
 };
 
 #endif // OUTPUTFILE_H

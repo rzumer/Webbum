@@ -6,6 +6,8 @@
 #include <QtWidgets>
 #include "inputfile.h"
 #include "outputfile.h"
+#include "inputstream.h"
+#include "inputchapter.h"
 
 extern "C"
 {
@@ -59,6 +61,11 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    InputFile inputFile;
+    OutputFile outputFile;
+    int selectedVideoStreamId = -1;
+    int selectedAudioStreamId = -1;
+    int selectedSubtitleStreamId = -1;
     bool validateInputFile(QString &inputFilePath);
     bool validateOutputFile(QString &outputFilePath);
     void refreshTargetMode(QString &currentTargetMode);
