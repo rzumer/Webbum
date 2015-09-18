@@ -2,12 +2,18 @@
 #define INPUTSTREAM_H
 
 #include <QObject>
+extern "C"
+{
+    #include "libavformat/avformat.h"
+    #include "libavcodec/avcodec.h"
+}
 
 class InputStream : public QObject
 {
     Q_OBJECT
 public:
-    explicit InputStream(QObject *parent = 0);
+    enum streamType {VIDEO, AUDIO, SUBTITLE};
+    explicit InputStream(QObject *parent = 0, AVStream stream = AVStream());
 
     // getters
     int type() const { return _type; }
@@ -19,7 +25,7 @@ public:
     bool isDefault() const { return _isDefault; }
 
 private:
-    enum _type {VIDEO,AUDIO,SUBTITLE};
+    streamType _type;
     QString _codec;
     QString _profile;
     double _frameRate;

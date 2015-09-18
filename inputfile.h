@@ -2,7 +2,13 @@
 #define INPUTFILE_H
 
 #include <QObject>
-#include <QtCore>
+#include <QMap>
+#include <QTime>
+extern "C"
+{
+    #include "libavcodec/avcodec.h"
+    #include "libavformat/avformat.h"
+}
 #include "inputstream.h"
 #include "inputchapter.h"
 
@@ -16,19 +22,17 @@ public:
     QString filePath() const { return _filePath; }
 
     bool isValid();
-
+    void dumpStreamInformation();
 private:
     QString _filePath;
-    QMap<int,InputStream> _streams;
-    QMap<int,InputChapter> _chapters;
+    QMap<int,InputStream*> _streams;
+    QMap<int,InputChapter*> _chapters;
     QTime _duration;
     int _bitRate;
 
 signals:
-    void filePathChanged(QString filePath);
 
 public slots:
-    void setFilePath(QString &filePath);
 };
 
 #endif // INPUTFILE_H
