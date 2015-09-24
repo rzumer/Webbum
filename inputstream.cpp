@@ -1,10 +1,10 @@
 #include "inputstream.h"
 
-InputStream::InputStream(QObject *parent, AVStream stream) : QObject(parent)
+InputStream::InputStream(AVStream *stream)
 {
     _isDefault = false;
 
-    if(stream != NULL)
+    if(stream)
     {
         AVDictionaryEntry *language = av_dict_get(stream->metadata,"language",NULL,0);
         if(language)
@@ -13,25 +13,28 @@ InputStream::InputStream(QObject *parent, AVStream stream) : QObject(parent)
         if(stream->disposition & AV_DISPOSITION_DEFAULT)
             _isDefault = true;
 
-        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        if(stream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
         {
+            _type = VIDEO;
             ui->streamVideoComboBox->addItem(streamStr);
         }
-        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+        else if(stream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
         {
+            _type = AUDIO;
             ui->streamAudioComboBox->addItem(streamStr);
         }
-        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
+        else if(stream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
         {
+            _type = SUBTITLE;
             ui->streamSubtitlesComboBox->addItem(streamStr);
         }
 
         if(stream->codec->codec_descriptor != NULL)
         {
-            QString streamStr = "[" + QString::number(i) + "] ";
+            QString streamStr = "[" + QString::number(stream->id) + "] ";
 
             // add stream title if available
-            AVDictionaryEntry *title = av_dict_get(currentStream->metadata,"title",NULL,0);
+            AVDictionaryEntry *title = av_dict_get(stream->metadata,"title",NULL,0);
             if(title)
                 streamStr.append("\"" + QString::fromStdString(title->value) + "\" - ");
 

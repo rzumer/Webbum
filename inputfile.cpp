@@ -13,7 +13,7 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
             for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
             {
                 AVStream *currentStream = formatContext->streams[i];
-                const InputStream *localStream = InputStream(this, *currentStream);
+                InputStream localStream = InputStream(currentStream);
                 _streams.insert(i, localStream);
             }
         }
