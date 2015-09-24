@@ -8,12 +8,11 @@ extern "C"
     #include "libavcodec/avcodec.h"
 }
 
-class InputStream : public QObject
+class InputStream
 {
-    Q_OBJECT
 public:
     enum streamType {VIDEO, AUDIO, SUBTITLE};
-    explicit InputStream(QObject *parent = 0, AVStream stream = AVStream());
+    explicit InputStream(AVStream *stream = new AVStream());
 
     // getters
     int type() const { return _type; }

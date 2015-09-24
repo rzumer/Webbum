@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QTime>
+#include <QFileInfo>
 extern "C"
 {
     #include "libavcodec/avcodec.h"
@@ -25,8 +26,8 @@ public:
     void dumpStreamInformation();
 private:
     QString _filePath;
-    QMap<int,InputStream*> _streams;
-    QMap<int,InputChapter*> _chapters;
+    QMap<int,InputStream> _streams;
+    QMap<int,InputChapter> _chapters;
     QTime _duration;
     int _bitRate;
 

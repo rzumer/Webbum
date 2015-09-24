@@ -3,11 +3,10 @@
 
 #include <QObject>
 
-class InputChapter : public QObject
+class InputChapter
 {
-    Q_OBJECT
 public:
-    explicit InputChapter(QObject *parent = 0, QString title = QString(), QTime startTime = QTime(0,0), QTime endTime = QTime(0,0));
+    explicit InputChapter(QString title = QString(), QTime startTime = QTime(0,0), QTime endTime = QTime(0,0));
 
     // getters
     QString title() const { return _title; }

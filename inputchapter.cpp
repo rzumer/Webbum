@@ -1,6 +1,6 @@
 #include "inputchapter.h"
 
-InputChapter::InputChapter(QObject *parent, QString title, QTime startTime, QTime endTime) : QObject(parent)
+InputChapter::InputChapter(QString title, QTime startTime, QTime endTime)
 {
     _title = title;
     _startTime = startTime;
