@@ -2,6 +2,7 @@
 #define INPUTCHAPTER_H
 
 #include <QObject>
+#include <QTime>
 
 class InputChapter
 {
@@ -13,17 +14,15 @@ public:
     QTime startTime() const { return _startTime; }
     QTime endTime() const { return _endTime; }
 
+    // setters
+    void setTitle(QString &title) { _title = title; }
+    void setStartTime(QTime &startTime) { _startTime = startTime; }
+    void setEndTime(QTime &endTime) { _endTime = endTime; }
+
 private:
     QString _title;
     QTime _startTime;
     QTime _endTime;
-
-signals:
-
-public slots:
-    void setTitle(QString &title) { _title = title; }
-    void setStartTime(QTime &startTime) { _startTime = startTime; }
-    void setEndTime(QTime &endTime) { _endTime = endTime; }
 };
 
 #endif // INPUTCHAPTER_H

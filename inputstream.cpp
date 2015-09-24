@@ -36,7 +36,7 @@ InputStream::InputStream(AVStream *stream)
             // Title
             AVDictionaryEntry *title = av_dict_get(stream->metadata,"title",NULL,0);
             if(title)
-                _title = title;
+                _title = QString::fromStdString(title->value);
 
             // Codec Name
             _codec = QString::fromStdString(avcodec_get_name(stream->codec->codec_id));

@@ -41,11 +41,6 @@ private:
     double _frameRate; // video only
     int _bitRate; // audio only
     QString _channelLayout; // audio only
-
-signals:
-
-public slots:
-    // TODO: add fromAVStream(AVStream **stream) ...
 };
 
 #endif // INPUTSTREAM_H
