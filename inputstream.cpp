@@ -39,21 +39,21 @@ InputStream::InputStream(AVStream *stream)
                 _title = title;
 
             // Codec Name
-            _codec = QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id));
+            _codec = QString::fromStdString(avcodec_get_name(stream->codec->codec_id));
 
             // Profile Name
-            if(currentStream->codec->profile != FF_PROFILE_UNKNOWN)
+            if(stream->codec->profile != FF_PROFILE_UNKNOWN)
             {
                 const AVCodec *profile;
                 const char *profileName;
 
-                if(currentStream->codec->codec)
-                    profile = currentStream->codec->codec;
+                if(stream->codec->codec)
+                    profile = stream->codec->codec;
                 else
-                    profile = avcodec_find_decoder(currentStream->codec->codec_id);
+                    profile = avcodec_find_decoder(stream->codec->codec_id);
 
                 if(profile)
-                    profileName = av_get_profile_name(profile,currentStream->codec->profile);
+                    profileName = av_get_profile_name(profile,stream->codec->profile);
 
                 if(profileName)
                     _profile = profileName;
@@ -70,17 +70,17 @@ InputStream::InputStream(AVStream *stream)
             if(stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
             {
                 // Bit Rate
-                int bitsPerSample = av_get_bits_per_sample(currentStream->codec->codec_id);
-                int bitRate = bitsPerSample ? currentStream->codec->sample_rate *
-                                              currentStream->codec->channels *
-                                              bitsPerSample : currentStream->codec->bit_rate;
+                int bitsPerSample = av_get_bits_per_sample(stream->codec->codec_id);
+                int bitRate = bitsPerSample ? stream->codec->sample_rate *
+                                              stream->codec->channels *
+                                              bitsPerSample : stream->codec->bit_rate;
                 if(bitRate != 0)
                     _bitRate = bitRate;
 
                 // Channel Layout
                 char buf[256];
                 av_get_channel_layout_string(buf,sizeof(buf),
-                    currentStream->codec->channels,currentStream->codec->channel_layout);
+                    stream->codec->channels,stream->codec->channel_layout);
                 _channelLayout = QString::fromStdString(buf);
             }
         }
