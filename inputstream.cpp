@@ -3,45 +3,45 @@
 InputStream::InputStream(AVStream *stream)
 {
     _isDefault = false;
+    _isForced = false;
 
+    // Extract stream information
     if(stream)
     {
+        // ID
+        _id = stream->id;
+
+        // Language
         AVDictionaryEntry *language = av_dict_get(stream->metadata,"language",NULL,0);
         if(language)
             _language = language->value;
 
+        // Disposition
         if(stream->disposition & AV_DISPOSITION_DEFAULT)
             _isDefault = true;
+        if(stream->disposition & AV_DISPOSITION_FORCED)
+            _isForced = true;
 
+        // Codec Type
         if(stream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
-        {
             _type = VIDEO;
-            ui->streamVideoComboBox->addItem(streamStr);
-        }
         else if(stream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
-        {
             _type = AUDIO;
-            ui->streamAudioComboBox->addItem(streamStr);
-        }
         else if(stream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
-        {
             _type = SUBTITLE;
-            ui->streamSubtitlesComboBox->addItem(streamStr);
-        }
 
-        if(stream->codec->codec_descriptor != NULL)
+        // Additional information
+        if(stream->codec->codec_descriptor)
         {
-            QString streamStr = "[" + QString::number(stream->id) + "] ";
-
-            // add stream title if available
+            // Title
             AVDictionaryEntry *title = av_dict_get(stream->metadata,"title",NULL,0);
             if(title)
-                streamStr.append("\"" + QString::fromStdString(title->value) + "\" - ");
+                _title = title;
 
-            // add codec name
-            streamStr.append(QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id)));
+            // Codec Name
+            _codec = QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id));
 
-            // add profile name if available
+            // Profile Name
             if(currentStream->codec->profile != FF_PROFILE_UNKNOWN)
             {
                 const AVCodec *profile;
@@ -56,25 +56,32 @@ InputStream::InputStream(AVStream *stream)
                     profileName = av_get_profile_name(profile,currentStream->codec->profile);
 
                 if(profileName)
-                    streamStr.append("/" + QString::fromStdString(profileName) + "");
+                    _profile = profileName;
             }
 
-            // add bitrate and channels to audio streams
-            if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+            // Video information
+            if(stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
             {
-                streamStr.append(" (");
+                // Frame Rate
+                _frameRate = av_q2d(stream->codec->framerate);
+            }
 
+            // Audio information
+            if(stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+            {
+                // Bit Rate
                 int bitsPerSample = av_get_bits_per_sample(currentStream->codec->codec_id);
                 int bitRate = bitsPerSample ? currentStream->codec->sample_rate *
                                               currentStream->codec->channels *
                                               bitsPerSample : currentStream->codec->bit_rate;
                 if(bitRate != 0)
-                    streamStr.append(QString::number((double)bitRate / 1000) + "kbps/");
+                    _bitRate = bitRate;
 
+                // Channel Layout
                 char buf[256];
                 av_get_channel_layout_string(buf,sizeof(buf),
                     currentStream->codec->channels,currentStream->codec->channel_layout);
-                streamStr.append(QString::fromStdString(buf) + ")");
+                _channelLayout = QString::fromStdString(buf);
             }
         }
     }
