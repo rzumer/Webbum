@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+  #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
 
@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    // remove vp9 rate control options
+    // remove vp9 rate control options until it is supported
     ui->rateCRFSpinBox->setMinimum(4);
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
