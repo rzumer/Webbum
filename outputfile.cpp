@@ -2,7 +2,7 @@
 
 OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent)
 {
-    _filePath = outputFilePath;
+    _filePath = QFileInfo(outputFilePath.trimmed()).canonicalFilePath();
 }
 
 bool OutputFile::isValid()
@@ -15,5 +15,4 @@ bool OutputFile::isValid()
 void OutputFile::setFilePath(QString &filePath)
 {
     _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath();
-    emit filePathChanged(_filePath);
 }

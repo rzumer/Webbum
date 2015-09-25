@@ -2,7 +2,7 @@
 
 InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
 {
-    _filePath = inputFilePath;
+    _filePath = QFileInfo(inputFilePath.trimmed()).canonicalFilePath();
 
     AVFormatContext *formatContext = NULL;
 
