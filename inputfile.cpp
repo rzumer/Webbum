@@ -42,6 +42,19 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
     }
 }
 
+double InputFile::fileSize(double durationInMSecs) const
+{
+    if(durationInMSecs > 0)
+        return ((double)_bitRate / 8) * durationInMSecs / 1000;
+    else
+        return ((double)_bitRate / 8) * QTime(0,0).msecsTo(_duration) / 1000;
+}
+
+double InputFile::fileSizeInMegabytes(double durationInMSecs) const
+{
+    return fileSize(durationInMSecs) / 1024 / 1024;
+}
+
 bool InputFile::isValid(QString inputFilePath)
 {
     QFileInfo file(inputFilePath.trimmed());

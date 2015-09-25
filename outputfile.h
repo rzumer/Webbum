@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTime>
+#include <math.h>
 
 class OutputFile : public QObject
 {
@@ -58,8 +59,8 @@ public slots:
     void setEndTime(QTime endTime) { _endTime = endTime; }
     void setBitRate(double bitRate, int multiplier = 1) { _bitRate = (int)(round(bitRate)) * multiplier; }
     void setBitRateInKilobits(double bitRateInKilobits) { setBitRate(bitRateInKilobits, 1000); }
-    void setBitRateForBytes(double sizeInBytes, int durationInMSecs = 0);
-    void setBitRateForMegabytes(double sizeInMegabytes, int durationInMSecs = 0);
+    void setBitRateForBytes(double sizeInBytes, double durationInMSecs = 0);
+    void setBitRateForMegabytes(double sizeInMegabytes, double durationInMSecs = 0);
     void setWidth(int width) { _width = width; }
     void setHeight(int height) { _height = height; }
     void setCropLeft(int cropLeft) { _cropLeft = cropLeft; }

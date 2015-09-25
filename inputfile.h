@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QTime>
 #include <QFileInfo>
+#include <math.h>
 extern "C"
 {
     #include "libavcodec/avcodec.h"
@@ -27,6 +28,9 @@ public:
     InputChapter chapter(int index) const { return _chapters.at(index); }
     QTime duration() const { return _duration; }
     int bitRate() const { return _bitRate; }
+    int bitRateInKilobits() const { return (int)(round(_bitRate / 1000)); }
+    double fileSize(double durationInMSecs = 0) const;
+    double fileSizeInMegabytes(double durationInMSecs = 0) const;
 
     static bool isValid(QString inputFilePath);
     bool isValid();
