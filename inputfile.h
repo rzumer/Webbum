@@ -21,6 +21,12 @@ public:
 
     // getters
     QString filePath() const { return _filePath; }
+    int streamCount() const { return _streams.size(); }
+    InputStream stream(int index) const { return _streams.at(index); }
+    int chapterCount() const { return _chapters.size(); }
+    InputChapter chapter(int index) const { return _chapters.at(index); }
+    QTime duration() const { return _duration; }
+    int bitRate() const { return _bitRate; }
 
     static bool isValid(QString inputFilePath);
     bool isValid();
@@ -28,8 +34,8 @@ public:
 
 private:
     QString _filePath;
-    QMap<int,InputStream> _streams;
-    QMap<int,InputChapter> _chapters;
+    QList<InputStream> _streams;
+    QList<InputChapter> _chapters;
     QTime _duration;
     int _bitRate;
 
