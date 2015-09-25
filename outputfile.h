@@ -2,8 +2,8 @@
 #define OUTPUTFILE_H
 
 #include <QObject>
-#include <QtCore>
-#include "inputstream.h"
+#include <QFileInfo>
+#include <QTime>
 
 class OutputFile : public QObject
 {
@@ -15,10 +15,6 @@ public:
 
     // getters
     QString filePath() const { return _filePath; }
-    // is getting the streams necessary? can IDs be returned? do they have to be member variables?
-    InputStream videoStream() const { return _videoStream; }
-    InputStream audioStream() const { return _audioStream; }
-    InputStream subtitleStream() const { return _subtitleStream; }
     int videoCodec() const { return _videoCodec; }
     int audioCodec() const { return _audioCodec; }
     QTime startTime() const { return _startTime; }
@@ -35,9 +31,6 @@ public:
 
 private:
     QString _filePath;
-    InputStream _videoStream;
-    InputStream _audioStream;
-    InputStream _subtitleStream;
     int _videoCodec;
     int _audioCodec;
     QTime _startTime;
@@ -54,9 +47,6 @@ signals:
 
 public slots:
     void setFilePath(QString &filePath) { _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath(); }
-    void setVideoStream(InputStream &videoStream) { _videoStream = videoStream; }
-    void setAudioStream(InputStream &audioStream) { _audioStream = audioStream; }
-    void setSubtitleStream(InputStream &subtitleStream) { _subtitleStream = subtitleStream; }
     void setVideoCodec(int videoCodec) { _videoCodec = videoCodec; }
     void setAudioCodec(int audioCodec) { _audioCodec = audioCodec; }
     void setStartTime(QTime &startTime) { _startTime = startTime; }

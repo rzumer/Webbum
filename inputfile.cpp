@@ -2,6 +2,8 @@
 
 InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
 {
+    av_register_all();
+
     _filePath = QFileInfo(inputFilePath.trimmed()).canonicalFilePath();
 
     AVFormatContext *formatContext = NULL;
@@ -32,9 +34,8 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
 
         // Bit Rate
         _bitRate = formatContext->bit_rate;
-
-        avformat_close_input(&formatContext);
     }
+    avformat_close_input(&formatContext);
 }
 
 bool InputFile::isValid()
@@ -55,6 +56,5 @@ void InputFile::dumpStreamInformation()
             av_dump_format(formatContext,0,fileNameStdString,false);
         }
     }
-
     avformat_close_input(&formatContext);
 }

@@ -59,8 +59,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    //InputFile inputFile; won't compile if uncommented
-    //OutputFile outputFile;
+    InputFile inputFile;
+    OutputFile outputFile;
     int selectedVideoStreamId = -1;
     int selectedAudioStreamId = -1;
     int selectedSubtitleStreamId = -1;
