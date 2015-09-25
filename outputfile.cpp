@@ -2,12 +2,39 @@
 
 OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent)
 {
-    _filePath = QFileInfo(outputFilePath.trimmed()).canonicalFilePath();
+    QFileInfo file(outputFilePath.trimmed());
+
+    _filePath = file.canonicalFilePath();
+
+    while(file.exists())
+    {
+        _filePath = file.dir().canonicalPath() + "/" + file.completeBaseName() + "_out.webm";
+        file = QFileInfo(_filePath);
+    }
+
+    emit outputFileChanged(_filePath);
+}
+
+bool OutputFile::isValid(QString outputFilePath)
+{
+    QFileInfo file(outputFilePath);
+    QFileInfo directory(file.path());
+    return !file.baseName().isEmpty() && !file.exists() && directory.exists() && directory.isWritable();
 }
 
 bool OutputFile::isValid()
 {
+    return isValid(_filePath);
+}
+
+bool OutputFile::isExistingFile()
+{
     QFileInfo file(_filePath);
-    QFileInfo directory(file.path());
-    return !file.exists() && directory.exists() && directory.isWritable();
+    return file.exists() && !file.isDir();
+}
+
+void OutputFile::setFilePath(QString &filePath)
+{
+    _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath();
+    emit outputFileChanged(_filePath);
 }

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QFileInfo>
+#include <QDir>
 #include <QTime>
 
 class OutputFile : public QObject
@@ -27,7 +28,10 @@ public:
     int cropTop() const { return _cropTop; }
     int cropBottom() const { return _cropBottom; }
 
+    static bool isValid(QString outputFilePath);
     bool isValid();
+    bool isExistingFile();
+    static OutputFile fromInputFile(QObject *parent, QString inputFilePath);
 
 private:
     QString _filePath;
@@ -44,9 +48,10 @@ private:
     int _cropBottom;
 
 signals:
+    void outputFileChanged(QString filePath);
 
 public slots:
-    void setFilePath(QString &filePath) { _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath(); }
+    void setFilePath(QString &filePath);
     void setVideoCodec(int videoCodec) { _videoCodec = videoCodec; }
     void setAudioCodec(int audioCodec) { _audioCodec = audioCodec; }
     void setStartTime(QTime &startTime) { _startTime = startTime; }

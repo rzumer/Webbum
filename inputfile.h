@@ -22,6 +22,7 @@ public:
     // getters
     QString filePath() const { return _filePath; }
 
+    static bool isValid(QString inputFilePath);
     bool isValid();
     void dumpStreamInformation();
 
@@ -33,6 +34,7 @@ private:
     int _bitRate;
 
 signals:
+    void inputFileChanged(QString filePath);
 
 public slots:
 };
