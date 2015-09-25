@@ -24,6 +24,7 @@ public:
 
     bool isValid();
     void dumpStreamInformation();
+
 private:
     QString _filePath;
     QMap<int,InputStream> _streams;

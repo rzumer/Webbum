@@ -22,22 +22,22 @@ public:
     QString language() const { return _language; }
     bool isDefault() const { return _isDefault; }
     bool isForced() const { return _isForced; }
-    bool isVideo() const { return _type == VIDEO; }
-    bool isAudio() const { return _type == AUDIO; }
-    bool isSubtitle() const { return _type == SUBTITLE; }
+    int type() const { return _type; }
     double frameRate() const { return _frameRate; }
+    int width() const { return _width; }
+    int height() const { return _height; }
     int bitRate() const { return _bitRate; }
     QString channelLayout() const { return _channelLayout; }
 
 private:
     int _id;
-    streamType _type; // video/audio/subtitle only
     QString _codec;
     QString _profile;
     QString _title;
     QString _language;
     bool _isDefault;
     bool _isForced;
+    streamType _type; // video/audio/subtitle only
     double _frameRate; // video only
     int _width; // video only
     int _height; // video only

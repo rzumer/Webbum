@@ -2,10 +2,6 @@
 
 InputChapter::InputChapter(AVChapter *chapter)
 {
-    /*_title = title;
-    _startTime = startTime;
-    _endTime = endTime;*/
-
     // ID
     _id = chapter->id;
 
