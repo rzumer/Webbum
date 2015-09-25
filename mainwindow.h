@@ -6,8 +6,6 @@
 #include <QtWidgets>
 #include "inputfile.h"
 #include "outputfile.h"
-#include "inputstream.h"
-#include "inputchapter.h"
 
 extern "C"
 {
