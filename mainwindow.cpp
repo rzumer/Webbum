@@ -12,11 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
 
+    // connect signals and slots
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
+    connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
+    connect(outputFile,SIGNAL(outputFileChanged(QString)),ui->outputFileLineEdit,SLOT(setText(QString)));
 
+    // accept drag & drop events
     setAcceptDrops(true);
 
-    av_register_all();
+    // register libav components
+    av_register_all(); // remove this when libav is fully integrated in external classes
 }
 
 MainWindow::~MainWindow()
@@ -26,7 +31,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::dropEvent(QDropEvent *ev)
 {
-    // use the first item in a drag&drop event as input file
+    // use the first item in a drag & drop event as input file
     if(!ev->mimeData()->urls().isEmpty())
     {
         QUrl url = ev->mimeData()->urls().first();
@@ -41,25 +46,6 @@ void MainWindow::dropEvent(QDropEvent *ev)
 void MainWindow::dragEnterEvent(QDragEnterEvent *ev)
 {
     ev->accept();
-}
-
-void MainWindow::connectSignalsAndSlots(InputFile &inputFile)
-{
-    // do stuff
-}
-
-bool MainWindow::validateInputFile(QString &inputFilePath)
-{
-    // Checks whether the file chosen for input exists
-    return QFile::exists(inputFilePath);
-}
-
-bool MainWindow::validateOutputFile(QString &outputFilePath)
-{
-    // Checks whether the directory chosen for output exists
-    return !QFileInfo(outputFilePath).exists() &&
-            QFileInfo(outputFilePath).dir().exists() &&
-            !QFileInfo(outputFilePath).baseName().isEmpty();
 }
 
 bool MainWindow::validateFormFields()
@@ -96,36 +82,14 @@ void MainWindow::refreshTargetMode(QString &currentTargetMode)
     }
 }
 
-AVFormatContext *MainWindow::openInputFile(QString &inputFilePath)
-{
-    AVFormatContext *formatContext = NULL;
-    if(avformat_open_input(&formatContext,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
-    {
-        if(avformat_find_stream_info(formatContext,NULL) >= 0)
-        {
-            return formatContext;
-        }
-    }
-    // close the file and return NULL if the input file has no streams to be found
-    avformat_close_input(&formatContext);
-    return NULL;
-}
-
-void MainWindow::closeInputFile(AVFormatContext *formatContext)
-{
-    avformat_close_input(&formatContext);
-}
-
 void MainWindow::processInputFile(QString &inputFilePath)
 {
-    AVFormatContext *formatContext = openInputFile(inputFilePath);
+    inputFile = new InputFile(this,inputFilePath);
+    outputFile = new OutputFile(this,inputFilePath);
 
-    if(formatContext != NULL)
-    {
-        populateStreamComboBoxes(formatContext);
-        initializeFormData(formatContext);
-        closeInputFile(formatContext);
-    }
+    populateStreamComboBoxes(formatContext);
+    initializeFormData(formatContext);
+    closeInputFile(formatContext);
 }
 
 void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
@@ -317,24 +281,6 @@ void MainWindow::clearInputFileFormData()
 
 void MainWindow::initializeFormData(AVFormatContext *formatContext)
 {
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    //if(!validateOutputFile(outputFilePath))
-    {
-        // set output file name based on the input's
-        QFileInfo inputFile = QFileInfo(inputFilePath);
-        outputFilePath = QDir::toNativeSeparators(inputFile.dir().canonicalPath() + "/") +
-                inputFile.completeBaseName() + ".webm";
-        QFileInfo outputFile = QFileInfo(outputFilePath);
-
-        while(outputFile.exists())
-        {
-            outputFilePath.replace(".webm","_out.webm");
-            outputFile = QFileInfo(outputFilePath);
-        }
-        ui->outputFileLineEdit->setText(outputFilePath);
-    }
-
     // set default end time and duration based on the container's
     // duration is rounded for ms accuracy
     QTime duration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
@@ -674,16 +620,15 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
 {
+    QString inputFilePath = arg1;
+
     clearInputFileFormData();
     ui->encodePushButton->setEnabled(false);
 
-    QString inputFilePath = arg1.trimmed();
-
-    if(validateInputFile(inputFilePath))
+    if(InputFile::isValid(inputFilePath))
     {
         processInputFile(inputFilePath);
-        QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-        if(validateOutputFile(outputFilePath) && validateFormFields())
+        if(outputFile->isValid() && validateFormFields())
         {
             ui->encodePushButton->setEnabled(true);
         }
@@ -692,12 +637,13 @@ void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
 
 void MainWindow::on_outputFileLineEdit_textChanged(const QString &arg1)
 {
+    QString outputFilePath = arg1;
+
     ui->encodePushButton->setEnabled(false);
 
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = arg1.trimmed();
+    outputFile->setFilePath(outputFilePath);
 
-    if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath) && validateFormFields())
+    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
     {
         ui->encodePushButton->setEnabled(true);
     }
