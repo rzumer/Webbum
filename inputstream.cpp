@@ -23,11 +23,11 @@ InputStream::InputStream(AVStream *stream)
             _isForced = true;
 
         // Codec Type
-        if(stream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        if(stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
             _type = VIDEO;
-        else if(stream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
+        else if(stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
             _type = AUDIO;
-        else if(stream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
+        else if(stream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
             _type = SUBTITLE;
 
         // Additional information
@@ -64,6 +64,10 @@ InputStream::InputStream(AVStream *stream)
             {
                 // Frame Rate
                 _frameRate = av_q2d(stream->codec->framerate);
+
+                // Width/Height
+                _width = stream->codec->width;
+                _height = stream->codec->height;
             }
 
             // Audio information
@@ -74,7 +78,7 @@ InputStream::InputStream(AVStream *stream)
                 int bitRate = bitsPerSample ? stream->codec->sample_rate *
                                               stream->codec->channels *
                                               bitsPerSample : stream->codec->bit_rate;
-                if(bitRate != 0)
+                if(bitRate > 0)
                     _bitRate = bitRate;
 
                 // Channel Layout

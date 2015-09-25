@@ -31,7 +31,7 @@ public:
 
 private:
     int _id;
-    streamType _type;
+    streamType _type; // video/audio/subtitle only
     QString _codec;
     QString _profile;
     QString _title;
@@ -39,6 +39,8 @@ private:
     bool _isDefault;
     bool _isForced;
     double _frameRate; // video only
+    int _width; // video only
+    int _height; // video only
     int _bitRate; // audio only
     QString _channelLayout; // audio only
 };
