@@ -1,0 +1,5 @@
+- Refactor the application by mapping media content to their own classes separate from MainWindow
+- Implement VP9 and Vorbis codec support
+- Encode in a separate thread to free the UI
+- Parse ffmpeg output and bind it to the progress bar
+- Rearrange the UI to use less vertical space
