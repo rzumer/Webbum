@@ -101,8 +101,7 @@ void MainWindow::processInputFile(QString &inputFilePath)
     outputFile = new OutputFile(this,inputFilePath);
 
     populateStreamComboBoxes();
-    initializeFormData(formatContext);
-    closeInputFile(formatContext);
+    initializeFormData();
 }
 
 void MainWindow::populateStreamComboBoxes()
@@ -112,33 +111,39 @@ void MainWindow::populateStreamComboBoxes()
         InputStream currentStream = inputFile->stream(i);
 
         QString streamStr = "[" + QString::number(currentStream.id()) + "] ";
-        // add stream title if available
+
+        // Title
         if(!currentStream.title().isEmpty())
             streamStr.append("\"" + currentStream.title() + "\" - ");
 
-        // add codec name
+        // Codec
         streamStr.append(currentStream.codec());
 
-        // add profile name if available
+        // Profile
         if(!currentStream.profile().isEmpty())
             streamStr.append("/" + currentStream.profile());
 
-        // add bitrate and channels to audio streams
+        // Audio information
         if(currentStream.type() == InputStream::AUDIO)
         {
             streamStr.append(" (");
 
+            // Bit Rate
             if(currentStream.bitRate() > 0)
                 streamStr.append(QString::number(round(currentStream.bitRate() / 1000)) + "kbps");
 
+            // Channel Layout
             if(!currentStream.channelLayout().isEmpty())
                 streamStr.append("/");
 
             streamStr.append(currentStream.channelLayout() + ")");
         }
 
+        // Language
         if(!currentStream.language().isEmpty())
             streamStr.append(" (" + currentStream.language() + ")");
+
+        // Disposition
         /*if(currentStream.isDefault())
             streamStr.append(" [default]");
         if(currentStream.isForced())
@@ -179,6 +184,8 @@ void MainWindow::populateStreamComboBoxes()
         InputChapter currentChapter = inputFile->chapter(i);
 
         QString chapterStr = "[" + QString::number(currentChapter.id()) + "] ";
+
+        // Title
         if(!currentChapter.title().isEmpty())
             chapterStr.append(currentChapter.title());
 
@@ -259,36 +266,33 @@ void MainWindow::clearInputFileFormData()
     }
 }
 
-void MainWindow::initializeFormData(AVFormatContext *formatContext)
+void MainWindow::initializeFormData()
 {
-    // set default end time and duration based on the container's
-    // duration is rounded for ms accuracy
-    QTime duration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
+    // set default end time, duration and maximum time edit values based on the container's duration
+    QTime duration = inputFile->duration();
     ui->trimDurationDurationTimeEdit->setTime(duration);
     ui->trimStartEndEndTimeEdit->setTime(duration);
-
-    // set maximum time to the video duration
     ui->trimStartEndStartTimeEdit->setMaximumTime(duration);
     ui->trimStartEndEndTimeEdit->setMaximumTime(duration);
     ui->trimDurationStartTimeEdit->setMaximumTime(duration);
     ui->trimDurationDurationTimeEdit->setMaximumTime(duration);
 
     // set default width and height based on the first video stream's
-    for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+    for(int i = 0; i < inputFile->streamCount(); i++)
     {
-        AVStream *currentStream = formatContext->streams[i];
-        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+        InputStream currentStream = inputFile->stream(i);
+        if(currentStream.type() == InputStream::VIDEO)
         {
-            ui->resizeWidthSpinBox->setValue(currentStream->codec->width);
-            ui->resizeHeightSpinBox->setValue(currentStream->codec->height);
+            ui->resizeWidthSpinBox->setValue(currentStream.width());
+            ui->resizeHeightSpinBox->setValue(currentStream.height());
             break;
         }
     }
 
     // set default target bitrate and file size based on the container's
-    int bitRate = (formatContext->bit_rate + 500) / 1000; // in kilobits = 1000 bits
+    int bitRate = inputFile->bitRateInKilobits();
     ui->rateTargetBitRateSpinBox->setValue(bitRate);
-    double fileSize = calculateFileSize(bitRate, duration); // in megabytes = 1024 kilobytes
+    double fileSize = inputFile->fileSizeInMegabytes();
     ui->rateTargetFileSizeDoubleSpinBox->setValue(fileSize);
 }
 
