@@ -371,7 +371,7 @@ void MainWindow::initializeFormData(AVFormatContext *formatContext)
 // this could be rewritten for better usability
 double MainWindow::calculateFileSize(int bitRate, QTime duration)
 {
-    return (double)bitRate / 1024 / 8 * (QTime(0,0).msecsTo(duration)) / 1000;
+    return (double)bitRate / 1000 / 8 * (QTime(0,0).msecsTo(duration)) / 1000;
 }
 
 // inverse of calculateFileSize
@@ -380,7 +380,8 @@ double MainWindow::calculateFileSize(int bitRate, QTime duration)
 // this could be rewritten for better usability
 int MainWindow::calculateBitRate(double fileSize, QTime duration)
 {
-    return (fileSize + 0.0005) * 1024 * 8 / QTime(0,0).msecsTo(duration) * 1000;
+    // not sure about that rounding
+    return (fileSize + 0.0005) * 1000 * 8 / QTime(0,0).msecsTo(duration) * 1000;
 }
 
 QTime MainWindow::getOutputDuration(int64_t inputDuration)
