@@ -16,6 +16,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
     connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
     connect(outputFile,SIGNAL(outputFileChanged(QString)),ui->outputFileLineEdit,SLOT(setText(QString)));
+    connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
+    connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
+    connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)));
+    connect(ui->cropBottomSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropBottom(int)));
+    connect(ui->resizeWidthSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setWidth(int)));
+    connect(ui->resizeHeightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setHeight(int)));
+    connect(ui->trimStartEndStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
+    connect(ui->trimDurationStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
+    connect(ui->trimStartEndEndTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setEndTime(QTime)));
+    connect(ui->codecVideoComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setVideoCodec(int)));
+    connect(ui->codecAudioComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setAudioCodec(int)));
+    connect(ui->rateTargetBitRateSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setBitRateInKilobits(double)));
+    connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setFileSizeInMegabytes(double)));
 
     // accept drag & drop events
     setAcceptDrops(true);
@@ -87,89 +100,56 @@ void MainWindow::processInputFile(QString &inputFilePath)
     inputFile = new InputFile(this,inputFilePath);
     outputFile = new OutputFile(this,inputFilePath);
 
-    populateStreamComboBoxes(formatContext);
+    populateStreamComboBoxes();
     initializeFormData(formatContext);
     closeInputFile(formatContext);
 }
 
-void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
+void MainWindow::populateStreamComboBoxes()
 {
-    // uncomment below to dump stream information to stderr
-    //const char *inputFileName = ui->inputFileLineEdit->text().trimmed().toStdString().c_str();
-    //av_dump_format(formatContext,0,inputFileName,false);
-
-    // add audio, video and subtitle streams to their respective combo boxes
-    for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+    for(int i = 0; i < inputFile->streamCount(); i++)
     {
-        AVStream *currentStream = formatContext->streams[i];
-        AVDictionaryEntry *lang = av_dict_get(currentStream->metadata,"language",NULL,0);
+        InputStream currentStream = inputFile->stream(i);
 
-        if(currentStream->codec->codec_descriptor != NULL)
+        QString streamStr = "[" + QString::number(currentStream.id()) + "] ";
+        // add stream title if available
+        if(!currentStream.title().isEmpty())
+            streamStr.append("\"" + currentStream.title() + "\" - ");
+
+        // add codec name
+        streamStr.append(currentStream.codec());
+
+        // add profile name if available
+        if(!currentStream.profile().isEmpty())
+            streamStr.append("/" + currentStream.profile());
+
+        // add bitrate and channels to audio streams
+        if(currentStream.type() == InputStream::AUDIO)
         {
-            QString streamStr = "[" + QString::number(i) + "] ";
+            streamStr.append(" (");
 
-            // add stream title if available
-            AVDictionaryEntry *title = av_dict_get(currentStream->metadata,"title",NULL,0);
-            if(title)
-                streamStr.append("\"" + QString::fromStdString(title->value) + "\" - ");
+            if(currentStream.bitRate() > 0)
+                streamStr.append(QString::number(round(currentStream.bitRate() / 1000)) + "kbps");
 
-            // add codec name
-            streamStr.append(QString::fromStdString(avcodec_get_name(currentStream->codec->codec_id)));
+            if(!currentStream.channelLayout().isEmpty())
+                streamStr.append("/");
 
-            // add profile name if available
-            if(currentStream->codec->profile != FF_PROFILE_UNKNOWN)
-            {
-                const AVCodec *profile;
-                const char *profileName;
-
-                if(currentStream->codec->codec)
-                    profile = currentStream->codec->codec;
-                else
-                    profile = avcodec_find_decoder(currentStream->codec->codec_id);
-
-                if(profile)
-                    profileName = av_get_profile_name(profile,currentStream->codec->profile);
-
-                if(profileName)
-                    streamStr.append("/" + QString::fromStdString(profileName) + "");
-            }
-
-            // add bitrate and channels to audio streams
-            if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
-            {
-                streamStr.append(" (");
-
-                int bitsPerSample = av_get_bits_per_sample(currentStream->codec->codec_id);
-                int bitRate = bitsPerSample ? currentStream->codec->sample_rate *
-                                              currentStream->codec->channels *
-                                              bitsPerSample : currentStream->codec->bit_rate;
-                if(bitRate != 0)
-                    streamStr.append(QString::number((double)bitRate / 1000) + "kbps/");
-
-                char buf[256];
-                av_get_channel_layout_string(buf,sizeof(buf),
-                    currentStream->codec->channels,currentStream->codec->channel_layout);
-                streamStr.append(QString::fromStdString(buf) + ")");
-            }
-
-            if(lang)
-                streamStr.append(" (" + QString::fromStdString(lang->value) + ")");
-            /*if(currentStream->disposition & AV_DISPOSITION_DEFAULT)
-                streamStr.append(" [default]");*/
-
-            if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
-            {
-                ui->streamVideoComboBox->addItem(streamStr);
-            }
-            else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
-            {
-                ui->streamAudioComboBox->addItem(streamStr);
-            }
-            else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
-            {
-                ui->streamSubtitlesComboBox->addItem(streamStr);
-            }
+            streamStr.append(currentStream.channelLayout() + ")");
         }
+
+        if(!currentStream.language().isEmpty())
+            streamStr.append(" (" + currentStream.language() + ")");
+        /*if(currentStream.isDefault())
+            streamStr.append(" [default]");
+        if(currentStream.isForced())
+            streamStr.append(" [forced]");*/
+
+        if(currentStream.type() == InputStream::VIDEO)
+            ui->streamVideoComboBox->addItem(streamStr);
+        else if(currentStream.type() == InputStream::AUDIO)
+            ui->streamAudioComboBox->addItem(streamStr);
+        else if(currentStream.type() == InputStream::SUBTITLE)
+            ui->streamSubtitlesComboBox->addItem(streamStr);
     }
 
     // enable combo boxes if at least one stream of that type is found,
@@ -194,18 +174,18 @@ void MainWindow::populateStreamComboBoxes(AVFormatContext *formatContext)
     }
 
     // populate chapter combo boxes
-    for(int i = 0; (unsigned)i < formatContext->nb_chapters; i++)
+    for(int i = 0; i < inputFile->chapterCount(); i++)
     {
-        AVChapter *currentChapter = formatContext->chapters[i];
-        AVDictionaryEntry *title = av_dict_get(currentChapter->metadata,"title",NULL,0);
+        InputChapter currentChapter = inputFile->chapter(i);
 
-        QString currentChapterText = "[" + QString::number(i) + "] ";
-        if(title)
-            currentChapterText.append(QString::fromStdString(title->value)); // use chapter title if it exists
+        QString chapterStr = "[" + QString::number(currentChapter.id()) + "] ";
+        if(!currentChapter.title().isEmpty())
+            chapterStr.append(currentChapter.title());
 
-        ui->trimStartEndStartChapterComboBox->addItem(currentChapterText.trimmed());
-        ui->trimStartEndEndChapterComboBox->addItem(currentChapterText.trimmed());
+        ui->trimStartEndStartChapterComboBox->addItem(chapterStr.trimmed());
+        ui->trimStartEndEndChapterComboBox->addItem(chapterStr.trimmed());
     }
+
     int chapterCount = ui->trimStartEndStartChapterComboBox->count() - 1;
     if(chapterCount > 0)
     {
@@ -591,23 +571,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
     }
 }
 
-double MainWindow::getFrameRate(QString &inputFileName, int videoStreamId)
-{
-    AVFormatContext *formatContext = openInputFile(inputFileName);
-    double frameRate = av_q2d(formatContext->streams[videoStreamId]->codec->framerate);
-    closeInputFile(formatContext);
-    return frameRate;
-}
-
-QTime MainWindow::getDuration(QString &inputFileName)
-{
-    AVFormatContext *formatContext = openInputFile(inputFileName);
-    QTime duration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
-    closeInputFile(formatContext);
-    return duration;
-}
-
-void MainWindow::updateProgressBar(QByteArray &standardError,double frameRate,QTime duration)
+void MainWindow::updateProgressBar()
 {
     // do stuff
 }

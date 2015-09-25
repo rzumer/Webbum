@@ -38,3 +38,16 @@ void OutputFile::setFilePath(QString &filePath)
     _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath();
     emit outputFileChanged(_filePath);
 }
+
+void OutputFile::setBitRateForBytes(double sizeInBytes, double durationInMSecs)
+{
+    if(durationInMSecs > 0)
+        setBitRate((sizeInBytes * 8) / durationInMSecs / 1000);
+    else
+        setBitRate((sizeInBytes * 8) / _startTime.msecsTo(_endTime) / 1000);
+}
+
+void OutputFile::setBitRateForMegabytes(double sizeInMegabytes, double durationInMSecs)
+{
+    setBitRateForBytes(sizeInMegabytes * 1024 * 1024, durationInMSecs);
+}

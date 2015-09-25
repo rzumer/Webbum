@@ -54,9 +54,12 @@ public slots:
     void setFilePath(QString &filePath);
     void setVideoCodec(int videoCodec) { _videoCodec = videoCodec; }
     void setAudioCodec(int audioCodec) { _audioCodec = audioCodec; }
-    void setStartTime(QTime &startTime) { _startTime = startTime; }
-    void setEndTime(QTime &endTime) { _endTime = endTime; }
-    void setBitRate(int bitRate) { _bitRate = bitRate; }
+    void setStartTime(QTime startTime) { _startTime = startTime; }
+    void setEndTime(QTime endTime) { _endTime = endTime; }
+    void setBitRate(double bitRate, int multiplier = 1) { _bitRate = (int)(round(bitRate)) * multiplier; }
+    void setBitRateInKilobits(double bitRateInKilobits) { setBitRate(bitRateInKilobits, 1000); }
+    void setBitRateForBytes(double sizeInBytes, int durationInMSecs = 0);
+    void setBitRateForMegabytes(double sizeInMegabytes, int durationInMSecs = 0);
     void setWidth(int width) { _width = width; }
     void setHeight(int height) { _height = height; }
     void setCropLeft(int cropLeft) { _cropLeft = cropLeft; }

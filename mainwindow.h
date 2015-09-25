@@ -71,14 +71,14 @@ private:
     void clearInputFileFormData();
     AVFormatContext *openInputFile(QString &inputFilePath);
     void closeInputFile(AVFormatContext *MainWindowformatContext);
-    void populateStreamComboBoxes(AVFormatContext *formatContext);
+    void populateStreamComboBoxes();
     void initializeFormData(AVFormatContext *formatContext);
     double calculateFileSize(int bitRate, QTime duration);
     QStringList generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, int crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters, bool twoPass);
     void encodePass(QStringList &encodingParameters);
     int calculateBitRate(double fileSize, QTime duration);
     bool validateFormFields();
-    void updateProgressBar(QByteArray &standardError, double frameRate, QTime duration);
+    void updateProgressBar();
     double getFrameRate(QString &inputFileName, int videoStreamId);
     QTime getDuration(QString &inputFileName);
     QTime getOutputDuration(int64_t inputDuration);
