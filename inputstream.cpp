@@ -2,6 +2,7 @@
 
 InputStream::InputStream(AVStream *stream)
 {
+    _id = -1;
     _isDefault = false;
     _isForced = false;
 

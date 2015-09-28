@@ -57,6 +57,8 @@ private slots:
     void on_trimDurationDurationTimeEdit_editingFinished();
     void on_trimNoneRadioButton_clicked();
 
+    void on_trimDurationRadioButton_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     InputFile *inputFile;
@@ -66,7 +68,7 @@ private:
     void clearInputFileFormData();
     void populateStreamComboBoxes();
     void initializeFormData();
-    QStringList generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, int crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters, bool twoPass);
+    QStringList generatePass(int passNumber, bool twoPass = true);
     void encodePass(QStringList &encodingParameters);
     bool validateFormFields();
     void updateProgressBar();
