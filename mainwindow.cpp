@@ -271,7 +271,7 @@ void MainWindow::initializeFormData()
     ui->rateTargetFileSizeDoubleSpinBox->setValue(fileSize);
 }
 
-QTime MainWindow::getOutputDuration(int64_t inputDuration)
+QTime MainWindow::getOutputDuration()
 {
     QTime duration = ui->trimDurationDurationTimeEdit->time();
     QTime startTime;
@@ -289,7 +289,7 @@ QTime MainWindow::getOutputDuration(int64_t inputDuration)
         if(ui->trimStartEndRadioButton->isChecked()) // if trimmed by start/end time, duration is end - start
             computedDuration = QTime(0,0).addMSecs(startTime.msecsTo(endTime));
         else // else, duration is the entire video (using container duration)
-            computedDuration = QTime(0,0).addMSecs((double)(inputDuration + 500) / AV_TIME_BASE * 1000);
+            computedDuration = inputFile->duration();
     }
     return computedDuration;
 }
@@ -335,7 +335,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     if(subtitleStreamId > -1) subtitleStream = formatContext->streams[subtitleStreamId];
 
     // calculate target bitrate and cropping if needed
-    QTime computedDuration = getOutputDuration(formatContext->duration);
+    QTime computedDuration = getOutputDuration();
     double bitRate = targetFileSize > -1 ? calculateBitRate(targetFileSize,computedDuration) : targetBitRate;
     if(audioStreamId > -1 && bitRate > 64)
         bitRate -= 64;
@@ -771,7 +771,7 @@ void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
     {
         AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
         closeInputFile(formatContext);
     }
 }
@@ -789,7 +789,7 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
     {
         AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
         closeInputFile(formatContext);
     }
 }
@@ -1015,7 +1015,7 @@ void MainWindow::on_rateTargetBitRateSpinBox_editingFinished()
     {
         AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
         closeInputFile(formatContext);
     }
 }
@@ -1027,7 +1027,7 @@ void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
     {
         AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
         closeInputFile(formatContext);
     }
 }
@@ -1039,7 +1039,7 @@ void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
     {
         AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
         closeInputFile(formatContext);
     }
 }
@@ -1051,7 +1051,7 @@ void MainWindow::on_trimNoneRadioButton_clicked()
     {
         AVFormatContext *formatContext = openInputFile(inputFilePath);
         ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration(formatContext->duration)));
+                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
         closeInputFile(formatContext);
     }
 }

@@ -70,7 +70,7 @@ private:
     void encodePass(QStringList &encodingParameters);
     bool validateFormFields();
     void updateProgressBar();
-    QTime getOutputDuration(int64_t inputDuration);
+    QTime getOutputDuration();
     void connectSignalsAndSlots();
 };
 
