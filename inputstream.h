@@ -29,6 +29,8 @@ public:
     int bitRate() const { return _bitRate; }
     QString channelLayout() const { return _channelLayout; }
 
+    bool isValid() { return _id != -1; }
+
 private:
     int _id;
     QString _codec;

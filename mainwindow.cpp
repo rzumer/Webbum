@@ -312,36 +312,117 @@ void MainWindow::connectSignalsAndSlots()
     connect(ui->codecAudioComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setAudioCodec(int)));
     connect(ui->rateTargetBitRateSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setBitRateInKilobits(double)));
     connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setFileSizeInMegabytes(double)));
+    connect(ui->rateCRFSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCrf(int)));
+    connect(ui->customFiltersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomFilters(QString)));
+    connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));
 }
 
-QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
-                                 QString &outputFilePath,int videoStreamId,
-                                 int audioStreamId, int subtitleStreamId,
-                                 QTime startTime,QTime endTime,QTime duration,
-                                 int cropLeft,int cropRight,int cropTop,
-                                 int cropBottom,int width,int height,int crf,
-                                 double targetFileSize,double targetBitRate,
-                                 bool cbr,QString customParameters,bool twoPass)
+QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 {
+    QString inputFilePath = inputFile->filePath();
+    QString outputFilePath = outputFile->filePath();
+
+    // get streams
+    InputStream videoStream;
+    InputStream audioStream;
+    InputStream subtitleStream;
+    int videoStreamCounter = ui->streamVideoComboBox->currentIndex() - 1;
+    int audioStreamCounter = ui->streamAudioComboBox->currentIndex() - 1;
+    int subtitleStreamCounter = ui->streamSubtitlesComboBox->currentIndex() - 1;
+    for(int i = 0; i < inputFile->streamCount(); i++)
+    {
+        InputStream stream = inputFile->stream(i);
+
+        if(stream.type() == InputStream::VIDEO)
+        {
+            if(videoStreamCounter == 0) videoStream = stream;
+            else videoStreamCounter--;
+        }
+        else if(stream.type() == InputStream::AUDIO)
+        {
+            if(audioStreamCounter == 0) audioStream = stream;
+            else audioStreamCounter--;
+        }
+        else if(stream.type() == InputStream::SUBTITLE)
+        {
+            if(subtitleStreamCounter == 0) subtitleStream = stream;
+            else subtitleStreamCounter--;
+        }
+    }
+
+    bool vp9 = outputFile->videoCodec() == OutputFile::VP9;
+    bool vorbis = outputFile->audioCodec() == OutputFile::VORBIS;
+
+    QTime startTime, endTime;
+    if(ui->trimStartEndRadioButton->isChecked())
+        outputFile->setStartTime(ui->trimStartEndStartTimeEdit->time());
+    else if(ui->trimDurationRadioButton->isChecked())
+        outputFile->setStartTime(ui->trimDurationStartTimeEdit->time());
+    if(ui->trimStartEndRadioButton->isChecked() || ui->trimDurationRadioButton->isChecked())
+    {
+        startTime = outputFile->startTime();
+        endTime = outputFile->endTime();
+    }
+
+    int cropLeft = 0;
+    int cropRight = 0;
+    int cropTop = 0;
+    int cropBottom = 0;
+    int width = -1;
+    int height = -1;
+    if(ui->cropCheckBox->isChecked())
+    {
+        cropLeft = outputFile->cropLeft();
+        cropRight = outputFile->cropRight();
+        cropTop = outputFile->cropTop();
+        cropBottom = outputFile->cropBottom();
+    }
+    if(ui->resizeCheckBox->isChecked())
+    {
+        width = outputFile->width();
+        height = outputFile->height();
+        if(width == 0) width = -1;
+        if(height == 0) height = -1;
+    }
+
+    int crf = -1;
+    int bitRate = -1;
+    bool cbr = false;
+    QString rateMode = ui->rateModeComboBox->currentText();
+    if(rateMode == "Constant Bit Rate")
+    {
+        cbr = true;
+    }
+    if(rateMode == "Constant Bit Rate" || rateMode == "Variable Bit Rate" || rateMode == "Constrained Quality")
+    {
+        if(ui->rateTargetModeComboBox->currentText() == "File Size")
+        {
+            outputFile->setBitRateForMegabytes(ui->rateTargetFileSizeDoubleSpinBox->value());
+        }
+        else if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+        {
+            outputFile->setBitRateInKilobits(ui->rateTargetBitRateSpinBox->value());
+        }
+        bitRate = outputFile->bitRate();
+    }
+    if(rateMode == "Constant Quality" || rateMode == "Constrained Quality")
+    {
+        crf = outputFile->crf();
+    }
+
+    QString customFilters = outputFile->customFilters().trimmed();
+    QString customParameters = outputFile->customParameters().trimmed();
+
+    // Build the string list
     QStringList passStringList = QStringList();
-
-    // open file to get some data
-    AVFormatContext *formatContext = openInputFile(inputFilePath);
-
-    // get stream information
-    AVStream *videoStream, *audioStream, *subtitleStream;
-    videoStream = formatContext->streams[videoStreamId];
-    if(audioStreamId > -1) audioStream = formatContext->streams[audioStreamId];
-    if(subtitleStreamId > -1) subtitleStream = formatContext->streams[subtitleStreamId];
 
     // calculate target bitrate and cropping if needed
     QTime computedDuration = getOutputDuration();
-    double bitRate = targetFileSize > -1 ? calculateBitRate(targetFileSize,computedDuration) : targetBitRate;
-    if(audioStreamId > -1 && bitRate > 64)
+    if(audioStream.isValid() && bitRate > 64)
         bitRate -= 64;
 
-    int cropWidth = videoStream->codec->width - cropLeft - cropRight;
-    int cropHeight = videoStream->codec->height - cropTop - cropBottom;
+    int cropWidth = videoStream.width() - cropLeft - cropRight;
+    int cropHeight = videoStream.height() - cropTop - cropBottom;
     int cropX = cropLeft;
     int cropY = cropTop;
 
@@ -356,30 +437,23 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     {
         passStringList << "-ss" << startTime.toString("hh:mm:ss.zzz");
     }
-
     if(endTime.isValid())
     {
         passStringList << "-t" << computedDuration.toString("hh:mm:ss.zzz");
     }
-    else if(duration.isValid())
-    {
-        passStringList << "-t" << duration.toString("hh:mm:ss.zzz");
-    }
 
-    // codec (VP9)
-    //passStringList << "-c:v:0." + QString::number(videoStreamId) << "libvpx-vp9";
-
-    // codec (VP8)
-    passStringList << "-c:v:0." + QString::number(videoStreamId) << "libvpx";
+    // video codec
+    if(vp9)
+        passStringList << "-c:v:0." + QString::number(videoStream.id()) << "libvpx-vp9";
+    else
+        passStringList << "-c:v:0." + QString::number(videoStream.id()) << "libvpx";
 
     // pass number
     if(twoPass) passStringList << "-pass" << QString::number(passNumber);
 
     // lossless
     if(lossless)
-    {
         passStringList << "-lossless" << QString::number(1);
-    }
 
     // cbr
     if(cbr && bitRate > 0)
@@ -390,42 +464,46 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
     // crf
     if(crf > -1)
-    {
         passStringList << "-crf" << QString::number(crf);
-    }
 
     // target bit rate
     if(!lossless && bitRate > 0)
-    {
         passStringList << "-b:v" << QString::number(bitRate).append("K");
-    }
 
     // threads/speed
     passStringList << "-threads" << QString::number(1);
 
-    // tile columns/frame parallel, vp9 only
-    //passStringList << "-tile-columns" << QString::number(6);
-    //passStringList << "-frame-parallel" << QString::number(1); // vp9 option
-
-    // auto alt ref/lag in frames
+    // last pass exclusive parameters
     if(!twoPass || passNumber != 1)
     {
         passStringList << "-auto-alt-ref" << QString::number(1);
         passStringList << "-lag-in-frames" << QString::number(25);
+        if(vp9)
+            passStringList << "-speed" << QString::number(0);
+    }
+    else
+    {
+        if(vp9)
+            passStringList << "-speed" << QString::number(4);
     }
 
-    // g/aq mode - vp9 specific
-    //passStringList << "-g" << QString::number(9999);
-    //passStringList << "-aq-mode" << QString::number(0);
-
-
-    // cpu-used/quality, vp8 options
-    passStringList << "-quality" << "good";
-    passStringList << "-cpu-used" << QString::number(0);
+    // vp8/vp9 exclusive parameters
+    if(vp9)
+    {
+        passStringList << "-tile-columns" << QString::number(6);
+        passStringList << "-frame-parallel" << QString::number(1);
+        passStringList << "-g" << QString::number(9999);
+        passStringList << "-aq-mode" << QString::number(0);
+    }
+    else
+    {
+        passStringList << "-quality" << "good";
+        passStringList << "-cpu-used" << QString::number(0);
+    }
 
     // filters
     QString filterChain;
-    if(cropWidth < videoStream->codec->width && cropHeight < videoStream->codec->height)
+    if(cropWidth < videoStream.width() && cropHeight < videoStream.height())
     {
         filterChain.append("crop=" + QString::number(cropWidth) + ":" + QString::number(cropHeight) +
                            ":" + QString::number(cropX) + ":" + QString::number(cropY));
@@ -437,26 +515,21 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
-    if(subtitleStreamId > -1)
+    if(subtitleStream.isValid() > -1)
     {
         if(!filterChain.isEmpty())
             filterChain.append(",");
 
         int subtitleStreamNumber = 0;
-        for(int i = 0; i < subtitleStreamId; i++)
+        for(int i = 0; i < subtitleStream.id(); i++)
         {
-            AVStream *currentStream = formatContext->streams[i];
-            if(currentStream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
-            {
+            if(inputFile->stream(i).type() == InputStream::SUBTITLE)
                 subtitleStreamNumber++;
-            }
         }
-        filterChain.append(QString("subtitles='" + QFileInfo(inputFilePath).canonicalFilePath()
-                                   .replace(":","\\:") + "':si=" + QString::number(subtitleStreamNumber))
+        filterChain.append(QString("subtitles='" + inputFilePath.replace(":","\\:") + "':si=" + QString::number(subtitleStreamNumber))
                            .replace("'","\\'").replace("[","\\[").replace("]","\\]")
                            .replace(",","\\,").replace(";","\\;"));
     }
-    QString customFilters = ui->customFiltersLineEdit->text().trimmed();
     if(!customFilters.isEmpty())
     {
         if(!filterChain.isEmpty())
@@ -464,34 +537,23 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
 
         filterChain.append(customFilters);
     }
-
     if(!filterChain.isEmpty())
     {
         passStringList << "-vf" << filterChain;
     }
 
     // audio
-    if(audioStreamId == -1 || (twoPass && passNumber == 1))
+    if(!audioStream.isValid() || (twoPass && passNumber == 1))
     {
-        // no audio on first pass or if audio is disabled
         passStringList << "-an";
     }
-    // webm supports only opus/vorbis, so use same settings across the board for now
-    /*else if(lossless)
-    {
-        // compress lossless pcm audio to flac
-        if(QString::fromStdString(audioStream->codec->codec_descriptor->name).startsWith("pcm"))
-        {
-            passStringList << "-c:a:0." + QString::number(audioStreamId) << "flac";
-            passStringList << "-compression_level" << QString::number(8);
-        }
-        // otherwise copy the audio stream
-        else passStringList << "-c:a:0." + QString::number(audioStreamId) << "copy";
-    }*/
     else
     {
-        // convert audio to 64kbps opus
-        passStringList << "-c:a:0." + QString::number(audioStreamId) << "libopus";
+        if(vorbis)
+            passStringList << "-c:a:0." + QString::number(audioStream.id()) << "libvorbis";
+        else
+            passStringList << "-c:a:0." + QString::number(audioStream.id()) << "libopus";
+
         passStringList << "-b:a" << "64k";
     }
 
@@ -499,8 +561,8 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
     passStringList << "-sn";
 
     // extra parameters
-    if(!customParameters.trimmed().isEmpty())
-        passStringList << customParameters.trimmed().split(' ');
+    if(!customParameters.isEmpty())
+        passStringList << customParameters.split(' ');
 
     // make webm
     passStringList << "-f" << "webm";
@@ -515,11 +577,7 @@ QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
         passStringList << outputFilePath;
     }
 
-    closeInputFile(formatContext);
-
-    qDebug() << passStringList;
-    //QStringList dummy;
-    //return dummy;
+    //qDebug() << passStringList;
     return passStringList;
 }
 
@@ -706,10 +764,13 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
 
 void MainWindow::on_trimStartEndRadioButton_toggled(bool checked)
 {
-    if(checked && ui->trimStartEndStartChapterComboBox->count() > 1)
+    if(checked)
     {
-        ui->trimStartEndStartChapterComboBox->setEnabled(true);
-        ui->trimStartEndEndChapterComboBox->setEnabled(true);
+        if(ui->trimStartEndStartChapterComboBox->count() > 1)
+        {
+            ui->trimStartEndStartChapterComboBox->setEnabled(true);
+            ui->trimStartEndEndChapterComboBox->setEnabled(true);
+        }
     }
     else
     {
@@ -849,116 +910,12 @@ void MainWindow::on_encodePushButton_clicked()
 {
     this->setEnabled(false);
 
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-
-    // get stream IDs
-    int videoStreamId = -1;
-    int audioStreamId = -1;
-    int subtitleStreamId = -1;
-    AVFormatContext *formatContext = openInputFile(inputFilePath);
-    int videoStreamIndex = 0;
-    int audioStreamIndex = 0;
-    int subtitleStreamIndex = 0;
-    for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
-    {
-        AVStream *currentStream = formatContext->streams[i];
-        if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
-        {
-            videoStreamIndex++;
-            if(videoStreamIndex == ui->streamVideoComboBox->currentIndex())
-                videoStreamId = i;
-        }
-        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_AUDIO)
-        {
-            audioStreamIndex++;
-            if(audioStreamIndex == ui->streamAudioComboBox->currentIndex())
-                audioStreamId = i;
-        }
-        else if(currentStream->codec->codec_type==AVMEDIA_TYPE_SUBTITLE)
-        {
-            subtitleStreamIndex++;
-            if(subtitleStreamIndex == ui->streamSubtitlesComboBox->currentIndex())
-                subtitleStreamId = i;
-        }
-    }
-    closeInputFile(formatContext);
-
-    QTime startTime, endTime, duration;
-    if(ui->trimStartEndRadioButton->isChecked())
-    {
-        startTime = ui->trimStartEndStartTimeEdit->time();
-        endTime = ui->trimStartEndEndTimeEdit->time();
-    }
-    else if(ui->trimDurationRadioButton->isChecked())
-    {
-        startTime = ui->trimDurationStartTimeEdit->time();
-        duration = ui->trimDurationDurationTimeEdit->time();
-    }
-
-    int cropLeft = 0;
-    int cropRight = 0;
-    int cropTop = 0;
-    int cropBottom = 0;
-    int width = -1;
-    int height = -1;
-    if(ui->cropCheckBox->isChecked())
-    {
-        cropLeft = ui->cropLeftSpinBox->value();
-        cropRight = ui->cropRightSpinBox->value();
-        cropTop = ui->cropTopSpinBox->value();
-        cropBottom = ui->cropBottomSpinBox->value();
-    }
-    if(ui->resizeCheckBox->isChecked())
-    {
-        width = ui->resizeWidthSpinBox->value();
-        height = ui->resizeHeightSpinBox->value();
-        if(width == 0) width = -1;
-        if(height == 0) height = -1;
-    }
-
-    int crf = -1;
-    double targetFileSize = -1;
-    int targetBitRate = -1;
-    bool cbr = false;
-    QString rateMode = ui->rateModeComboBox->currentText();
-    if(rateMode == "Constant Bit Rate")
-    {
-        cbr = true;
-    }
-    if(rateMode == "Constant Bit Rate" || rateMode == "Variable Bit Rate" || rateMode == "Constrained Quality")
-    {
-        if(ui->rateTargetModeComboBox->currentText() == "File Size")
-        {
-            targetFileSize = ui->rateTargetFileSizeDoubleSpinBox->value();
-        }
-        else if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
-        {
-            targetBitRate = ui->rateTargetBitRateSpinBox->value();
-        }
-    }
-    if(rateMode == "Constant Quality" || rateMode == "Constrained Quality")
-    {
-        crf = ui->rateCRFSpinBox->value();
-    }
-
-    QString customParameters = ui->customEncodingParametersLineEdit->text().trimmed();
-
     // two pass encode
-    bool twoPass = true;
-    QStringList firstPass,secondPass;
+    //bool twoPass = true;
+    QStringList firstPass, secondPass;
 
-    firstPass = generatePass(1,inputFilePath,outputFilePath,videoStreamId,
-                                    audioStreamId,subtitleStreamId,startTime,
-                                    endTime,duration,cropLeft,cropRight,cropTop,
-                                    cropBottom,width,height,crf,targetFileSize,
-                                    targetBitRate,cbr,customParameters,twoPass);
-
-    secondPass = generatePass(2,inputFilePath,outputFilePath,videoStreamId,
-                                    audioStreamId,subtitleStreamId,startTime,
-                                    endTime,duration,cropLeft,cropRight,cropTop,
-                                    cropBottom,width,height,crf,targetFileSize,
-                                    targetBitRate,cbr,customParameters,twoPass);
+    firstPass = generatePass(1);
+    secondPass = generatePass(2);
 
     QDir outputDirectory = QFileInfo(outputFilePath).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";

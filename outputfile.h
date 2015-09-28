@@ -22,12 +22,15 @@ public:
     QTime startTime() const { return _startTime; }
     QTime endTime() const { return _endTime; }
     int bitRate() const { return _bitRate; }
+    int crf() const { return _crf; }
     int width() const { return _width; }
     int height() const { return _height; }
     int cropLeft() const { return _cropLeft; }
     int cropRight() const { return _cropRight; }
     int cropTop() const { return _cropTop; }
     int cropBottom() const { return _cropBottom; }
+    QString customFilters() const { return _customFilters; }
+    QString customParameters() const { return _customParameters; }
 
     static bool isValid(QString outputFilePath);
     bool isValid();
@@ -36,37 +39,43 @@ public:
 
 private:
     QString _filePath;
-    int _videoCodec;
-    int _audioCodec;
+    outputVideoCodec _videoCodec;
+    outputAudioCodec _audioCodec;
     QTime _startTime;
     QTime _endTime;
     int _bitRate;
+    int _crf;
     int _width;
     int _height;
     int _cropLeft;
     int _cropRight;
     int _cropTop;
     int _cropBottom;
+    QString _customFilters;
+    QString _customParameters;
 
 signals:
     void outputFileChanged(QString filePath);
 
 public slots:
     void setFilePath(QString &filePath);
-    void setVideoCodec(int videoCodec) { _videoCodec = videoCodec; }
-    void setAudioCodec(int audioCodec) { _audioCodec = audioCodec; }
+    void setVideoCodec(outputVideoCodec videoCodec) { _videoCodec = videoCodec; }
+    void setAudioCodec(outputAudioCodec audioCodec) { _audioCodec = audioCodec; }
     void setStartTime(QTime startTime) { _startTime = startTime; }
     void setEndTime(QTime endTime) { _endTime = endTime; }
     void setBitRate(double bitRate, int multiplier = 1) { _bitRate = (int)(round(bitRate)) * multiplier; }
     void setBitRateInKilobits(double bitRateInKilobits) { setBitRate(bitRateInKilobits, 1000); }
     void setBitRateForBytes(double sizeInBytes, double durationInMSecs = 0);
     void setBitRateForMegabytes(double sizeInMegabytes, double durationInMSecs = 0);
+    void setCrf(int crf) { _crf = crf; }
     void setWidth(int width) { _width = width; }
     void setHeight(int height) { _height = height; }
     void setCropLeft(int cropLeft) { _cropLeft = cropLeft; }
     void setCropRight(int cropRight) { _cropRight = cropRight; }
     void setCropTop(int cropTop) { _cropTop = cropTop; }
     void setCropBottom(int cropBottom) { _cropBottom = cropBottom; }
+    void setCustomFilters(QString customFilters) { _customFilters = customFilters; }
+    void setCustomParameters(QString customParameters) { _customParameters = customParameters; }
 };
 
 #endif // OUTPUTFILE_H
