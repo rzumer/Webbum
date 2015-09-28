@@ -13,33 +13,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
 
     // connect signals and slots
-    connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
-    connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
-    connect(outputFile,SIGNAL(outputFileChanged(QString)),ui->outputFileLineEdit,SLOT(setText(QString)));
-    connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
-    connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
-    connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)));
-    connect(ui->cropBottomSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropBottom(int)));
-    connect(ui->resizeWidthSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setWidth(int)));
-    connect(ui->resizeHeightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setHeight(int)));
-    connect(ui->trimStartEndStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
-    connect(ui->trimDurationStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
-    connect(ui->trimStartEndEndTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setEndTime(QTime)));
-    connect(ui->codecVideoComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setVideoCodec(int)));
-    connect(ui->codecAudioComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setAudioCodec(int)));
-    connect(ui->rateTargetBitRateSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setBitRateInKilobits(double)));
-    connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setFileSizeInMegabytes(double)));
+    connectSignalsAndSlots();
 
     // accept drag & drop events
     setAcceptDrops(true);
 
     // register libav components
     av_register_all(); // remove this when libav is fully integrated in external classes
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
 }
 
 void MainWindow::dropEvent(QDropEvent *ev)
@@ -54,11 +34,6 @@ void MainWindow::dropEvent(QDropEvent *ev)
                     QFileInfo(url.toLocalFile()).canonicalFilePath()));
         }
     }
-}
-
-void MainWindow::dragEnterEvent(QDragEnterEvent *ev)
-{
-    ev->accept();
 }
 
 bool MainWindow::validateFormFields()
@@ -296,24 +271,6 @@ void MainWindow::initializeFormData()
     ui->rateTargetFileSizeDoubleSpinBox->setValue(fileSize);
 }
 
-// bitRate is in KILOBITS per second
-// file size returned is in MEGABYTES
-// this could be rewritten for better usability
-double MainWindow::calculateFileSize(int bitRate, QTime duration)
-{
-    return (double)bitRate / 1000 / 8 * (QTime(0,0).msecsTo(duration)) / 1000;
-}
-
-// inverse of calculateFileSize
-// file size is in MEGABYTES
-// bitRate returned is in KILOBITS per second
-// this could be rewritten for better usability
-int MainWindow::calculateBitRate(double fileSize, QTime duration)
-{
-    // not sure about that rounding
-    return (fileSize + 0.0005) * 1000 * 8 / QTime(0,0).msecsTo(duration) * 1000;
-}
-
 QTime MainWindow::getOutputDuration(int64_t inputDuration)
 {
     QTime duration = ui->trimDurationDurationTimeEdit->time();
@@ -335,6 +292,26 @@ QTime MainWindow::getOutputDuration(int64_t inputDuration)
             computedDuration = QTime(0,0).addMSecs((double)(inputDuration + 500) / AV_TIME_BASE * 1000);
     }
     return computedDuration;
+}
+
+void MainWindow::connectSignalsAndSlots()
+{
+    connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
+    connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
+    connect(outputFile,SIGNAL(outputFileChanged(QString)),ui->outputFileLineEdit,SLOT(setText(QString)));
+    connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
+    connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
+    connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)));
+    connect(ui->cropBottomSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropBottom(int)));
+    connect(ui->resizeWidthSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setWidth(int)));
+    connect(ui->resizeHeightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setHeight(int)));
+    connect(ui->trimStartEndStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
+    connect(ui->trimDurationStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
+    connect(ui->trimStartEndEndTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setEndTime(QTime)));
+    connect(ui->codecVideoComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setVideoCodec(int)));
+    connect(ui->codecAudioComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setAudioCodec(int)));
+    connect(ui->rateTargetBitRateSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setBitRateInKilobits(double)));
+    connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setFileSizeInMegabytes(double)));
 }
 
 QStringList MainWindow::generatePass(int passNumber,QString &inputFilePath,
