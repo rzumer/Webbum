@@ -11,7 +11,7 @@ extern "C"
 class InputStream
 {
 public:
-    enum streamType {VIDEO, AUDIO, SUBTITLE};
+    enum StreamType {VIDEO, AUDIO, SUBTITLE};
     explicit InputStream(AVStream *stream = new AVStream());
 
     // getters
@@ -39,7 +39,7 @@ private:
     QString _language;
     bool _isDefault;
     bool _isForced;
-    streamType _type; // video/audio/subtitle only
+    StreamType _type; // video/audio/subtitle only
     double _frameRate; // video only
     int _width; // video only
     int _height; // video only

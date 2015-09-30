@@ -30,6 +30,7 @@ public:
     int bitRate() const { return _bitRate; }
     int bitRateInKilobits() const { return (int)(round(_bitRate / 1000)); }
     double fileSize(double durationInMSecs = 0) const;
+    double fileSize(QTime duration) const;
     double fileSizeInMegabytes(double durationInMSecs = 0) const;
     double fileSizeInMegabytes(QTime duration) const;
 
