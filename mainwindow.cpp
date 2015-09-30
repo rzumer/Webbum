@@ -7,10 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    // remove vp9 rate control options until it is supported
-    ui->rateCRFSpinBox->setMinimum(4);
-    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
-    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
 
     // connect signals and slots
     connectSignalsAndSlots();
@@ -960,4 +956,21 @@ void MainWindow::on_trimNoneRadioButton_clicked()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+}
+
+void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
+{
+    QString codec = arg1;
+    if(codec == "VP8")
+    {
+        ui->rateCRFSpinBox->setMinimum(4);
+        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
+        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
+    }
+    else if(codec == "VP9")
+    {
+        ui->rateCRFSpinBox->setMinimum(0);
+        ui->rateModeComboBox->insertItem(2,"Constant Quality");
+        ui->rateModeComboBox->insertItem(4,"Lossless");
+    }
 }
