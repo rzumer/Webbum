@@ -11,8 +11,8 @@ class OutputFile : public QObject
 {
     Q_OBJECT
 public:
-    enum outputVideoCodec {VP8, VP9};
-    enum outputAudioCodec {OPUS, VORBIS};
+    enum OutputVideoCodec {VP8, VP9};
+    enum OutputAudioCodec {OPUS, VORBIS};
     explicit OutputFile(QObject *parent = 0, QString outputFilePath = QString());
 
     // getters
@@ -39,8 +39,8 @@ public:
 
 private:
     QString _filePath;
-    outputVideoCodec _videoCodec;
-    outputAudioCodec _audioCodec;
+    OutputVideoCodec _videoCodec;
+    OutputAudioCodec _audioCodec;
     QTime _startTime;
     QTime _endTime;
     int _bitRate;
@@ -59,12 +59,15 @@ signals:
 
 public slots:
     void setFilePath(QString &filePath);
-    void setVideoCodec(outputVideoCodec videoCodec) { _videoCodec = videoCodec; }
-    void setAudioCodec(outputAudioCodec audioCodec) { _audioCodec = audioCodec; }
+    void setVideoCodec(OutputVideoCodec videoCodec) { _videoCodec = videoCodec; }
+    void setAudioCodec(OutputAudioCodec audioCodec) { _audioCodec = audioCodec; }
+    void setVideoCodec(int videoCodec) { _videoCodec = (OutputVideoCodec)videoCodec; }
+    void setAudioCodec(int audioCodec) { _audioCodec = (OutputAudioCodec)audioCodec; }
     void setStartTime(QTime startTime) { _startTime = startTime; }
     void setEndTime(QTime endTime) { _endTime = endTime; }
-    void setBitRate(double bitRate, int multiplier = 1) { _bitRate = (int)(round(bitRate)) * multiplier; }
-    void setBitRateInKilobits(double bitRateInKilobits) { setBitRate(bitRateInKilobits, 1000); }
+    void setBitRate(double bitRate) { _bitRate = (int)(round(bitRate)); }
+    void setBitRateInKilobits(double bitRateInKilobits) { setBitRate(bitRateInKilobits * 1000); }
+    void setBitRateInKilobits(int bitRateInKilobits) { setBitRate(bitRateInKilobits * 1000); }
     void setBitRateForBytes(double sizeInBytes, double durationInMSecs = 0);
     void setBitRateForMegabytes(double sizeInMegabytes, double durationInMSecs = 0);
     void setCrf(int crf) { _crf = crf; }
