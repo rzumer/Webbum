@@ -57,6 +57,8 @@ private slots:
     void on_trimDurationDurationTimeEdit_editingFinished();
     void on_trimNoneRadioButton_clicked();
 
+    void on_codecVideoComboBox_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     InputFile *inputFile;
