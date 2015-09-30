@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow() { delete ui; }
+    ~MainWindow();
 
 protected:
     void dropEvent(QDropEvent *ev);
@@ -56,8 +56,6 @@ private slots:
     void on_trimDurationStartTimeEdit_editingFinished();
     void on_trimDurationDurationTimeEdit_editingFinished();
     void on_trimNoneRadioButton_clicked();
-
-    void on_trimDurationRadioButton_toggled(bool checked);
 
 private:
     Ui::MainWindow *ui;

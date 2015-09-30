@@ -31,6 +31,7 @@ public:
     int bitRateInKilobits() const { return (int)(round(_bitRate / 1000)); }
     double fileSize(double durationInMSecs = 0) const;
     double fileSizeInMegabytes(double durationInMSecs = 0) const;
+    double fileSizeInMegabytes(QTime duration) const;
 
     static bool isValid(QString inputFilePath);
     bool isValid();
