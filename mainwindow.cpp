@@ -295,7 +295,7 @@ QTime MainWindow::getOutputDuration()
 void MainWindow::connectSignalsAndSlots()
 {
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
-    connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
+    /*connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
     connect(outputFile,SIGNAL(outputFileChanged(QString)),ui->outputFileLineEdit,SLOT(setText(QString)));
     connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
     connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
@@ -312,7 +312,7 @@ void MainWindow::connectSignalsAndSlots()
     connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setFileSizeInMegabytes(double)));
     connect(ui->rateCRFSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCrf(int)));
     connect(ui->customFiltersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomFilters(QString)));
-    connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));
+    connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));*/
 }
 
 QStringList MainWindow::generatePass(int passNumber, bool twoPass)
