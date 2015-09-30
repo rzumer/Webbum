@@ -730,6 +730,7 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
         ui->encodePushButton->setEnabled(false);
         ui->resizeWidthSpinBox->setValue(0);
         ui->resizeHeightSpinBox->setValue(0);
+        ui->codecVideoComboBox->setEnabled(false);
     }
     // change resolution fields based on the selected stream
     else
@@ -748,6 +749,7 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
                 }
             }
         }
+        ui->codecVideoComboBox->setEnabled(true);
     }
 }
 
@@ -973,4 +975,12 @@ void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
         ui->rateModeComboBox->insertItem(2,"Constant Quality");
         ui->rateModeComboBox->insertItem(4,"Lossless");
     }
+}
+
+void MainWindow::on_streamAudioComboBox_currentIndexChanged(int index)
+{
+    if(index == 0)
+        ui->codecAudioComboBox->setEnabled(false);
+    else
+        ui->codecAudioComboBox->setEnabled(true);
 }
