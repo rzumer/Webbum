@@ -1,4 +1,4 @@
-  #include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
 
@@ -17,9 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // accept drag & drop events
     setAcceptDrops(true);
+}
 
-    // register libav components
-    av_register_all(); // remove this when libav is fully integrated in external classes
+MainWindow::~MainWindow()
+{
+    delete ui;
 }
 
 void MainWindow::dropEvent(QDropEvent *ev)
@@ -706,9 +708,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
 
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath) && validateFormFields())
+    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
         ui->encodePushButton->setEnabled(true);
     else
         ui->encodePushButton->setEnabled(false);
@@ -720,9 +720,7 @@ void MainWindow::on_rateTargetModeComboBox_currentIndexChanged(const QString &ar
 
     refreshTargetMode(currentTargetMode);
 
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath) && validateFormFields())
+    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
         ui->encodePushButton->setEnabled(true);
     else
         ui->encodePushButton->setEnabled(false);
@@ -740,25 +738,20 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
     // change resolution fields based on the selected stream
     else
     {
-        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-
         int videoStreamIndex = 0;
-        for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+        for(int i = 0; i < inputFile->streamCount(); i++)
         {
-            AVStream *currentStream = formatContext->streams[i];
-            if(currentStream->codec->codec_type==AVMEDIA_TYPE_VIDEO)
+            InputStream stream = inputFile->stream(i);
+            if(stream.type() == InputStream::VIDEO)
             {
                 videoStreamIndex++;
                 if(videoStreamIndex == index)
                 {
-                    ui->resizeWidthSpinBox->setValue(currentStream->codec->width);
-                    ui->resizeHeightSpinBox->setValue(currentStream->codec->height);
+                    ui->resizeWidthSpinBox->setValue(stream.width());
+                    ui->resizeHeightSpinBox->setValue(stream.height());
                 }
             }
         }
-
-        closeInputFile(formatContext);
     }
 }
 
@@ -784,18 +777,14 @@ void MainWindow::on_trimStartEndStartChapterComboBox_activated(int index)
     if(index > 0)
     {
         int endChapterIndex = ui->trimStartEndEndChapterComboBox->currentIndex();
-        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        AVChapter *currentChapter = formatContext->chapters[index - 1];
-        ui->trimStartEndStartTimeEdit->setTime(
-            QTime(0,0).addMSecs(((double)currentChapter->start + 500) * av_q2d(currentChapter->time_base) * 1000));
+
+        InputChapter chapter = inputFile->chapter(index - 1);
+        ui->trimStartEndStartTimeEdit->setTime(chapter.startTime());
         if(index > endChapterIndex && endChapterIndex > 0)
         {
             ui->trimStartEndEndChapterComboBox->setCurrentIndex(index);
-            ui->trimStartEndEndTimeEdit->setTime(
-                QTime(0,0).addMSecs(((double)currentChapter->end + 500) * av_q2d(currentChapter->time_base) * 1000));
+            ui->trimStartEndEndTimeEdit->setTime(chapter.endTime());
         }
-        closeInputFile(formatContext);
     }
 }
 
@@ -804,18 +793,13 @@ void MainWindow::on_trimStartEndEndChapterComboBox_activated(int index)
     if(index > 0)
     {
         int startChapterIndex = ui->trimStartEndStartChapterComboBox->currentIndex();
-        QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        AVChapter *currentChapter = formatContext->chapters[index - 1];
-        ui->trimStartEndEndTimeEdit->setTime(
-            QTime(0,0).addMSecs(((double)currentChapter->end + 500) * av_q2d(currentChapter->time_base) * 1000));
+        InputChapter chapter = inputFile->chapter(index - 1);
+        ui->trimStartEndEndTimeEdit->setTime(chapter.endTime());
         if(index < startChapterIndex)
         {
             ui->trimStartEndStartChapterComboBox->setCurrentIndex(index);
-            ui->trimStartEndStartTimeEdit->setTime(
-                QTime(0,0).addMSecs(((double)currentChapter->start + 500) * av_q2d(currentChapter->time_base) * 1000));
+            ui->trimStartEndStartTimeEdit->setTime(chapter.startTime());
         }
-        closeInputFile(formatContext);
     }
 }
 
@@ -827,14 +811,8 @@ void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
     if(startTime > endTime)
         ui->trimStartEndEndTimeEdit->setTime(startTime);
 
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && validateInputFile(inputFilePath))
-    {
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
-        closeInputFile(formatContext);
-    }
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 }
 
 void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
@@ -845,14 +823,8 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
     if(endTime < startTime)
         ui->trimStartEndStartTimeEdit->setTime(endTime);
 
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && validateInputFile(inputFilePath))
-    {
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
-        closeInputFile(formatContext);
-    }
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 }
 
 void MainWindow::on_cropLeftSpinBox_editingFinished()
@@ -917,7 +889,7 @@ void MainWindow::on_encodePushButton_clicked()
     firstPass = generatePass(1);
     secondPass = generatePass(2);
 
-    QDir outputDirectory = QFileInfo(outputFilePath).dir();
+    QDir outputDirectory = QFileInfo(outputFile->filePath()).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
     QFile logFile("ffmpeg2pass-0.log");
 
@@ -953,7 +925,7 @@ void MainWindow::on_rateTargetFileSizeDoubleSpinBox_editingFinished()
 {
     QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
     QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath) && validateFormFields())
+    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
         ui->encodePushButton->setEnabled(true);
     else
         ui->encodePushButton->setEnabled(false);
@@ -963,52 +935,29 @@ void MainWindow::on_rateTargetBitRateSpinBox_editingFinished()
 {   
     QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
     QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    if(validateInputFile(inputFilePath) && validateOutputFile(outputFilePath) && validateFormFields())
+    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
         ui->encodePushButton->setEnabled(true);
     else
         ui->encodePushButton->setEnabled(false);
 
-    if(validateInputFile(inputFilePath))
-    {
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
-        closeInputFile(formatContext);
-    }
+    if(inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 }
 
 void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
 {
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && validateInputFile(inputFilePath))
-    {
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
-        closeInputFile(formatContext);
-    }
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 }
 
 void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 {
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && validateInputFile(inputFilePath))
-    {
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
-        closeInputFile(formatContext);
-    }
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 }
 
 void MainWindow::on_trimNoneRadioButton_clicked()
 {
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && validateInputFile(inputFilePath))
-    {
-        AVFormatContext *formatContext = openInputFile(inputFilePath);
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(
-                    calculateFileSize(ui->rateTargetBitRateSpinBox->value(),getOutputDuration()));
-        closeInputFile(formatContext);
-    }
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 }

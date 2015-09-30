@@ -50,9 +50,14 @@ double InputFile::fileSize(double durationInMSecs) const
         return ((double)_bitRate / 8) * QTime(0,0).msecsTo(_duration) / 1000;
 }
 
-double InputFile::fileSizeInMegabytes(double durationInMSecs) const
+double InputFile::fileSizeInMegabytes(QTime duration) const
 {
-    return fileSize(durationInMSecs) / 1024 / 1024;
+    return fileSize(duration) / 1024 / 1024;
+}
+
+double InputFile::fileSizeInMegabytes(QTime duration) const
+{
+    return fileSizeInMegabytes(QTime(0,0).msecsTo(duration));
 }
 
 bool InputFile::isValid(QString inputFilePath)
