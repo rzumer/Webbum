@@ -11,8 +11,8 @@ extern "C"
 class InputStream
 {
 public:
-    enum streamType {VIDEO, AUDIO, SUBTITLE};
-    explicit InputStream(AVStream *stream = new AVStream());
+    enum StreamType {VIDEO, AUDIO, SUBTITLE, OTHER};
+    explicit InputStream(AVStream *stream = NULL, int id = -1);
 
     // getters
     int id() const { return _id; }
@@ -29,6 +29,8 @@ public:
     int bitRate() const { return _bitRate; }
     QString channelLayout() const { return _channelLayout; }
 
+    bool isValid() { return _id != -1; }
+
 private:
     int _id;
     QString _codec;
@@ -37,7 +39,7 @@ private:
     QString _language;
     bool _isDefault;
     bool _isForced;
-    streamType _type; // video/audio/subtitle only
+    StreamType _type; // video/audio/subtitle only
     double _frameRate; // video only
     int _width; // video only
     int _height; // video only

@@ -6,6 +6,7 @@
 #include <QtWidgets>
 #include "inputfile.h"
 #include "outputfile.h"
+#include "inputstream.h"
 
 extern "C"
 {
@@ -27,7 +28,7 @@ public:
 
 protected:
     void dropEvent(QDropEvent *ev);
-    void dragEnterEvent(QDragEnterEvent *ev);
+    void dragEnterEvent(QDragEnterEvent *ev) { ev->accept(); }
 
 private slots:
     void on_actionAbout_triggered();
@@ -56,33 +57,24 @@ private slots:
     void on_trimDurationStartTimeEdit_editingFinished();
     void on_trimDurationDurationTimeEdit_editingFinished();
     void on_trimNoneRadioButton_clicked();
+    void on_codecVideoComboBox_currentIndexChanged(const QString &arg1);
+    void on_streamAudioComboBox_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;
-    InputFile inputFile;
-    OutputFile outputFile;
-    int selectedVideoStreamId = -1;
-    int selectedAudioStreamId = -1;
-    int selectedSubtitleStreamId = -1;
-    bool validateInputFile(QString &inputFilePath);
-    bool validateOutputFile(QString &outputFilePath);
+    InputFile *inputFile;
+    OutputFile *outputFile;
     void refreshTargetMode(QString &currentTargetMode);
     void processInputFile(QString &inputFilePath);
     void clearInputFileFormData();
-    AVFormatContext *openInputFile(QString &inputFilePath);
-    void closeInputFile(AVFormatContext *MainWindowformatContext);
-    void populateStreamComboBoxes(AVFormatContext *formatContext);
-    void initializeFormData(AVFormatContext *formatContext);
-    double calculateFileSize(int bitRate, QTime duration);
-    QStringList generatePass(int passNumber, QString &inputFilePath, QString &outputFilePath, int videoStreamId, int audioStreamId, int subtitleStreamId, QTime startTime, QTime endTime, QTime duration, int cropLeft, int cropRight, int cropTop, int cropBottom, int width, int height, int crf, double targetFileSize, double targetBitRate, bool cbr, QString customParameters, bool twoPass);
+    void populateStreamComboBoxes();
+    void initializeFormData();
+    QStringList generatePass(int passNumber, bool twoPass = true);
     void encodePass(QStringList &encodingParameters);
-    int calculateBitRate(double fileSize, QTime duration);
     bool validateFormFields();
-    void updateProgressBar(QByteArray &standardError, double frameRate, QTime duration);
-    double getFrameRate(QString &inputFileName, int videoStreamId);
-    QTime getDuration(QString &inputFileName);
-    QTime getOutputDuration(int64_t inputDuration);
-    void connectSignalsAndSlots(InputFile &inputFile);
+    void updateProgressBar();
+    QTime getOutputDuration();
+    void connectSignalsAndSlots();
 };
 
 #endif // MAINWINDOW_H

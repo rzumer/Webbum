@@ -12,7 +12,7 @@ extern "C"
 class InputChapter
 {
 public:
-    explicit InputChapter(AVChapter *chapter = new AVChapter());
+    explicit InputChapter(AVChapter *chapter = new AVChapter(), int id = -1);
 
     // getters
     int id() const { return _id; }
