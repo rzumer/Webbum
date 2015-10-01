@@ -11,8 +11,8 @@ extern "C"
 class InputStream
 {
 public:
-    enum StreamType {VIDEO, AUDIO, SUBTITLE};
-    explicit InputStream(AVStream *stream = new AVStream());
+    enum StreamType {VIDEO, AUDIO, SUBTITLE, OTHER};
+    explicit InputStream(AVStream *stream = new AVStream(), int id = -1);
 
     // getters
     int id() const { return _id; }

@@ -19,7 +19,7 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
                 for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
                 {
                     AVStream *currentStream = formatContext->streams[i];
-                    InputStream localStream = InputStream(currentStream);
+                    InputStream localStream = InputStream(currentStream, i);
                     _streams.insert(i, localStream);
                 }
             }
@@ -28,7 +28,7 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
             for(int i = 0; (unsigned)i < formatContext->nb_chapters; i++)
             {
                 AVChapter *currentChapter = formatContext->chapters[i];
-                InputChapter localChapter = InputChapter(currentChapter);
+                InputChapter localChapter = InputChapter(currentChapter, i);
                 _chapters.insert(i, localChapter);
             }
 

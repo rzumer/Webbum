@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setAcceptDrops(true);
+    connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
 }
 
 MainWindow::~MainWindow()
@@ -99,10 +100,10 @@ void MainWindow::populateStreamComboBoxes()
 
             // Bit Rate
             if(currentStream.bitRate() > 0)
-                streamStr.append(QString::number(round(currentStream.bitRate() / 1000)) + "kbps");
+                streamStr.append(QString::number(round((double)currentStream.bitRate() / 1000)) + "kbps");
 
             // Channel Layout
-            if(!currentStream.channelLayout().isEmpty())
+            if(!currentStream.channelLayout().isEmpty() && currentStream.bitRate() > 0)
                 streamStr.append("/");
 
             streamStr.append(currentStream.channelLayout() + ")");
@@ -118,11 +119,11 @@ void MainWindow::populateStreamComboBoxes()
         if(currentStream.isForced())
             streamStr.append(" [forced]");*/
 
-        if(currentStream.type() == InputStream::VIDEO)
+        if(currentStream.type() == (int)InputStream::VIDEO)
             ui->streamVideoComboBox->addItem(streamStr);
-        else if(currentStream.type() == InputStream::AUDIO)
+        else if(currentStream.type() == (int)InputStream::AUDIO)
             ui->streamAudioComboBox->addItem(streamStr);
-        else if(currentStream.type() == InputStream::SUBTITLE)
+        else if(currentStream.type() == (int)InputStream::SUBTITLE)
             ui->streamSubtitlesComboBox->addItem(streamStr);
     }
 
@@ -237,6 +238,11 @@ void MainWindow::clearInputFileFormData()
 
 void MainWindow::initializeFormData()
 {
+    // enable and initialize output file controls
+    ui->outputFileLineEdit->setText(QDir::toNativeSeparators(outputFile->filePath()));
+    ui->outputFileLineEdit->setEnabled(true);
+    ui->outputFileBrowsePushButton->setEnabled(true);
+
     // set default end time, duration and maximum time edit values based on the container's duration
     QTime duration = inputFile->duration();
     ui->trimDurationDurationTimeEdit->setTime(duration);
@@ -290,9 +296,6 @@ QTime MainWindow::getOutputDuration()
 
 void MainWindow::connectSignalsAndSlots()
 {
-    connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
-    connect(inputFile,SIGNAL(inputFileChanged(QString)),ui->inputFileLineEdit,SLOT(setText(QString)));
-    connect(outputFile,SIGNAL(outputFileChanged(QString)),ui->outputFileLineEdit,SLOT(setText(QString)));
     connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
     connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
     connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)));
@@ -564,15 +567,17 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     // output file
     if(twoPass && passNumber == 1)
     {
-        passStringList << QDir::toNativeSeparators(QFileInfo(outputFilePath).dir().absolutePath() + "/temp/null");
+        passStringList << QDir::toNativeSeparators(QFileInfo(outputFilePath).absolutePath() + "/temp/null");
     }
     else
     {
         passStringList << outputFilePath;
     }
 
-    //qDebug() << passStringList;
-    return passStringList;
+    qDebug() << passStringList;
+    QStringList dummy = QStringList();
+    return dummy;
+    //return passStringList;
 }
 
 void MainWindow::encodePass(QStringList &encodingParameters)
@@ -874,6 +879,7 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_encodePushButton_clicked()
 {
+    // crash somewhere here
     this->setEnabled(false);
 
     // two pass encode

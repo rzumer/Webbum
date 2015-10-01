@@ -3,16 +3,10 @@
 OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent)
 {
     QFileInfo file(outputFilePath.trimmed());
-
-    _filePath = file.canonicalFilePath();
-
-    while(file.exists())
-    {
-        _filePath = file.dir().canonicalPath() + "/" + file.completeBaseName() + "_out.webm";
-        file = QFileInfo(_filePath);
-    }
-
-    emit outputFileChanged(_filePath);
+    if(file.exists())
+        setFilePath(file.canonicalPath() + "/" + file.completeBaseName() + ".webm");
+    else
+        setFilePath(file.filePath());
 }
 
 bool OutputFile::isValid(QString outputFilePath)
@@ -27,15 +21,17 @@ bool OutputFile::isValid()
     return isValid(_filePath);
 }
 
-bool OutputFile::isExistingFile()
+void OutputFile::setFilePath(QString filePath)
 {
-    QFileInfo file(_filePath);
-    return file.exists() && !file.isDir();
-}
+    QFileInfo file(filePath.trimmed());
+    _filePath = file.filePath();
 
-void OutputFile::setFilePath(QString &filePath)
-{
-    _filePath = QFileInfo(filePath.trimmed()).canonicalFilePath();
+    while(file.exists())
+    {
+        _filePath = file.canonicalPath() + "/" + file.completeBaseName() + "_out.webm";
+        file = QFileInfo(_filePath);
+    }
+
     emit outputFileChanged(_filePath);
 }
 
