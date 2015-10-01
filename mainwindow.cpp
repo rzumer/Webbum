@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setAcceptDrops(true);
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
+
+    inputFile = new InputFile();
+    outputFile = new OutputFile();
 }
 
 MainWindow::~MainWindow()
@@ -30,23 +33,29 @@ void MainWindow::dropEvent(QDropEvent *ev)
     }
 }
 
-bool MainWindow::validateFormFields()
+void MainWindow::validateFormFields()
 {
     // Checks whether form input will produce a valid encode
+    ui->encodePushButton->setEnabled(false);
+
+    if(!inputFile->isValid() || !outputFile->isValid())
+        return;
     if(ui->streamVideoComboBox->currentIndex() == 0)
-        return false;
+        return;
     if(ui->rateTargetModeComboBox->isEnabled())
     {
         if(ui->rateTargetBitRateSpinBox->isEnabled() && ui->rateTargetBitRateSpinBox->value() == 0)
-            return false;
+            return;
         if(ui->rateTargetFileSizeDoubleSpinBox->isEnabled() && ui->rateTargetFileSizeDoubleSpinBox->value() == 0)
-            return false;
+            return;
     }
-    if(ui->trimStartEndRadioButton->isChecked() && QTime(0,0).msecsTo(ui->trimStartEndEndTimeEdit->time()) == 0)
-        return false;
+    if(ui->trimStartEndRadioButton->isChecked() && ui->trimStartEndStartTimeEdit->time()
+            .msecsTo(ui->trimStartEndEndTimeEdit->time()) == 0)
+        return;
     if(ui->trimDurationRadioButton->isChecked() && QTime(0,0).msecsTo(ui->trimDurationDurationTimeEdit->time()) == 0)
-        return false;
-    return true;
+        return;
+
+    ui->encodePushButton->setEnabled(true);
 }
 
 void MainWindow::refreshTargetMode(QString &currentTargetMode)
@@ -189,11 +198,13 @@ void MainWindow::clearInputFileFormData()
     ui->rateTargetBitRateSpinBox->setValue(0);
     ui->rateTargetFileSizeDoubleSpinBox->setValue(0);
 
-    // restore maximum time on time edits
+    // restore minimum/maximum time on time edits
     ui->trimStartEndStartTimeEdit->setMaximumTime(QTime(23,59,59,999));
     ui->trimStartEndEndTimeEdit->setMaximumTime(QTime(23,59,59,999));
     ui->trimDurationStartTimeEdit->setMaximumTime(QTime(23,59,59,999));
     ui->trimDurationDurationTimeEdit->setMaximumTime(QTime(23,59,59,999));
+    ui->trimStartEndEndTimeEdit->setMinimumTime(QTime(0,0));
+    ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0));
 
     // add "No Chapter" item to chapter combo boxes in case it was removed
     ui->trimStartEndStartChapterComboBox->insertItem(0,"No Chapter");
@@ -238,6 +249,17 @@ void MainWindow::clearInputFileFormData()
 
 void MainWindow::initializeFormData()
 {
+    // refresh crop values
+    ui->cropLeftSpinBox->setValue(0);
+    ui->cropRightSpinBox->setValue(0);
+    ui->cropTopSpinBox->setValue(0);
+    ui->cropBottomSpinBox->setValue(0);
+
+    // refresh rate control values
+    ui->rateCRFSpinBox->setValue(10);
+    ui->rateTargetBitRateSpinBox->setValue(0);
+    ui->rateTargetFileSizeDoubleSpinBox->setValue(0);
+
     // enable and initialize output file controls
     ui->outputFileLineEdit->setText(QDir::toNativeSeparators(outputFile->filePath()));
     ui->outputFileLineEdit->setEnabled(true);
@@ -247,10 +269,12 @@ void MainWindow::initializeFormData()
     QTime duration = inputFile->duration();
     ui->trimDurationDurationTimeEdit->setTime(duration);
     ui->trimStartEndEndTimeEdit->setTime(duration);
-    ui->trimStartEndStartTimeEdit->setMaximumTime(duration);
+    ui->trimStartEndStartTimeEdit->setMaximumTime(duration.addMSecs(-1));
     ui->trimStartEndEndTimeEdit->setMaximumTime(duration);
-    ui->trimDurationStartTimeEdit->setMaximumTime(duration);
+    ui->trimDurationStartTimeEdit->setMaximumTime(duration.addMSecs(-1));
     ui->trimDurationDurationTimeEdit->setMaximumTime(duration);
+    ui->trimStartEndEndTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
+    ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
 
     // set default width and height based on the first video stream's
     for(int i = 0; i < inputFile->streamCount(); i++)
@@ -635,10 +659,7 @@ void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
     if(InputFile::isValid(inputFilePath))
     {
         processInputFile(inputFilePath);
-        if(outputFile->isValid() && validateFormFields())
-        {
-            ui->encodePushButton->setEnabled(true);
-        }
+        validateFormFields();
     }
 }
 
@@ -650,10 +671,7 @@ void MainWindow::on_outputFileLineEdit_textChanged(const QString &arg1)
 
     outputFile->setFilePath(outputFilePath);
 
-    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
-    {
-        ui->encodePushButton->setEnabled(true);
-    }
+    validateFormFields();
 }
 
 void MainWindow::on_outputFileBrowsePushButton_clicked()
@@ -710,10 +728,7 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
 
-    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
-        ui->encodePushButton->setEnabled(true);
-    else
-        ui->encodePushButton->setEnabled(false);
+    validateFormFields();
 }
 
 void MainWindow::on_rateTargetModeComboBox_currentIndexChanged(const QString &arg1)
@@ -722,10 +737,7 @@ void MainWindow::on_rateTargetModeComboBox_currentIndexChanged(const QString &ar
 
     refreshTargetMode(currentTargetMode);
 
-    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
-        ui->encodePushButton->setEnabled(true);
-    else
-        ui->encodePushButton->setEnabled(false);
+    validateFormFields();
 }
 
 void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
@@ -812,11 +824,13 @@ void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
     ui->trimStartEndStartChapterComboBox->setCurrentIndex(0);
     QTime startTime = ui->trimStartEndStartTimeEdit->time();
     QTime endTime = ui->trimStartEndEndTimeEdit->time();
-    if(startTime > endTime)
-        ui->trimStartEndEndTimeEdit->setTime(startTime);
+    if(startTime >= endTime)
+        ui->trimStartEndEndTimeEdit->setTime(startTime.addMSecs(1));
 
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+
+    validateFormFields();
 }
 
 void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
@@ -824,11 +838,13 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
     ui->trimStartEndEndChapterComboBox->setCurrentIndex(0);
     QTime startTime = ui->trimStartEndStartTimeEdit->time();
     QTime endTime = ui->trimStartEndEndTimeEdit->time();
-    if(endTime < startTime)
-        ui->trimStartEndStartTimeEdit->setTime(endTime);
+    if(endTime <= startTime)
+        ui->trimStartEndStartTimeEdit->setTime(endTime.addMSecs(-1));
 
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+
+    validateFormFields();
 }
 
 void MainWindow::on_cropLeftSpinBox_editingFinished()
@@ -926,37 +942,39 @@ void MainWindow::on_cancelPushButton_clicked()
 
 void MainWindow::on_rateTargetFileSizeDoubleSpinBox_editingFinished()
 {
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
-        ui->encodePushButton->setEnabled(true);
-    else
-        ui->encodePushButton->setEnabled(false);
+    validateFormFields();
 }
 
 void MainWindow::on_rateTargetBitRateSpinBox_editingFinished()
 {   
-    QString inputFilePath = ui->inputFileLineEdit->text().trimmed();
-    QString outputFilePath = ui->outputFileLineEdit->text().trimmed();
-    if(inputFile->isValid() && outputFile->isValid() && validateFormFields())
-        ui->encodePushButton->setEnabled(true);
-    else
-        ui->encodePushButton->setEnabled(false);
-
     if(inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+
+    validateFormFields();
 }
 
 void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
 {
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+    if(inputFile->isValid())
+    {
+        QTime maxDuration = QTime(0,0).addMSecs(ui->trimDurationStartTimeEdit->time().msecsTo(inputFile->duration()));
+        if(ui->trimDurationDurationTimeEdit->time() > maxDuration)
+            ui->trimDurationDurationTimeEdit->setTime(maxDuration);
+        ui->trimDurationDurationTimeEdit->setMaximumTime(maxDuration);
+
+        if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+            ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+    }
+
+    validateFormFields();
 }
 
 void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+
+    validateFormFields();
 }
 
 void MainWindow::on_trimNoneRadioButton_clicked()

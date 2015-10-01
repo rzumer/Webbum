@@ -71,7 +71,7 @@ private:
     void initializeFormData();
     QStringList generatePass(int passNumber, bool twoPass = true);
     void encodePass(QStringList &encodingParameters);
-    bool validateFormFields();
+    void validateFormFields();
     void updateProgressBar();
     QTime getOutputDuration();
     void connectSignalsAndSlots();
