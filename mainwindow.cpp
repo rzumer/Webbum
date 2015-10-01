@@ -599,7 +599,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
         double frameRate = getFrameRate(inputFileName,videoStreamId);
         QTime duration = getDuration(inputFileName);*/
 
-        while(ffmpegProcess.waitForReadyRead(120000))
+        while(ffmpegProcess.waitForReadyRead(240000))
         {
             qDebug() << ffmpegProcess.readAllStandardError();
             //updateProgressBar(ffmpegProcess.readAllStandardError(),frameRate,duration);
