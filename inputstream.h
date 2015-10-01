@@ -12,7 +12,7 @@ class InputStream
 {
 public:
     enum StreamType {VIDEO, AUDIO, SUBTITLE, OTHER};
-    explicit InputStream(AVStream *stream = new AVStream(), int id = -1);
+    explicit InputStream(AVStream *stream = NULL, int id = -1);
 
     // getters
     int id() const { return _id; }
