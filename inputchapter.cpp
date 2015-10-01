@@ -1,9 +1,9 @@
 #include "inputchapter.h"
 
-InputChapter::InputChapter(AVChapter *chapter)
+InputChapter::InputChapter(AVChapter *chapter, int id)
 {
     // ID
-    _id = chapter->id;
+    _id = id;
 
     // Title
     AVDictionaryEntry *title = av_dict_get(chapter->metadata,"title",NULL,0);

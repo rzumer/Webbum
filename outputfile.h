@@ -34,8 +34,6 @@ public:
 
     static bool isValid(QString outputFilePath);
     bool isValid();
-    bool isExistingFile();
-    static OutputFile fromInputFile(QObject *parent, QString inputFilePath);
 
 private:
     QString _filePath;
@@ -58,7 +56,7 @@ signals:
     void outputFileChanged(QString filePath);
 
 public slots:
-    void setFilePath(QString &filePath);
+    void setFilePath(QString filePath);
     void setVideoCodec(OutputVideoCodec videoCodec) { _videoCodec = videoCodec; }
     void setAudioCodec(OutputAudioCodec audioCodec) { _audioCodec = audioCodec; }
     void setVideoCodec(int videoCodec) { _videoCodec = (OutputVideoCodec)videoCodec; }
