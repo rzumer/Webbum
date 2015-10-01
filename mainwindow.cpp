@@ -320,9 +320,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     QString outputFilePath = outputFile->filePath();
 
     // get streams
-    InputStream videoStream;
-    InputStream audioStream;
-    InputStream subtitleStream;
+    InputStream videoStream = InputStream();
+    InputStream audioStream = InputStream();
+    InputStream subtitleStream = InputStream();
     int videoStreamCounter = ui->streamVideoComboBox->currentIndex() - 1;
     int audioStreamCounter = ui->streamAudioComboBox->currentIndex() - 1;
     int subtitleStreamCounter = ui->streamSubtitlesComboBox->currentIndex() - 1;
@@ -332,21 +332,26 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
         if(stream.type() == InputStream::VIDEO)
         {
-            if(videoStreamCounter == 0) videoStream = stream;
-            else videoStreamCounter--;
+            if(videoStreamCounter == 0)
+                videoStream = stream;
+            else
+                videoStreamCounter--;
         }
         else if(stream.type() == InputStream::AUDIO)
         {
-            if(audioStreamCounter == 0) audioStream = stream;
-            else audioStreamCounter--;
+            if(audioStreamCounter == 0)
+                audioStream = stream;
+            else
+                audioStreamCounter--;
         }
         else if(stream.type() == InputStream::SUBTITLE)
         {
-            if(subtitleStreamCounter == 0) subtitleStream = stream;
-            else subtitleStreamCounter--;
+            if(subtitleStreamCounter == 0)
+                subtitleStream = stream;
+            else
+                subtitleStreamCounter--;
         }
     }
-
     bool vp9 = outputFile->videoCodec() == OutputFile::VP9;
     bool vorbis = outputFile->audioCodec() == OutputFile::VORBIS;
 
@@ -400,7 +405,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         {
             outputFile->setBitRateInKilobits(ui->rateTargetBitRateSpinBox->value());
         }
-        bitRate = outputFile->bitRate();
+        bitRate = outputFile->bitRateInKilobits();
     }
     if(rateMode == "Constant Quality" || rateMode == "Constrained Quality")
     {
@@ -512,7 +517,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
-    if(subtitleStream.isValid() > -1)
+    if(subtitleStream.isValid())
     {
         if(!filterChain.isEmpty())
             filterChain.append(",");
@@ -575,9 +580,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     }
 
     qDebug() << passStringList;
-    QStringList dummy = QStringList();
-    return dummy;
-    //return passStringList;
+    /*QStringList dummy = QStringList();
+    return dummy;*/
+    return passStringList;
 }
 
 void MainWindow::encodePass(QStringList &encodingParameters)
@@ -879,11 +884,9 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_encodePushButton_clicked()
 {
-    // crash somewhere here
     this->setEnabled(false);
 
     // two pass encode
-    //bool twoPass = true;
     QStringList firstPass, secondPass;
 
     firstPass = generatePass(1);

@@ -22,6 +22,7 @@ public:
     QTime startTime() const { return _startTime; }
     QTime endTime() const { return _endTime; }
     int bitRate() const { return _bitRate; }
+    double bitRateInKilobits() const { return (double)_bitRate / 1000; }
     int crf() const { return _crf; }
     int width() const { return _width; }
     int height() const { return _height; }
