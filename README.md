@@ -1,13 +1,12 @@
 # Webbum
-A VP8 (and possibly VP9) WebM video encoder.
+A VP8 and VP9 WebM video encoder.
 
 It is an interface for ffmpeg.
 
 Some indications to anyone trying to use it at this point:  
 * May be buggy  
-* Very messy code (set for refactoring)  
-* Currently only supports VP8 encoding
-* 64kbps Opus audio only
+* Moderately messy code (still needs some refactoring)  
+* 64kbps audio only (Opus/Vorbis codec restricted by the WebM format)  
 * Incomplete UI, freezes while encoding  
 * Some "hidden" features (e.g. specify a width or height of 0 to scale automatically on aspect ratio)
 
