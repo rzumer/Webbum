@@ -2,6 +2,12 @@
 
 OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent)
 {
+    _cropLeft = 0;
+    _cropRight = 0;
+    _cropTop = 0;
+    _cropBottom = 0;
+    _crf = 10;
+
     QFileInfo file(outputFilePath.trimmed());
     if(file.exists())
         setFilePath(file.canonicalPath() + "/" + file.completeBaseName() + ".webm");

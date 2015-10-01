@@ -608,9 +608,9 @@ void MainWindow::encodePass(QStringList &encodingParameters)
 
     if(ffmpegProcess.exitCode() != 0)
     {
-        QMessageBox::warning(this,"Warning","ffmpeg returned an exit code of " +
+        /*QMessageBox::warning(this,"Warning","ffmpeg returned an exit code of " +
                              QString::number(ffmpegProcess.exitCode()) +
-                             ". Errors may have occured.",QMessageBox::Ok);
+                             ". Errors may have occured.",QMessageBox::Ok);*/
     }
 }
 
