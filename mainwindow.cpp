@@ -197,10 +197,10 @@ void MainWindow::clearInputFileFormData()
     ui->cropBottomSpinBox->setMaximum(9998);
 
     // clear generated form fields
-    ui->resizeWidthSpinBox->setValue(0);
-    ui->resizeHeightSpinBox->setValue(0);
     ui->resizeWidthSpinBox->setMinimum(0);
     ui->resizeHeightSpinBox->setMinimum(0);
+    ui->resizeWidthSpinBox->setValue(0);
+    ui->resizeHeightSpinBox->setValue(0);
     ui->resizeWidthSpinBox->setMaximum(9998);
     ui->resizeHeightSpinBox->setMaximum(9998);
     ui->trimStartEndStartTimeEdit->setTime(QTime(0,0));
@@ -257,6 +257,13 @@ void MainWindow::clearInputFileFormData()
     {
         ui->trimStartEndEndChapterComboBox->removeItem(i);
     }
+
+    // disable controls
+    ui->processingGroupBox->setEnabled(false);
+    ui->encodingGroupBox->setEnabled(false);
+    ui->encodePushButton->setEnabled(false);
+    ui->outputFileLineEdit->setEnabled(false);
+    ui->outputFileBrowsePushButton->setEnabled(false);
 }
 
 void MainWindow::initializeFormData()
@@ -270,6 +277,10 @@ void MainWindow::initializeFormData()
     ui->outputFileLineEdit->setText(QDir::toNativeSeparators(outputFile->filePath()));
     ui->outputFileLineEdit->setEnabled(true);
     ui->outputFileBrowsePushButton->setEnabled(true);
+
+    // enable controls
+    ui->processingGroupBox->setEnabled(true);
+    ui->encodingGroupBox->setEnabled(true);
 
     // set default end time, duration and maximum time edit values based on the container's duration
     QTime duration = inputFile->duration();
@@ -660,7 +671,6 @@ void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
     QString inputFilePath = arg1;
 
     clearInputFileFormData();
-    ui->encodePushButton->setEnabled(false);
 
     if(InputFile::isValid(inputFilePath))
     {
@@ -753,8 +763,7 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
     if(index == 0)
     {
         ui->encodePushButton->setEnabled(false);
-        ui->resizeWidthSpinBox->setValue(0);
-        ui->resizeHeightSpinBox->setValue(0);
+        ui->resizingGroupBox->setEnabled(false);
         ui->codecVideoComboBox->setEnabled(false);
     }
     // change resolution fields based on the selected stream
@@ -774,6 +783,7 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
                 }
             }
         }
+        ui->resizingGroupBox->setEnabled(true);
         ui->codecVideoComboBox->setEnabled(true);
     }
 }

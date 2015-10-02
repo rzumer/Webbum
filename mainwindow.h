@@ -61,9 +61,7 @@ private slots:
     void on_streamAudioComboBox_currentIndexChanged(int index);
     void on_resizeWidthAutomaticCheckBox_toggled(bool checked);
     void on_resizeHeightAutomaticCheckBox_toggled(bool checked);
-
     void on_resizeCheckBox_toggled(bool checked);
-
     void on_actionExit_triggered();
 
 private:
