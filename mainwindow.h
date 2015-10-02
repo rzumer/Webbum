@@ -59,6 +59,12 @@ private slots:
     void on_trimNoneRadioButton_clicked();
     void on_codecVideoComboBox_currentIndexChanged(const QString &arg1);
     void on_streamAudioComboBox_currentIndexChanged(int index);
+    void on_resizeWidthAutomaticCheckBox_toggled(bool checked);
+    void on_resizeHeightAutomaticCheckBox_toggled(bool checked);
+
+    void on_resizeCheckBox_toggled(bool checked);
+
+    void on_actionExit_triggered();
 
 private:
     Ui::MainWindow *ui;

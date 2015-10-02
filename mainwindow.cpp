@@ -199,6 +199,10 @@ void MainWindow::clearInputFileFormData()
     // clear generated form fields
     ui->resizeWidthSpinBox->setValue(0);
     ui->resizeHeightSpinBox->setValue(0);
+    ui->resizeWidthSpinBox->setMinimum(0);
+    ui->resizeHeightSpinBox->setMinimum(0);
+    ui->resizeWidthSpinBox->setMaximum(9998);
+    ui->resizeHeightSpinBox->setMaximum(9998);
     ui->trimStartEndStartTimeEdit->setTime(QTime(0,0));
     ui->trimStartEndEndTimeEdit->setTime(QTime(0,0));
     ui->trimDurationStartTimeEdit->setTime(QTime(0,0));
@@ -283,6 +287,8 @@ void MainWindow::initializeFormData()
     int height = inputFile->height();
     ui->resizeWidthSpinBox->setValue(width);
     ui->resizeHeightSpinBox->setValue(height);
+    ui->resizeWidthSpinBox->setMinimum(2);
+    ui->resizeHeightSpinBox->setMinimum(2);
     ui->cropLeftSpinBox->setMaximum(width - 1);
     ui->cropRightSpinBox->setMaximum(width - 1);
     ui->cropTopSpinBox->setMaximum(height - 1);
@@ -405,10 +411,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     }
     if(ui->resizeCheckBox->isChecked())
     {
-        width = outputFile->width();
-        height = outputFile->height();
-        if(width == 0) width = -1;
-        if(height == 0) height = -1;
+        if(!ui->resizeWidthAutomaticCheckBox->isChecked())
+            width = outputFile->width();
+        if(!ui->resizeHeightAutomaticCheckBox->isChecked())
+            height = outputFile->height();
     }
 
     int crf = -1;
@@ -1039,4 +1045,36 @@ void MainWindow::on_streamAudioComboBox_currentIndexChanged(int index)
         ui->codecAudioComboBox->setEnabled(false);
     else
         ui->codecAudioComboBox->setEnabled(true);
+}
+
+void MainWindow::on_resizeWidthAutomaticCheckBox_toggled(bool checked)
+{
+    if(checked)
+        ui->resizeWidthSpinBox->setEnabled(false);
+    else
+        ui->resizeWidthSpinBox->setEnabled(true);
+}
+
+void MainWindow::on_resizeHeightAutomaticCheckBox_toggled(bool checked)
+{
+    if(checked)
+        ui->resizeHeightSpinBox->setEnabled(false);
+    else
+        ui->resizeHeightSpinBox->setEnabled(true);
+}
+
+void MainWindow::on_resizeCheckBox_toggled(bool checked)
+{
+    if(checked)
+    {
+        if(ui->resizeWidthAutomaticCheckBox->isChecked())
+            ui->resizeWidthSpinBox->setEnabled(false);
+        if(ui->resizeHeightAutomaticCheckBox->isChecked())
+            ui->resizeHeightSpinBox->setEnabled(false);
+    }
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    this->close();
 }
