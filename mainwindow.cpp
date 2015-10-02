@@ -35,7 +35,6 @@ void MainWindow::dropEvent(QDropEvent *ev)
 
 void MainWindow::validateFormFields()
 {
-    // Checks whether form input will produce a valid encode
     ui->encodePushButton->setEnabled(false);
 
     if(!inputFile->isValid() || !outputFile->isValid())
@@ -60,7 +59,6 @@ void MainWindow::validateFormFields()
 
 void MainWindow::refreshTargetMode(QString &currentTargetMode)
 {
-    // Checks current target mode and enables/disables associated controls accordingly
     if(currentTargetMode == "Bit Rate")
     {
         ui->rateTargetBitRateSpinBox->setEnabled(true);
@@ -188,6 +186,16 @@ void MainWindow::populateStreamComboBoxes()
 
 void MainWindow::clearInputFileFormData()
 {
+    // clear crop values
+    ui->cropLeftSpinBox->setValue(0);
+    ui->cropRightSpinBox->setValue(0);
+    ui->cropTopSpinBox->setValue(0);
+    ui->cropBottomSpinBox->setValue(0);
+    ui->cropLeftSpinBox->setMaximum(9998);
+    ui->cropRightSpinBox->setMaximum(9998);
+    ui->cropTopSpinBox->setMaximum(9998);
+    ui->cropBottomSpinBox->setMaximum(9998);
+
     // clear generated form fields
     ui->resizeWidthSpinBox->setValue(0);
     ui->resizeHeightSpinBox->setValue(0);
@@ -249,12 +257,6 @@ void MainWindow::clearInputFileFormData()
 
 void MainWindow::initializeFormData()
 {
-    // refresh crop values
-    ui->cropLeftSpinBox->setValue(0);
-    ui->cropRightSpinBox->setValue(0);
-    ui->cropTopSpinBox->setValue(0);
-    ui->cropBottomSpinBox->setValue(0);
-
     // refresh rate control values
     ui->rateCRFSpinBox->setValue(10);
     ui->rateTargetBitRateSpinBox->setValue(0);
@@ -276,17 +278,15 @@ void MainWindow::initializeFormData()
     ui->trimStartEndEndTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
     ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
 
-    // set default width and height based on the first video stream's
-    for(int i = 0; i < inputFile->streamCount(); i++)
-    {
-        InputStream currentStream = inputFile->stream(i);
-        if(currentStream.type() == InputStream::VIDEO)
-        {
-            ui->resizeWidthSpinBox->setValue(currentStream.width());
-            ui->resizeHeightSpinBox->setValue(currentStream.height());
-            break;
-        }
-    }
+    // set default width and height based on the largest video stream's
+    int width = inputFile->width();
+    int height = inputFile->height();
+    ui->resizeWidthSpinBox->setValue(width);
+    ui->resizeHeightSpinBox->setValue(height);
+    ui->cropLeftSpinBox->setMaximum(width - 1);
+    ui->cropRightSpinBox->setMaximum(width - 1);
+    ui->cropTopSpinBox->setMaximum(height - 1);
+    ui->cropBottomSpinBox->setMaximum(height - 1);
 
     // set default target bitrate and file size based on the container's
     int bitRate = inputFile->bitRateInKilobits();
@@ -659,6 +659,7 @@ void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
     if(InputFile::isValid(inputFilePath))
     {
         processInputFile(inputFilePath);
+
         validateFormFields();
     }
 }
@@ -849,30 +850,62 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
 
 void MainWindow::on_cropLeftSpinBox_editingFinished()
 {
-    int value = ui->cropLeftSpinBox->value();
-    if(value % 2 != 0)
-        ui->cropLeftSpinBox->setValue(value - 1);
+    int cropLeftValue = ui->cropLeftSpinBox->value();
+    int cropRightValue = ui->cropRightSpinBox->value();
+    int width = inputFile->width();
+    if(cropLeftValue % 2 != 0)
+    {
+        cropLeftValue--;
+        ui->cropLeftSpinBox->setValue(cropLeftValue);
+    }
+
+    if(cropLeftValue + cropRightValue >= width)
+        ui->cropRightSpinBox->setValue(width - cropLeftValue - 2);
 }
 
 void MainWindow::on_cropRightSpinBox_editingFinished()
 {
-    int value = ui->cropRightSpinBox->value();
-    if(value % 2 != 0)
-        ui->cropRightSpinBox->setValue(value - 1);
+    int cropLeftValue = ui->cropLeftSpinBox->value();
+    int cropRightValue = ui->cropRightSpinBox->value();
+    int width = inputFile->width();
+    if(cropRightValue % 2 != 0)
+    {
+        cropRightValue--;
+        ui->cropRightSpinBox->setValue(cropRightValue);
+    }
+
+    if(cropLeftValue + cropRightValue >= width)
+        ui->cropLeftSpinBox->setValue(width - cropRightValue - 2);
 }
 
 void MainWindow::on_cropTopSpinBox_editingFinished()
 {
-    int value = ui->cropTopSpinBox->value();
-    if(value % 2 != 0)
-        ui->cropTopSpinBox->setValue(value - 1);
+    int cropTopValue = ui->cropTopSpinBox->value();
+    int cropBottomValue = ui->cropBottomSpinBox->value();
+    int height = inputFile->height();
+    if(cropTopValue % 2 != 0)
+    {
+        cropTopValue--;
+        ui->cropTopSpinBox->setValue(cropTopValue);
+    }
+
+    if(cropTopValue + cropBottomValue >= height)
+        ui->cropBottomSpinBox->setValue(height - cropTopValue - 2);
 }
 
 void MainWindow::on_cropBottomSpinBox_editingFinished()
 {
-    int value = ui->cropBottomSpinBox->value();
-    if(value % 2 != 0)
-        ui->cropBottomSpinBox->setValue(value - 1);
+    int cropTopValue = ui->cropTopSpinBox->value();
+    int cropBottomValue = ui->cropBottomSpinBox->value();
+    int height = inputFile->height();
+    if(cropBottomValue % 2 != 0)
+    {
+        cropBottomValue--;
+        ui->cropBottomSpinBox->setValue(cropBottomValue);
+    }
+
+    if(cropTopValue + cropBottomValue >= height)
+        ui->cropTopSpinBox->setValue(height - cropBottomValue - 2);
 }
 
 void MainWindow::on_resizeWidthSpinBox_editingFinished()

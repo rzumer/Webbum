@@ -2,6 +2,9 @@
 
 InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
 {
+    _width = 0;
+    _height = 0;
+
     _filePath = QFileInfo(inputFilePath.trimmed()).canonicalFilePath();
     emit inputFileChanged(_filePath);
 
@@ -20,6 +23,12 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
                 {
                     AVStream *currentStream = formatContext->streams[i];
                     InputStream localStream = InputStream(currentStream, i);
+                    if(localStream.width() + localStream.height() > _width + _height)
+                    {
+                        _width = localStream.width();
+                        _height = localStream.height();
+                    }
+
                     _streams.insert(i, localStream);
                 }
             }
