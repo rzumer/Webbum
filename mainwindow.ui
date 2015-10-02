@@ -76,13 +76,13 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_9">
         <item row="1" column="0">
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QGroupBox" name="processingGroupBox">
           <property name="title">
            <string>Processing</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QGroupBox" name="groupBox_6">
+            <widget class="QGroupBox" name="trimmingGroupBox">
              <property name="title">
               <string>Trimming</string>
              </property>
@@ -235,7 +235,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_7">
+            <widget class="QGroupBox" name="resizingGroupBox">
              <property name="title">
               <string>Resizing</string>
              </property>
@@ -435,13 +435,13 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QGroupBox" name="groupBox_3">
+         <widget class="QGroupBox" name="encodingGroupBox">
           <property name="title">
            <string>Encoding</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QGroupBox" name="groupBox_4">
+            <widget class="QGroupBox" name="rateControlGroupBox">
              <property name="title">
               <string>Rate Control</string>
              </property>
@@ -584,7 +584,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_5">
+            <widget class="QGroupBox" name="streamsGroupBox">
              <property name="title">
               <string>Streams</string>
              </property>
@@ -659,7 +659,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_9">
+            <widget class="QGroupBox" name="codecsGroupBox">
              <property name="title">
               <string>Codecs</string>
              </property>
@@ -722,7 +722,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_8">
+            <widget class="QGroupBox" name="customGroupBox">
              <property name="title">
               <string>Custom</string>
              </property>
@@ -754,7 +754,7 @@
          </widget>
         </item>
         <item row="0" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="inputOutputGroupBox">
           <property name="autoFillBackground">
            <bool>false</bool>
           </property>
