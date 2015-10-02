@@ -33,6 +33,8 @@ public:
     double fileSize(QTime duration) const;
     double fileSizeInMegabytes(double durationInMSecs = 0) const;
     double fileSizeInMegabytes(QTime duration) const;
+    int width() const { return _width; }
+    int height() const { return _height; }
 
     static bool isValid(QString inputFilePath);
     bool isValid();
@@ -44,6 +46,8 @@ private:
     QList<InputChapter> _chapters;
     QTime _duration;
     int _bitRate;
+    int _width;
+    int _height;
 
 signals:
     void inputFileChanged(QString filePath);
