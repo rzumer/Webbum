@@ -3,12 +3,9 @@ A VP8 and VP9 WebM video encoder.
 
 It is an interface for ffmpeg.
 
-Some indications to anyone trying to use it at this point:  
-* May be buggy  
-* Moderately messy code (still needs some refactoring)  
+Known restrictions:  
 * 64kbps audio only (Opus/Vorbis codec restricted by the WebM format)  
 * Incomplete UI, freezes while encoding  
-* Some "hidden" features (e.g. specify a width or height of 0 to scale automatically on aspect ratio)
 
 Any feedback is appreciated. Please use the Issues system to leave any constructive comments, questions, feature requests, or bug reports.
 
