@@ -586,6 +586,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     // ignore subtitle streams
     passStringList << "-sn";
 
+    // scaling algorithm
+    passStringList << "-sws_flags" << "lanczos";
+
     // extra parameters
     if(!customParameters.isEmpty())
         passStringList << customParameters.split(' ');
