@@ -5,6 +5,8 @@ InputStream::InputStream(AVStream *stream, int id)
     _id = id;
     _isDefault = false;
     _isForced = false;
+    _width = 0;
+    _height = 0;
     _bitRate = 0;
 
     // Extract stream information
