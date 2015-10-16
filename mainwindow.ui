@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>690</height>
+    <width>1200</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,75 +70,19 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>711</width>
-         <height>945</height>
+         <width>1180</width>
+         <height>605</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
+       <layout class="QGridLayout" name="gridLayout_9">
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="processingGroupBox">
           <property name="title">
            <string>Processing</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QGroupBox" name="groupBox">
-             <property name="autoFillBackground">
-              <bool>false</bool>
-             </property>
-             <property name="title">
-              <string>Input/Output</string>
-             </property>
-             <property name="flat">
-              <bool>false</bool>
-             </property>
-             <layout class="QGridLayout" name="gridLayout">
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>Output File:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QPushButton" name="inputFileBrowsePushButton">
-                <property name="text">
-                 <string>Browse...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QPushButton" name="outputFileBrowsePushButton">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Browse...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="inputFileLineEdit"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Input File:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="outputFileLineEdit">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_6">
+            <widget class="QGroupBox" name="trimmingGroupBox">
              <property name="title">
               <string>Trimming</string>
              </property>
@@ -291,7 +235,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_7">
+            <widget class="QGroupBox" name="resizingGroupBox">
              <property name="title">
               <string>Resizing</string>
              </property>
@@ -305,7 +249,7 @@
                  <enum>Qt::StrongFocus</enum>
                 </property>
                 <property name="maximum">
-                 <number>9998</number>
+                 <number>9999</number>
                 </property>
                 <property name="singleStep">
                  <number>2</number>
@@ -321,7 +265,7 @@
                  <enum>Qt::StrongFocus</enum>
                 </property>
                 <property name="maximum">
-                 <number>9998</number>
+                 <number>9999</number>
                 </property>
                 <property name="singleStep">
                  <number>2</number>
@@ -337,7 +281,7 @@
                  <enum>Qt::StrongFocus</enum>
                 </property>
                 <property name="maximum">
-                 <number>9998</number>
+                 <number>9999</number>
                 </property>
                 <property name="singleStep">
                  <number>2</number>
@@ -367,7 +311,7 @@
                  <enum>Qt::StrongFocus</enum>
                 </property>
                 <property name="maximum">
-                 <number>9998</number>
+                 <number>9999</number>
                 </property>
                 <property name="singleStep">
                  <number>2</number>
@@ -411,7 +355,7 @@
                  <enum>Qt::StrongFocus</enum>
                 </property>
                 <property name="maximum">
-                 <number>9998</number>
+                 <number>9999</number>
                 </property>
                 <property name="singleStep">
                  <number>2</number>
@@ -434,7 +378,7 @@
                  <enum>Qt::StrongFocus</enum>
                 </property>
                 <property name="maximum">
-                 <number>9998</number>
+                 <number>9999</number>
                 </property>
                 <property name="singleStep">
                  <number>2</number>
@@ -445,6 +389,26 @@
                <widget class="QCheckBox" name="resizeCheckBox">
                 <property name="text">
                  <string>Resize</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="1">
+               <widget class="QCheckBox" name="resizeWidthAutomaticCheckBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Automatic</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="2">
+               <widget class="QCheckBox" name="resizeHeightAutomaticCheckBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Automatic</string>
                 </property>
                </widget>
               </item>
@@ -463,19 +427,21 @@
              <zorder>label_14</zorder>
              <zorder>resizeHeightSpinBox</zorder>
              <zorder>resizeCheckBox</zorder>
+             <zorder>resizeWidthAutomaticCheckBox</zorder>
+             <zorder>resizeHeightAutomaticCheckBox</zorder>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_3">
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="encodingGroupBox">
           <property name="title">
-           <string>Advanced</string>
+           <string>Encoding</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QGroupBox" name="groupBox_4">
+            <widget class="QGroupBox" name="rateControlGroupBox">
              <property name="title">
               <string>Rate Control</string>
              </property>
@@ -618,7 +584,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_5">
+            <widget class="QGroupBox" name="streamsGroupBox">
              <property name="title">
               <string>Streams</string>
              </property>
@@ -693,7 +659,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_9">
+            <widget class="QGroupBox" name="codecsGroupBox">
              <property name="title">
               <string>Codecs</string>
              </property>
@@ -756,7 +722,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_8">
+            <widget class="QGroupBox" name="customGroupBox">
              <property name="title">
               <string>Custom</string>
              </property>
@@ -787,6 +753,62 @@
           </layout>
          </widget>
         </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QGroupBox" name="inputOutputGroupBox">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>Input/Output</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Output File:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="inputFileBrowsePushButton">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="outputFileBrowsePushButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="inputFileLineEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Input File:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="outputFileLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -798,7 +820,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>744</width>
+     <width>1200</width>
      <height>21</height>
     </rect>
    </property>
@@ -807,6 +829,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -826,6 +849,11 @@
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>
@@ -853,6 +881,8 @@
   <tabstop>resizeCheckBox</tabstop>
   <tabstop>resizeWidthSpinBox</tabstop>
   <tabstop>resizeHeightSpinBox</tabstop>
+  <tabstop>resizeWidthAutomaticCheckBox</tabstop>
+  <tabstop>resizeHeightAutomaticCheckBox</tabstop>
   <tabstop>rateModeComboBox</tabstop>
   <tabstop>rateTargetModeComboBox</tabstop>
   <tabstop>rateCRFSpinBox</tabstop>
@@ -877,12 +907,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>172</x>
-     <y>-80</y>
+     <x>184</x>
+     <y>268</y>
     </hint>
     <hint type="destinationlabel">
-     <x>450</x>
-     <y>-77</y>
+     <x>306</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -893,12 +923,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>216</x>
-     <y>-80</y>
+     <x>184</x>
+     <y>268</y>
     </hint>
     <hint type="destinationlabel">
-     <x>652</x>
-     <y>-77</y>
+     <x>437</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -909,12 +939,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>165</x>
-     <y>-18</y>
+     <x>184</x>
+     <y>338</y>
     </hint>
     <hint type="destinationlabel">
-     <x>450</x>
-     <y>-15</y>
+     <x>306</x>
+     <y>336</y>
     </hint>
    </hints>
   </connection>
@@ -925,12 +955,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>-18</y>
+     <x>184</x>
+     <y>338</y>
     </hint>
     <hint type="destinationlabel">
-     <x>652</x>
-     <y>-15</y>
+     <x>437</x>
+     <y>336</y>
     </hint>
    </hints>
   </connection>
@@ -941,12 +971,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>183</x>
-     <y>156</y>
+     <x>176</x>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
-     <x>450</x>
-     <y>187</y>
+     <x>307</x>
+     <y>567</y>
     </hint>
    </hints>
   </connection>
@@ -957,12 +987,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>156</y>
+     <x>176</x>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
-     <x>652</x>
-     <y>187</y>
+     <x>437</x>
+     <y>567</y>
     </hint>
    </hints>
   </connection>
@@ -973,12 +1003,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>168</x>
-     <y>47</y>
+     <x>176</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
-     <x>450</x>
-     <y>78</y>
+     <x>307</x>
+     <y>434</y>
     </hint>
    </hints>
   </connection>
@@ -989,12 +1019,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>47</y>
+     <x>176</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
-     <x>652</x>
-     <y>78</y>
+     <x>437</x>
+     <y>434</y>
     </hint>
    </hints>
   </connection>
@@ -1005,12 +1035,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>212</x>
-     <y>47</y>
+     <x>176</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
-     <x>450</x>
-     <y>130</y>
+     <x>307</x>
+     <y>506</y>
     </hint>
    </hints>
   </connection>
@@ -1021,12 +1051,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>234</x>
-     <y>47</y>
+     <x>176</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
-     <x>652</x>
-     <y>130</y>
+     <x>437</x>
+     <y>506</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resizeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>resizeWidthAutomaticCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>523</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>218</x>
+     <y>585</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resizeCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>resizeHeightAutomaticCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>530</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>590</y>
     </hint>
    </hints>
   </connection>
