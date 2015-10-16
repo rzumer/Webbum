@@ -637,6 +637,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
 
     if(ffmpegProcess.waitForStarted())
     {
+        qDebug() << "started";
         /*QString inputFileName = encodingParameters[encodingParameters.indexOf("-i") + 1];
         QString codecString = encodingParameters[encodingParameters.indexOf("libvpx-vp9") - 1];
         int videoStreamId = codecString.right(1).toInt();
@@ -649,6 +650,7 @@ void MainWindow::encodePass(QStringList &encodingParameters)
             //updateProgressBar(ffmpegProcess.readAllStandardError(),frameRate,duration);
         }
     }
+    else qDebug() << "not started";
 
     if(ffmpegProcess.exitCode() != 0)
     {
