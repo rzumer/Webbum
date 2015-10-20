@@ -2,3 +2,4 @@
 - Implement Avisynth input support
 - Encode in a separate thread to free the UI
 - Parse ffmpeg output and bind it to the progress bar
+- Preview the first and last frames being encoded
