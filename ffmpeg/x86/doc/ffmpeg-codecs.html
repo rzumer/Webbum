@@ -3254,7 +3254,7 @@ kilobits/s.
 </dd>
 <dt><samp>vbr (<em>vbr</em>, <em>hard-cbr</em>, and <em>cvbr</em>)</samp></dt>
 <dd><p>Set VBR mode. The FFmpeg <samp>vbr</samp> option has the following
-valid arguments, with the their <code>opusenc</code> equivalent options
+valid arguments, with the <code>opusenc</code> equivalent options
 in parentheses:
 </p>
 <dl compact="compact">
@@ -3594,7 +3594,7 @@ can be selected with <code>-pred 1</code>.
 <dl compact="compact">
 <dt><samp>format</samp></dt>
 <dd><p>Can be set to either <code>j2k</code> or <code>jp2</code> (the default) that
-allows to store non-rgb pix_fmts.
+makes it possible to store non-rgb pix_fmts.
 </p>
 </dd>
 </dl>
@@ -4384,6 +4384,11 @@ is kept undocumented for some reason.
 </pre></div>
 
 </dd>
+<dt><samp>a53cc <var>boolean</var></samp></dt>
+<dd><p>Import closed captions (which must be ATSC compatible format) into output.
+Only the mpeg2 and h264 decoders provide these. Default is 0 (off).
+</p>
+</dd>
 <dt><samp>x264-params (N.A.)</samp></dt>
 <dd><p>Override the x264 configuration using a :-separated list of key=value
 parameters.
@@ -4752,10 +4757,6 @@ configuration. You need to explicitly configure the build with
 <dl compact="compact">
 <dt><samp>b</samp></dt>
 <dd><p>Set target video bitrate in bit/s and enable rate control.
-</p>
-</dd>
-<dt><samp>threads</samp></dt>
-<dd><p>Set number of encoding threads.
 </p>
 </dd>
 <dt><samp>kvazaar-params</samp></dt>

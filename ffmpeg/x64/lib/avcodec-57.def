@@ -27,6 +27,7 @@ EXPORTS
     av_codec_set_seek_preroll
     av_copy_packet
     av_copy_packet_side_data
+    av_d3d11va_alloc_context
     av_dct_calc
     av_dct_end
     av_dct_init
@@ -59,7 +60,10 @@ EXPORTS
     av_mdct_end
     av_mdct_init
     av_new_packet
+    av_packet_alloc
+    av_packet_clone
     av_packet_copy_props
+    av_packet_free
     av_packet_free_side_data
     av_packet_from_data
     av_packet_get_side_data
@@ -163,10 +167,8 @@ EXPORTS
     avpriv_aac_parse_header
     avpriv_ac3_channel_layout_tab DATA
     avpriv_ac3_parse_header
-    avpriv_ac3_parse_header2
     avpriv_align_put_bits
     avpriv_bprint_to_extradata
-    avpriv_color_frame
     avpriv_copy_bits
     avpriv_copy_pce_data
     avpriv_dca_convert_bitstream

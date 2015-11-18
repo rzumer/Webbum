@@ -73,7 +73,6 @@ EXPORTS
     av_crc
     av_crc_get_table
     av_crc_init
-    av_ctz
     av_d2q
     av_d2str
     av_default_get_category
@@ -112,6 +111,7 @@ EXPORTS
     av_fifo_free
     av_fifo_freep
     av_fifo_generic_peek
+    av_fifo_generic_peek_at
     av_fifo_generic_read
     av_fifo_generic_write
     av_fifo_grow
@@ -231,10 +231,6 @@ EXPORTS
     av_image_get_buffer_size
     av_image_get_linesize
     av_int_list_length_for_size
-    av_isdigit
-    av_isgraph
-    av_isspace
-    av_isxdigit
     av_lfg_init
     av_log
     av_log2
@@ -431,7 +427,6 @@ EXPORTS
     avpriv_alloc_fixed_dsp
     avpriv_cga_font DATA
     avpriv_float_dsp_alloc
-    avpriv_float_dsp_init
     avpriv_frame_get_metadatap
     avpriv_get_gamma_from_trc
     avpriv_get_trc_function_from_trc

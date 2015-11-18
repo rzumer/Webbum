@@ -81,7 +81,7 @@ this document.
 </p>
 <p>For more detailed legal information about the use of FFmpeg in
 external programs read the <samp>LICENSE</samp> file in the source tree and
-consult <a href="http://ffmpeg.org/legal.html">http://ffmpeg.org/legal.html</a>.
+consult <a href="https://ffmpeg.org/legal.html">https://ffmpeg.org/legal.html</a>.
 </p>
 <a name="Contributing"></a>
 <h3 class="section">1.2 Contributing<span class="pull-right"><a class="anchor hidden-xs" href="#Contributing" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-Contributing" aria-hidden="true">TOC</a></span></h3>
@@ -175,9 +175,9 @@ features from ISO C99, namely:
 
 </li><li> &lsquo;<samp>//</samp>&rsquo; comments;
 
-</li><li> designated struct initializers (&lsquo;<samp>struct s x = { .i = 17 };</samp>&rsquo;)
+</li><li> designated struct initializers (&lsquo;<samp>struct s x = { .i = 17 };</samp>&rsquo;);
 
-</li><li> compound literals (&lsquo;<samp>x = (struct s) { 17, 23 };</samp>&rsquo;)
+</li><li> compound literals (&lsquo;<samp>x = (struct s) { 17, 23 };</samp>&rsquo;).
 </li></ul>
 
 <p>These features are supported by all compilers we care about, so we will not
@@ -203,7 +203,7 @@ additional C99 features or GCC extensions. Especially watch out for:
 <p>All names should be composed with underscores (_), not CamelCase. For example,
 &lsquo;<samp>avfilter_get_video_buffer</samp>&rsquo; is an acceptable function name and
 &lsquo;<samp>AVFilterGetVideo</samp>&rsquo; is not. The exception from this are type names, like
-for example structs and enums; they should always be in the CamelCase
+for example structs and enums; they should always be in CamelCase.
 </p>
 <p>There are the following conventions for naming variables and functions:
 </p>
@@ -454,7 +454,7 @@ and has no lrint()&rsquo;)
 do not attach several unrelated patches to the same mail.
 </p>
 <p>Patches should be posted to the
-<a href="http://lists.ffmpeg.org/mailman/listinfo/ffmpeg-devel">ffmpeg-devel</a>
+<a href="https://lists.ffmpeg.org/mailman/listinfo/ffmpeg-devel">ffmpeg-devel</a>
 mailing list. Use <code>git send-email</code> when possible since it will properly
 send patches without requiring extra care. If you cannot, then send patches
 as base64-encoded attachments, so your patch is not trashed during
@@ -547,7 +547,7 @@ should not crash, end in a (near) infinite loop, or allocate ridiculous
 amounts of memory when fed damaged data.
 
 </li><li> Did you test your decoder or demuxer against sample files?
-Samples may be obtained at <a href="http://samples.ffmpeg.org">http://samples.ffmpeg.org</a>.
+Samples may be obtained at <a href="https://samples.ffmpeg.org">https://samples.ffmpeg.org</a>.
 
 </li><li> Does the patch not mix functional and cosmetic changes?
 
@@ -697,7 +697,7 @@ your configure line instead.
 recommended deliverable for system integrators and distributors (such as
 Linux distributions, etc.). At regular times, a <strong>release
 manager</strong> prepares, tests and publishes tarballs on the
-<a href="http://ffmpeg.org">http://ffmpeg.org</a> website.
+<a href="https://ffmpeg.org">https://ffmpeg.org</a> website.
 </p>
 <p>There are two kinds of releases:
 </p>
@@ -764,7 +764,7 @@ branch on at least <strong>i386</strong> and <strong>amd64</strong>
 </li><li> Prepare the release tarballs in <code>bz2</code> and <code>gz</code> formats, and
 supplementing files that contain <code>gpg</code> signatures
 
-</li><li> Publish the tarballs at <a href="http://ffmpeg.org/releases">http://ffmpeg.org/releases</a>. Create and
+</li><li> Publish the tarballs at <a href="https://ffmpeg.org/releases">https://ffmpeg.org/releases</a>. Create and
 push an annotated tag in the form <code>nX</code>, with <code>X</code>
 containing the version number.
 
