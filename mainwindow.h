@@ -63,6 +63,7 @@ private slots:
     void on_resizeHeightAutomaticCheckBox_toggled(bool checked);
     void on_resizeCheckBox_toggled(bool checked);
     void on_actionExit_triggered();
+    void encodePassFinished(int, QProcess::ExitStatus exitStatus);
 
 private:
     Ui::MainWindow *ui;
@@ -74,11 +75,13 @@ private:
     void populateStreamComboBoxes();
     void initializeFormData();
     QStringList generatePass(int passNumber, bool twoPass = true);
-    void encodePass(QStringList &encodingParameters);
+    QProcess *encodePass(QStringList &encodingParameters);
     void validateFormFields();
     void updateProgressBar();
     QTime getOutputDuration();
     void connectSignalsAndSlots();
+    void cleanTemporaryFiles();
+    void activateUserInterface();
 };
 
 #endif // MAINWINDOW_H
