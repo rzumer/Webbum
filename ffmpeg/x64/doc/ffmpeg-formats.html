@@ -52,9 +52,10 @@
       <li><a name="toc-Examples" href="#Examples">3.10.1 Examples</a></li>
     </ul></li>
     <li><a name="toc-mpegts" href="#mpegts">3.11 mpegts</a></li>
-    <li><a name="toc-rawvideo" href="#rawvideo">3.12 rawvideo</a></li>
-    <li><a name="toc-sbg" href="#sbg">3.13 sbg</a></li>
-    <li><a name="toc-tedcaptions" href="#tedcaptions">3.14 tedcaptions</a></li>
+    <li><a name="toc-mpjpeg" href="#mpjpeg">3.12 mpjpeg</a></li>
+    <li><a name="toc-rawvideo" href="#rawvideo">3.13 rawvideo</a></li>
+    <li><a name="toc-sbg" href="#sbg">3.14 sbg</a></li>
+    <li><a name="toc-tedcaptions" href="#tedcaptions">3.15 tedcaptions</a></li>
   </ul></li>
   <li><a name="toc-Muxers" href="#Muxers">4 Muxers</a>
   <ul class="no-bullet">
@@ -667,6 +668,15 @@ filter to H.264 streams in MP4 format. This is necessary in particular if
 there are resolution changes.
 </p>
 </dd>
+<dt><samp>segment_time_metadata</samp></dt>
+<dd><p>If set to 1, every packet will contain the <var>lavf.concat.start_time</var> and the
+<var>lavf.concat.duration</var> packet metadata values which are the start_time and
+the duration of the respective file segments in the concatenated output
+expressed in microseconds. The duration metadata is only set if it is known
+based on the concat file.
+The default is 0.
+</p>
+</dd>
 </dl>
 
 <a name="flv"></a>
@@ -930,8 +940,24 @@ disabled). Default value is -1.
 </p></dd>
 </dl>
 
+<a name="mpjpeg"></a>
+<h3 class="section">3.12 mpjpeg<span class="pull-right"><a class="anchor hidden-xs" href="#mpjpeg" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-mpjpeg" aria-hidden="true">TOC</a></span></h3>
+
+<p>MJPEG encapsulated in multi-part MIME demuxer.
+</p>
+<p>This demuxer allows reading of MJPEG, where each frame is represented as a part of
+multipart/x-mixed-replace stream.
+</p><dl compact="compact">
+<dt><samp>strict_mime_boundary</samp></dt>
+<dd><p>Default implementation applies a relaxed standard to multi-part MIME boundary detection,
+to prevent regression with numerous existing endpoints not generating a proper MIME
+MJPEG stream. Turning this option on by setting it to 1 will result in a stricter check
+of the boundary value.
+</p></dd>
+</dl>
+
 <a name="rawvideo"></a>
-<h3 class="section">3.12 rawvideo<span class="pull-right"><a class="anchor hidden-xs" href="#rawvideo" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-rawvideo" aria-hidden="true">TOC</a></span></h3>
+<h3 class="section">3.13 rawvideo<span class="pull-right"><a class="anchor hidden-xs" href="#rawvideo" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-rawvideo" aria-hidden="true">TOC</a></span></h3>
 
 <p>Raw video demuxer.
 </p>
@@ -963,7 +989,7 @@ the command:
 </pre></div>
 
 <a name="sbg"></a>
-<h3 class="section">3.13 sbg<span class="pull-right"><a class="anchor hidden-xs" href="#sbg" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-sbg" aria-hidden="true">TOC</a></span></h3>
+<h3 class="section">3.14 sbg<span class="pull-right"><a class="anchor hidden-xs" href="#sbg" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-sbg" aria-hidden="true">TOC</a></span></h3>
 
 <p>SBaGen script demuxer.
 </p>
@@ -994,7 +1020,7 @@ timestamps up to the sound controller&rsquo;s clock accuracy, but if the user
 somehow pauses the playback or seeks, all times will be shifted accordingly.
 </p>
 <a name="tedcaptions"></a>
-<h3 class="section">3.14 tedcaptions<span class="pull-right"><a class="anchor hidden-xs" href="#tedcaptions" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-tedcaptions" aria-hidden="true">TOC</a></span></h3>
+<h3 class="section">3.15 tedcaptions<span class="pull-right"><a class="anchor hidden-xs" href="#tedcaptions" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-tedcaptions" aria-hidden="true">TOC</a></span></h3>
 
 <p>JSON captions used for <a href="http://www.ted.com/">TED Talks</a>.
 </p>
@@ -1967,6 +1993,9 @@ ffmpeg -i source2.ts -codec copy -f mpegts -tables_version 1 udp://1.1.1.1:1111
 </p></dd>
 <dt><samp>pat_pmt_at_frames</samp></dt>
 <dd><p>Reemit PAT and PMT at each video frame.
+</p></dd>
+<dt><samp>system_b</samp></dt>
+<dd><p>Conform to System B (DVB) instead of System A (ATSC).
 </p></dd>
 </dl>
 
