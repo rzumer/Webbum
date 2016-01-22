@@ -5,7 +5,6 @@ It is an interface for ffmpeg.
 
 Known restrictions:  
 * 64kbps audio only (Opus/Vorbis codec restricted by the WebM format)  
-* Incomplete UI, freezes while encoding  
 
 Any feedback is appreciated. Please use the Issues system to leave any constructive comments, questions, feature requests, or bug reports.
 
