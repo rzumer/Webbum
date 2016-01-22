@@ -1,3 +1,4 @@
+- Mod2 resizing support (e.g. 640:-2)
 - Finetune encoding settings
 - Implement Avisynth input support
 - Implement encoding by frame number
