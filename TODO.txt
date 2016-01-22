@@ -1,4 +1,5 @@
 - Finetune encoding settings
 - Implement Avisynth input support
+- Implement encoding by frame number
 - Parse ffmpeg output and bind it to the progress bar
 - Preview frames?
