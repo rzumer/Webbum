@@ -3,3 +3,5 @@
 - Implement encoding by frame number
 - Parse ffmpeg output and bind it to the progress bar
 - Preview frames?
+- Sanic speed encoding mode
+- Setting presets
