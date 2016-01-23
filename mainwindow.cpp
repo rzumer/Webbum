@@ -542,11 +542,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     //passStringList << "-threads" << QString::number(1);
 
     // last pass exclusive parameters
-    passStringList << "-auto-alt-ref" << QString::number(1);
-    passStringList << "-lag-in-frames" << QString::number(25);
     if(!twoPass || passNumber != 1)
     {
-
+        passStringList << "-auto-alt-ref" << QString::number(1);
+        passStringList << "-lag-in-frames" << QString::number(25);
         if(vp9)
             passStringList << "-speed" << QString::number(0);
     }
