@@ -65,6 +65,8 @@ private slots:
     void encodePassFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void on_cancelPushButton_clicked();
 
+    void on_codecAudioComboBox_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     InputFile *inputFile;

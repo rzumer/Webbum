@@ -248,6 +248,9 @@
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
                 </property>
+                <property name="suffix">
+                 <string> px</string>
+                </property>
                 <property name="maximum">
                  <number>9999</number>
                 </property>
@@ -263,6 +266,9 @@
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="suffix">
+                 <string> px</string>
                 </property>
                 <property name="maximum">
                  <number>9999</number>
@@ -280,6 +286,9 @@
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
                 </property>
+                <property name="suffix">
+                 <string> px</string>
+                </property>
                 <property name="maximum">
                  <number>9999</number>
                 </property>
@@ -291,7 +300,7 @@
               <item row="3" column="1">
                <widget class="QLabel" name="label_15">
                 <property name="text">
-                 <string>Left (px):</string>
+                 <string>Left:</string>
                 </property>
                </widget>
               </item>
@@ -310,6 +319,9 @@
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
                 </property>
+                <property name="suffix">
+                 <string> px</string>
+                </property>
                 <property name="maximum">
                  <number>9999</number>
                 </property>
@@ -321,28 +333,28 @@
               <item row="3" column="2">
                <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>Right (px):</string>
+                 <string>Right:</string>
                 </property>
                </widget>
               </item>
               <item row="5" column="2">
                <widget class="QLabel" name="label_18">
                 <property name="text">
-                 <string>Bottom (px):</string>
+                 <string>Bottom:</string>
                 </property>
                </widget>
               </item>
               <item row="5" column="1">
                <widget class="QLabel" name="label_17">
                 <property name="text">
-                 <string>Top (px):</string>
+                 <string>Top:</string>
                 </property>
                </widget>
               </item>
               <item row="8" column="1">
                <widget class="QLabel" name="label_13">
                 <property name="text">
-                 <string>Width (px):</string>
+                 <string>Width:</string>
                 </property>
                </widget>
               </item>
@@ -353,6 +365,9 @@
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="suffix">
+                 <string> px</string>
                 </property>
                 <property name="maximum">
                  <number>9999</number>
@@ -365,7 +380,7 @@
               <item row="8" column="2">
                <widget class="QLabel" name="label_14">
                 <property name="text">
-                 <string>Height (px):</string>
+                 <string>Height:</string>
                 </property>
                </widget>
               </item>
@@ -376,6 +391,9 @@
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="suffix">
+                 <string> px</string>
                 </property>
                 <property name="maximum">
                  <number>9999</number>
@@ -429,6 +447,62 @@
              <zorder>resizeCheckBox</zorder>
              <zorder>resizeWidthAutomaticCheckBox</zorder>
              <zorder>resizeHeightAutomaticCheckBox</zorder>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QGroupBox" name="inputOutputGroupBox">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>Input/Output</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Output File:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="inputFileBrowsePushButton">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="outputFileBrowsePushButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="inputFileLineEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Input File:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="outputFileLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -515,14 +589,14 @@
               <item row="0" column="3">
                <widget class="QLabel" name="label_8">
                 <property name="text">
-                 <string>Target File Size (MB):</string>
+                 <string>Target File Size:</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="4">
                <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>Target Bit Rate (kbps):</string>
+                 <string>Target Bit Rate:</string>
                 </property>
                </widget>
               </item>
@@ -533,6 +607,9 @@
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="suffix">
+                 <string> kbps</string>
                 </property>
                 <property name="maximum">
                  <number>99999</number>
@@ -549,6 +626,9 @@
                 </property>
                 <property name="wrapping">
                  <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> MB</string>
                 </property>
                 <property name="decimals">
                  <number>3</number>
@@ -671,6 +751,13 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_22">
+                <property name="text">
+                 <string>Audio:</string>
+                </property>
+               </widget>
+              </item>
               <item row="1" column="0">
                <widget class="QComboBox" name="codecVideoComboBox">
                 <property name="enabled">
@@ -691,32 +778,48 @@
                 </item>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_22">
-                <property name="text">
-                 <string>Audio:</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="1">
-               <widget class="QComboBox" name="codecAudioComboBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::StrongFocus</enum>
-                </property>
+               <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
-                 <property name="text">
-                  <string>Opus</string>
-                 </property>
+                 <widget class="QComboBox" name="codecAudioComboBox">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Opus</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Vorbis</string>
+                   </property>
+                  </item>
+                 </widget>
                 </item>
                 <item>
-                 <property name="text">
-                  <string>Vorbis</string>
-                 </property>
+                 <widget class="QSpinBox" name="codecAudioBitRateSpinBox">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="suffix">
+                   <string> kbps</string>
+                  </property>
+                  <property name="minimum">
+                   <number>6</number>
+                  </property>
+                  <property name="maximum">
+                   <number>510</number>
+                  </property>
+                  <property name="value">
+                   <number>64</number>
+                  </property>
+                 </widget>
                 </item>
-               </widget>
+               </layout>
               </item>
              </layout>
             </widget>
@@ -748,62 +851,6 @@
                <widget class="QLineEdit" name="customFiltersLineEdit"/>
               </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QGroupBox" name="inputOutputGroupBox">
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="title">
-           <string>Input/Output</string>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Output File:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="inputFileBrowsePushButton">
-             <property name="text">
-              <string>Browse...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="outputFileBrowsePushButton">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Browse...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="inputFileLineEdit"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Input File:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="outputFileLineEdit">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
             </widget>
            </item>
           </layout>
@@ -893,6 +940,7 @@
   <tabstop>streamSubtitlesComboBox</tabstop>
   <tabstop>codecVideoComboBox</tabstop>
   <tabstop>codecAudioComboBox</tabstop>
+  <tabstop>codecAudioBitRateSpinBox</tabstop>
   <tabstop>customFiltersLineEdit</tabstop>
   <tabstop>customEncodingParametersLineEdit</tabstop>
   <tabstop>encodePushButton</tabstop>

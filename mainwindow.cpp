@@ -86,6 +86,8 @@ void MainWindow::processInputFile(QString &inputFilePath)
 
     // initialize crf in case the value is never modified
     outputFile->setCrf(ui->rateCRFSpinBox->value());
+    outputFile->setVideoCodec(ui->codecVideoComboBox->currentIndex());
+    outputFile->setAudioCodec(ui->codecAudioComboBox->currentIndex());
 
     connectSignalsAndSlots();
     populateStreamComboBoxes();
@@ -206,6 +208,9 @@ void MainWindow::clearInputFileFormData()
     ui->cropRightSpinBox->setMaximum(9998);
     ui->cropTopSpinBox->setMaximum(9998);
     ui->cropBottomSpinBox->setMaximum(9998);
+
+    // clear audio bitrate
+    ui->codecAudioBitRateSpinBox->setValue(64);
 
     // clear generated form fields
     ui->resizeWidthSpinBox->setMinimum(0);
@@ -464,6 +469,8 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         crf = outputFile->crf();
     }
 
+    int audioBitRate = ui->codecAudioBitRateSpinBox->value();
+
     QString customFilters = outputFile->customFilters().trimmed();
     QString customParameters = outputFile->customParameters().trimmed();
 
@@ -472,8 +479,8 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
     // calculate target bitrate and cropping if needed
     QTime computedDuration = getOutputDuration();
-    if(audioStream.isValid() && bitRate > 64)
-        bitRate -= 64;
+    if(audioStream.isValid() && bitRate > audioBitRate)
+        bitRate -= audioBitRate;
 
     int cropWidth = videoStream.width() - cropLeft - cropRight;
     int cropHeight = videoStream.height() - cropTop - cropBottom;
@@ -523,7 +530,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         if(!vp9)
         {
             passStringList << "-qmin" << QString::number(4);
-            passStringList << "-qmax" << QString::number(50);
+            passStringList << "-qmax" << QString::number(42);
         }
     }
 
@@ -535,10 +542,11 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     //passStringList << "-threads" << QString::number(1);
 
     // last pass exclusive parameters
+    passStringList << "-auto-alt-ref" << QString::number(1);
+    passStringList << "-lag-in-frames" << QString::number(25);
     if(!twoPass || passNumber != 1)
     {
-        passStringList << "-auto-alt-ref" << QString::number(1);
-        passStringList << "-lag-in-frames" << QString::number(25);
+
         if(vp9)
             passStringList << "-speed" << QString::number(0);
     }
@@ -615,7 +623,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         else
             passStringList << "-c:a:0." + QString::number(audioStream.id()) << "libopus";
 
-        passStringList << "-b:a" << "64k";
+        passStringList << "-b:a" << QString::number(audioBitRate) + "k";
     }
 
     // ignore subtitle streams
@@ -1102,9 +1110,15 @@ void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
 void MainWindow::on_streamAudioComboBox_currentIndexChanged(int index)
 {
     if(index == 0)
+    {
         ui->codecAudioComboBox->setEnabled(false);
+        ui->codecAudioBitRateSpinBox->setEnabled(false);
+    }
     else
+    {
         ui->codecAudioComboBox->setEnabled(true);
+        ui->codecAudioBitRateSpinBox->setEnabled(true);
+    }
 }
 
 void MainWindow::on_resizeWidthAutomaticCheckBox_toggled(bool checked)
@@ -1148,5 +1162,20 @@ void MainWindow::on_cancelPushButton_clicked()
     {
         ffmpegProcess->kill();
         ui->cancelPushButton->setEnabled(false);
+    }
+}
+
+void MainWindow::on_codecAudioComboBox_currentIndexChanged(const QString &arg1)
+{
+    QString selectedCodec = arg1;
+    if(selectedCodec == "Opus")
+    {
+        ui->codecAudioBitRateSpinBox->setMinimum(6);
+        ui->codecAudioBitRateSpinBox->setMaximum(510);
+    }
+    else if(selectedCodec == "Vorbis")
+    {
+        ui->codecAudioBitRateSpinBox->setMinimum(45);
+        ui->codecAudioBitRateSpinBox->setMaximum(500);
     }
 }
