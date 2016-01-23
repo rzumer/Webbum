@@ -77,6 +77,16 @@ void MainWindow::processInputFile(QString &inputFilePath)
     inputFile = new InputFile(this,inputFilePath);
     outputFile = new OutputFile(this,inputFilePath);
 
+    while(!outputFile->isValid())
+    {
+        QFileInfo file(outputFile->filePath());
+        QString outputFilePath = file.canonicalPath() + "/" + file.completeBaseName() + "_out.webm";
+        outputFile = new OutputFile(this,outputFilePath);
+    }
+
+    // initialize crf in case the value is never modified
+    outputFile->setCrf(ui->rateCRFSpinBox->value());
+
     connectSignalsAndSlots();
     populateStreamComboBoxes();
     initializeFormData();
@@ -508,14 +518,21 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
     // crf
     if(crf > -1)
+    {
         passStringList << "-crf" << QString::number(crf);
+        if(!vp9)
+        {
+            passStringList << "-qmin" << QString::number(4);
+            passStringList << "-qmax" << QString::number(50);
+        }
+    }
 
     // target bit rate
     if(!lossless && bitRate > 0)
         passStringList << "-b:v" << QString::number(bitRate).append("K");
 
     // threads/speed
-    passStringList << "-threads" << QString::number(1);
+    //passStringList << "-threads" << QString::number(1);
 
     // last pass exclusive parameters
     if(!twoPass || passNumber != 1)
@@ -624,7 +641,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << outputFilePath;
     }
 
-    qDebug() << passStringList;
+    qDebug() << passStringList.join(' ');
     /*QStringList dummy = QStringList();
     return dummy;*/
     return passStringList;
@@ -669,8 +686,6 @@ void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
 void MainWindow::on_outputFileLineEdit_textChanged(const QString &arg1)
 {
     QString outputFilePath = arg1;
-
-    ui->encodePushButton->setEnabled(false);
 
     outputFile->setFilePath(outputFilePath);
 
@@ -937,6 +952,7 @@ void MainWindow::on_encodePushButton_clicked()
 {
     ui->encodePushButton->setEnabled(false);
     ui->scrollArea->setEnabled(false);
+    ui->menuBar->setEnabled(false);
 
     // two pass encode
     QStringList firstPass = generatePass(1);
@@ -1018,6 +1034,7 @@ void MainWindow::activateUserInterface()
     ui->progressBar->setValue(0);
     ui->encodePushButton->setEnabled(false); // output file name conflict
     ui->scrollArea->setEnabled(true);
+    ui->menuBar->setEnabled(true);
 
     validateFormFields();
 }

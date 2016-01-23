@@ -30,14 +30,6 @@ void OutputFile::setFilePath(QString filePath)
 {
     QFileInfo file(filePath.trimmed());
     _filePath = file.filePath();
-
-    while(file.exists())
-    {
-        _filePath = file.canonicalPath() + "/" + file.completeBaseName() + "_out.webm";
-        file = QFileInfo(_filePath);
-    }
-
-    emit outputFileChanged(_filePath);
 }
 
 void OutputFile::setBitRateForBytes(double sizeInBytes, double durationInMSecs)

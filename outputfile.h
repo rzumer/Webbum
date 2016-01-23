@@ -53,9 +53,6 @@ private:
     QString _customFilters;
     QString _customParameters;
 
-signals:
-    void outputFileChanged(QString filePath);
-
 public slots:
     void setFilePath(QString filePath);
     void setVideoCodec(OutputVideoCodec videoCodec) { _videoCodec = videoCodec; }
