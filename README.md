@@ -3,10 +3,7 @@ A VP8 and VP9 WebM video encoder.
 
 It is an interface for ffmpeg.
 
-Known restrictions:  
-* 64kbps audio only (Opus/Vorbis codec restricted by the WebM format)  
-
-Any feedback is appreciated. Please use the Issues system to leave any constructive comments, questions, feature requests, or bug reports.
+Any feedback is appreciated.
 
 # Compilation
 On Linux, the following packages are required (tested on Debian Jessie):  
