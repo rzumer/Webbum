@@ -51,7 +51,6 @@ private slots:
     void on_resizeHeightSpinBox_editingFinished();
     void on_actionOpen_triggered();
     void on_encodePushButton_clicked();
-    void on_cancelPushButton_clicked();
     void on_rateTargetFileSizeDoubleSpinBox_editingFinished();
     void on_rateTargetBitRateSpinBox_editingFinished();
     void on_trimDurationStartTimeEdit_editingFinished();
@@ -63,25 +62,28 @@ private slots:
     void on_resizeHeightAutomaticCheckBox_toggled(bool checked);
     void on_resizeCheckBox_toggled(bool checked);
     void on_actionExit_triggered();
-    void encodePassFinished(int, QProcess::ExitStatus exitStatus);
+    void encodePassFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void on_cancelPushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     InputFile *inputFile;
     OutputFile *outputFile;
+    QProcess *ffmpegProcess;
     void refreshTargetMode(QString &currentTargetMode);
     void processInputFile(QString &inputFilePath);
     void clearInputFileFormData();
     void populateStreamComboBoxes();
     void initializeFormData();
     QStringList generatePass(int passNumber, bool twoPass = true);
-    QProcess *encodePass(QStringList &encodingParameters);
+    void encodePass(QStringList &encodingParameters);
     void validateFormFields();
     void updateProgressBar();
     QTime getOutputDuration();
     void connectSignalsAndSlots();
     void cleanTemporaryFiles();
     void activateUserInterface();
+    bool passFileExists();
 };
 
 #endif // MAINWINDOW_H

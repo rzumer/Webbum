@@ -1,4 +1,5 @@
 #include "inputstream.h"
+#include <qDebug>
 
 InputStream::InputStream(AVStream *stream, int id)
 {
