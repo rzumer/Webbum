@@ -64,11 +64,8 @@ private slots:
     void on_actionExit_triggered();
     void encodePassFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void on_cancelPushButton_clicked();
-
     void on_codecAudioComboBox_currentIndexChanged(const QString &arg1);
-
     void on_trimStartEndRadioButton_clicked();
-
     void on_trimDurationRadioButton_clicked();
 
 private:
@@ -92,6 +89,7 @@ private:
     bool passFileExists();
     double getTargetFileSize();
     QString getFilterString(QString rawString);
+    void adjustSubtitles();
 };
 
 #endif // MAINWINDOW_H

@@ -18,7 +18,8 @@ bool OutputFile::isValid(QString outputFilePath)
 {
     QFileInfo file(outputFilePath);
     QFileInfo directory(file.path());
-    return !file.baseName().isEmpty() && !file.exists() && directory.exists() && directory.isWritable();
+    return !file.baseName().isEmpty() && !file.exists() && directory.exists() && directory.isWritable()
+            && !file.canonicalFilePath().contains("'");
 }
 
 bool OutputFile::isValid()
@@ -28,7 +29,7 @@ bool OutputFile::isValid()
 
 void OutputFile::setFilePath(QString filePath)
 {
-    QFileInfo file(filePath.trimmed());
+    QFileInfo file(QDir::cleanPath(filePath.trimmed()));
     _filePath = file.filePath();
 }
 

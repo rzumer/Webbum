@@ -92,3 +92,8 @@ InputStream::InputStream(AVStream *stream, int id)
     }
 }
 
+bool InputStream::isImageSub() const
+{
+    return (_type == StreamType::SUBTITLE && (_codec == "dvd_subtitle" || _codec == "hdmv_pgs_subtitle"));
+}
+
