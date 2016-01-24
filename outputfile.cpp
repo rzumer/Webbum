@@ -1,5 +1,4 @@
 #include "outputfile.h"
-#include <qDebug>
 
 OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent)
 {
