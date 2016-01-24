@@ -1,3 +1,4 @@
+- Fix seeking with text subtitles
 - Mod2 resizing support (e.g. 640:-2)
 - Finetune encoding settings
 - Implement Avisynth input support
