@@ -440,8 +440,8 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     int cropRight = 0;
     int cropTop = 0;
     int cropBottom = 0;
-    int width = -1;
-    int height = -1;
+    int width = -2; // mod2 if automatic
+    int height = -2; // mod2 if automatic
     if(ui->cropCheckBox->isChecked())
     {
         cropLeft = outputFile->cropLeft();
