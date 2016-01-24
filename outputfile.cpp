@@ -1,4 +1,5 @@
 #include "outputfile.h"
+#include <qDebug>
 
 OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent)
 {
@@ -7,19 +8,19 @@ OutputFile::OutputFile(QObject *parent, QString outputFilePath) : QObject(parent
     _cropTop = 0;
     _cropBottom = 0;
 
-    QFileInfo file(outputFilePath.trimmed());
+    QFileInfo file(outputFilePath);
     if(file.exists())
         setFilePath(file.canonicalPath() + "/" + file.completeBaseName() + ".webm");
     else
-        setFilePath(file.filePath());
+        setFilePath(file.absoluteFilePath());
 }
 
 bool OutputFile::isValid(QString outputFilePath)
 {
     QFileInfo file(outputFilePath);
     QFileInfo directory(file.path());
-    return !file.baseName().isEmpty() && !file.exists() && directory.exists() && directory.isWritable()
-            && !file.canonicalFilePath().contains("'");
+    return !file.baseName().isEmpty() && !file.exists() && directory.exists() && directory.isWritable();
+            //&& !file.absoluteFilePath().contains("'");
 }
 
 bool OutputFile::isValid()
@@ -30,7 +31,7 @@ bool OutputFile::isValid()
 void OutputFile::setFilePath(QString filePath)
 {
     QFileInfo file(QDir::cleanPath(filePath.trimmed()));
-    _filePath = file.filePath();
+    _filePath = file.absoluteFilePath();
 }
 
 void OutputFile::setBitRateForBytes(double sizeInBytes, double durationInMSecs)

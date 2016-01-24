@@ -77,11 +77,12 @@ void MainWindow::processInputFile(QString &inputFilePath)
     inputFile = new InputFile(this,inputFilePath);
     outputFile = new OutputFile(this,inputFilePath);
 
-    while(!outputFile->isValid())
+    if(!outputFile->isValid())
     {
         QFileInfo file(outputFile->filePath());
-        QString outputFilePath = file.canonicalPath() + "/" + file.completeBaseName() + "_out.webm";
-        outputFile = new OutputFile(this,outputFilePath);
+        QString outputFilePath = file.absolutePath() + "/" + file.completeBaseName() + "_out.webm";
+        if(OutputFile::isValid(outputFilePath))
+            outputFile = new OutputFile(this,outputFilePath);
     }
 
     // initialize crf in case the value is never modified
@@ -502,8 +503,11 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     // lossless shortcut
     bool lossless = bitRate == -1 && crf == -1;
 
+    // fast seeking compatible shortcut
+    bool fastSeek = subtitleStream.isImageSub() || !subtitleStream.isValid();
+
     // input - text subtitles
-    if(!subtitleStream.isImageSub())
+    if(!fastSeek)
         passStringList << "-i" << inputFilePath;
 
     // seeking/trimming
@@ -517,7 +521,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     }
 
     // input - image subtitles
-    if(subtitleStream.isImageSub())
+    if(fastSeek)
         passStringList << "-i" << inputFilePath;
 
     // video codec
@@ -697,7 +701,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
     // output file
     if(twoPass && passNumber == 1)
-        passStringList << QDir::toNativeSeparators(QFileInfo(outputFilePath).canonicalPath() + "/temp/null");
+        passStringList << QDir::cleanPath(QFileInfo(outputFilePath).absolutePath() + "/temp/null");
     else
         passStringList << outputFilePath;
 
@@ -1021,8 +1025,9 @@ void MainWindow::on_encodePushButton_clicked()
 
     QDir outputDirectory = QFileInfo(outputFile->filePath()).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
+
     if(!tempDirectory.exists())
-        QDir().mkdir(tempDirectory.canonicalPath());
+        QDir().mkdir(tempDirectory.path());
 
     encodePass(firstPass);
 }
