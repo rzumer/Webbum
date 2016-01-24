@@ -10,6 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
 
+win32:RC_ICONS += $$PWD/icon.ico
+
 win32
 {
     !contains(QMAKE_TARGET.arch, x86_64) {
