@@ -383,12 +383,6 @@ void MainWindow::connectSignalsAndSlots()
     connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));
 }
 
-void MainWindow::adjustSubtitles()
-{
-    QString inputFilePath = inputFile->filePath();
-    InputStream subtitleStream = InputStream();
-}
-
 QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 {
     QString inputFilePath = inputFile->filePath();
@@ -508,6 +502,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     // lossless shortcut
     bool lossless = bitRate == -1 && crf == -1;
 
+    // input - text subtitles
+    if(!subtitleStream.isImageSub())
+        passStringList << "-i" << inputFilePath;
+
     // seeking/trimming
     if(startTime.isValid())
     {
@@ -518,8 +516,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << "-t" << computedDuration.toString("hh:mm:ss.zzz");
     }
 
-    // input
-    passStringList << "-i" << inputFilePath;
+    // input - image subtitles
+    if(subtitleStream.isImageSub())
+        passStringList << "-i" << inputFilePath;
 
     // video codec
     if(vp9)

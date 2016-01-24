@@ -89,7 +89,6 @@ private:
     bool passFileExists();
     double getTargetFileSize();
     QString getFilterString(QString rawString);
-    void adjustSubtitles();
 };
 
 #endif // MAINWINDOW_H
