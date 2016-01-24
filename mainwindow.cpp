@@ -92,6 +92,16 @@ void MainWindow::processInputFile(QString &inputFilePath)
     connectSignalsAndSlots();
     populateStreamComboBoxes();
     initializeFormData();
+
+    if(inputFilePath.contains("'") && ui->streamSubtitlesComboBox->currentIndex() > 0)
+    {
+        // see generatePass for subtitle bug involving filenames containing single quotes
+        ui->streamSubtitlesComboBox->setCurrentIndex(0);
+        ui->streamSubtitlesComboBox->setEnabled(false);
+        QString errorMessage = QString("This file name contains a single quotation mark ('), ")
+                + QString("which is unsupported by the subtitle filter.\n\nSubtitle support has been disabled.");
+        QMessageBox::warning(this,"Warning",errorMessage);
+    }
 }
 
 void MainWindow::populateStreamComboBoxes()
@@ -567,6 +577,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     {
         passStringList << "-quality" << "good";
         passStringList << "-cpu-used" << QString::number(0);
+        // TODO: calculate width and height of the output (based on aspect ratio)
+        // 4 slices for anything larger than PAL DVD, else 1
+        //passStringList << "-slices" << QString::number(slices);
     }
 
     // filters
@@ -583,7 +596,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
-    if(subtitleStream.isValid())
+    if(subtitleStream.isValid() && subtitleStream.codec() != "dvd_subtitle") // TODO detect what formats are supported
     {
         if(!filterChain.isEmpty())
             filterChain.append(",");
@@ -594,9 +607,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
             if(inputFile->stream(i).type() == InputStream::SUBTITLE)
                 subtitleStreamNumber++;
         }
+        // Bug: filenames with single quotation marks cannot be used as input files with subs enabled
         filterChain.append(QString("subtitles='" + inputFilePath.replace(":","\\:") + "':si=" + QString::number(subtitleStreamNumber))
-                           .replace("'","\\'").replace("[","\\[").replace("]","\\]")
-                           .replace(",","\\,").replace(";","\\;"));
+                           .replace("'","\\'").replace("[","\\[").replace("]","\\]").replace(",","\\,")
+                           .replace(";","\\;"));//.replace("\\","\\\\").replace("\\\\'","\\\\\\'"));
     }
     if(!customFilters.isEmpty())
     {
@@ -625,8 +639,13 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << "-b:a" << QString::number(audioBitRate) + "k";
     }
 
-    // ignore subtitle streams
-    passStringList << "-sn";
+    // subtitle streams
+    /*if(subtitleStream.codec() == "dvd_subtitle") // TODO detect what formats are supported
+    {
+        // do stuff
+    }
+    else*/
+        passStringList << "-sn";
 
     // scaling algorithm
     passStringList << "-sws_flags" << "lanczos";
@@ -648,7 +667,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << outputFilePath;
     }
 
-    qDebug() << passStringList.join(' ');
+    qDebug().noquote() << passStringList.join(' ');
     /*QStringList dummy = QStringList();
     return dummy;*/
     return passStringList;
