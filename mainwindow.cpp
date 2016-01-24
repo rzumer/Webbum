@@ -584,6 +584,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
     // filters
     QString filterChain;
+    QString complexFilterChain;
     if(cropWidth < videoStream.width() && cropHeight < videoStream.height())
     {
         filterChain.append("crop=" + QString::number(cropWidth) + ":" + QString::number(cropHeight) +
@@ -596,21 +597,39 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
-    if(subtitleStream.isValid() && subtitleStream.codec() != "dvd_subtitle") // TODO detect what formats are supported
+    if(subtitleStream.isValid())
     {
-        if(!filterChain.isEmpty())
-            filterChain.append(",");
-
         int subtitleStreamNumber = 0;
+        int videoStreamNumber = 0;
         for(int i = 0; i < subtitleStream.id(); i++)
         {
             if(inputFile->stream(i).type() == InputStream::SUBTITLE)
                 subtitleStreamNumber++;
         }
-        // Bug: filenames with single quotation marks cannot be used as input files with subs enabled
-        filterChain.append(QString("subtitles='" + inputFilePath.replace(":","\\:") + "':si=" + QString::number(subtitleStreamNumber))
-                           .replace("'","\\'").replace("[","\\[").replace("]","\\]").replace(",","\\,")
-                           .replace(";","\\;"));//.replace("\\","\\\\").replace("\\\\'","\\\\\\'"));
+        for(int i = 0; i < videoStream.id(); i++)
+        {
+            if(inputFile->stream(i).type() == InputStream::VIDEO)
+                videoStreamNumber++;
+        }
+
+        if(subtitleStream.codec() == "dvd_subtitle") // TODO detect what formats are supported
+        {
+            QString subtitleID = "[0:s:" + QString::number(subtitleStreamNumber) + "]";
+            QString videoID = "[0:v:" + QString::number(videoStreamNumber) + "]";
+
+            complexFilterChain.append(videoID);
+            complexFilterChain.append(subtitleID);
+            complexFilterChain.append("overlay[vid];[vid]");
+            complexFilterChain.append(filterChain);
+        }
+        else
+        {
+            if(!filterChain.isEmpty())
+                filterChain.append(",");
+
+            // Bug: filenames with single quotation marks cannot be used as input files with subs enabled
+            filterChain.append(QString("subtitles=" + getFilterString("'" + inputFilePath + "'") + ":si=" + QString::number(subtitleStreamNumber)));
+        }
     }
     if(!customFilters.isEmpty())
     {
@@ -618,8 +637,17 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
             filterChain.append(",");
 
         filterChain.append(customFilters);
+
+        if(!complexFilterChain.isEmpty())
+            complexFilterChain.append(",");
+
+        complexFilterChain.append(customFilters);
     }
-    if(!filterChain.isEmpty())
+    if(!complexFilterChain.isEmpty())
+    {
+        passStringList << "-filter_complex" << complexFilterChain;
+    }
+    else if(!filterChain.isEmpty())
     {
         passStringList << "-vf" << filterChain;
     }
@@ -639,13 +667,8 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << "-b:a" << QString::number(audioBitRate) + "k";
     }
 
-    // subtitle streams
-    /*if(subtitleStream.codec() == "dvd_subtitle") // TODO detect what formats are supported
-    {
-        // do stuff
-    }
-    else*/
-        passStringList << "-sn";
+    // ignore subtitle streams
+    passStringList << "-sn";
 
     // scaling algorithm
     passStringList << "-sws_flags" << "lanczos";
@@ -1073,7 +1096,7 @@ void MainWindow::on_rateTargetFileSizeDoubleSpinBox_editingFinished()
 void MainWindow::on_rateTargetBitRateSpinBox_editingFinished()
 {   
     if(inputFile->isValid())
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 
     validateFormFields();
 }
@@ -1088,7 +1111,7 @@ void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
         ui->trimDurationDurationTimeEdit->setMaximumTime(maxDuration);
 
         if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
-            ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+            ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
     }
 
     validateFormFields();
@@ -1097,7 +1120,7 @@ void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
 void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 
     validateFormFields();
 }
@@ -1105,7 +1128,19 @@ void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 void MainWindow::on_trimNoneRadioButton_clicked()
 {
     if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
-        ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
+}
+
+void MainWindow::on_trimStartEndRadioButton_clicked()
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
+}
+
+void MainWindow::on_trimDurationRadioButton_clicked()
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 }
 
 void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
@@ -1196,4 +1231,16 @@ void MainWindow::on_codecAudioComboBox_currentIndexChanged(const QString &arg1)
         ui->codecAudioBitRateSpinBox->setMinimum(45);
         ui->codecAudioBitRateSpinBox->setMaximum(500);
     }
+}
+
+double MainWindow::getTargetFileSize()
+{
+    return inputFile->fileSizeInMegabytes(getOutputDuration())
+            / inputFile->bitRateInKilobits() * ui->rateTargetBitRateSpinBox->value();
+}
+
+QString MainWindow::getFilterString(QString rawString)
+{
+    return rawString.replace(":","\\:").replace("'","\\'").replace("[","\\[").replace("]","\\]").replace(",","\\,")
+    .replace(";","\\;");//.replace("\\","\\\\").replace("\\\\'","\\\\\\'"));
 }

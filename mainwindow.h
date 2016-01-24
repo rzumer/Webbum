@@ -67,6 +67,10 @@ private slots:
 
     void on_codecAudioComboBox_currentIndexChanged(const QString &arg1);
 
+    void on_trimStartEndRadioButton_clicked();
+
+    void on_trimDurationRadioButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     InputFile *inputFile;
@@ -86,6 +90,8 @@ private:
     void cleanTemporaryFiles();
     void activateUserInterface();
     bool passFileExists();
+    double getTargetFileSize();
+    QString getFilterString(QString rawString);
 };
 
 #endif // MAINWINDOW_H
