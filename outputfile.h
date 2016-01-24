@@ -32,7 +32,6 @@ public:
     int cropBottom() const { return _cropBottom; }
     QString customFilters() const { return _customFilters; }
     QString customParameters() const { return _customParameters; }
-
     static bool isValid(QString outputFilePath);
     bool isValid();
 

@@ -93,15 +93,17 @@ void MainWindow::processInputFile(QString &inputFilePath)
     populateStreamComboBoxes();
     initializeFormData();
 
+    /*
     if(inputFilePath.contains("'") && ui->streamSubtitlesComboBox->currentIndex() > 0)
     {
         // see generatePass for subtitle bug involving filenames containing single quotes
+        // commented out, as it does not apply to image subtitles...
         ui->streamSubtitlesComboBox->setCurrentIndex(0);
         ui->streamSubtitlesComboBox->setEnabled(false);
-        QString errorMessage = QString("This file name contains a single quotation mark ('), ")
+        QString errorMessage = QString("This file path contains a single quotation mark ('), ")
                 + QString("which is unsupported by the subtitle filter.\n\nSubtitle support has been disabled.");
         QMessageBox::warning(this,"Warning",errorMessage);
-    }
+    }*/
 }
 
 void MainWindow::populateStreamComboBoxes()
@@ -381,6 +383,12 @@ void MainWindow::connectSignalsAndSlots()
     connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));
 }
 
+void MainWindow::adjustSubtitles()
+{
+    QString inputFilePath = inputFile->filePath();
+    InputStream subtitleStream = InputStream();
+}
+
 QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 {
     QString inputFilePath = inputFile->filePath();
@@ -500,10 +508,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     // lossless shortcut
     bool lossless = bitRate == -1 && crf == -1;
 
-    // input
-    passStringList << "-i" << inputFilePath;
-
-    // trimming
+    // seeking/trimming
     if(startTime.isValid())
     {
         passStringList << "-ss" << startTime.toString("hh:mm:ss.zzz");
@@ -512,6 +517,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     {
         passStringList << "-t" << computedDuration.toString("hh:mm:ss.zzz");
     }
+
+    // input
+    passStringList << "-i" << inputFilePath;
 
     // video codec
     if(vp9)
@@ -612,15 +620,19 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
                 videoStreamNumber++;
         }
 
-        if(subtitleStream.codec() == "dvd_subtitle") // TODO detect what formats are supported
+        if(subtitleStream.isImageSub())
         {
             QString subtitleID = "[0:s:" + QString::number(subtitleStreamNumber) + "]";
             QString videoID = "[0:v:" + QString::number(videoStreamNumber) + "]";
 
             complexFilterChain.append(videoID);
             complexFilterChain.append(subtitleID);
-            complexFilterChain.append("overlay[vid];[vid]");
-            complexFilterChain.append(filterChain);
+            complexFilterChain.append("overlay");
+            if(!filterChain.isEmpty())
+            {
+                complexFilterChain.append("[vid];[vid]");
+                complexFilterChain.append(filterChain);
+            }
         }
         else
         {
@@ -631,17 +643,21 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
             filterChain.append(QString("subtitles=" + getFilterString("'" + inputFilePath + "'") + ":si=" + QString::number(subtitleStreamNumber)));
         }
     }
+
     if(!customFilters.isEmpty())
     {
-        if(!filterChain.isEmpty())
+        if(!complexFilterChain.isEmpty())
+        {
+            if(!filterChain.isEmpty())
+                complexFilterChain.append(",");
+            else
+                complexFilterChain.append("[vid];[vid]");
+            complexFilterChain.append(customFilters);
+        }
+        else if(!filterChain.isEmpty())
             filterChain.append(",");
 
         filterChain.append(customFilters);
-
-        if(!complexFilterChain.isEmpty())
-            complexFilterChain.append(",");
-
-        complexFilterChain.append(customFilters);
     }
     if(!complexFilterChain.isEmpty())
     {
@@ -682,13 +698,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
     // output file
     if(twoPass && passNumber == 1)
-    {
-        passStringList << QDir::toNativeSeparators(QFileInfo(outputFilePath).absolutePath() + "/temp/null");
-    }
+        passStringList << QDir::toNativeSeparators(QFileInfo(outputFilePath).canonicalPath() + "/temp/null");
     else
-    {
         passStringList << outputFilePath;
-    }
 
     qDebug().noquote() << passStringList.join(' ');
     /*QStringList dummy = QStringList();
@@ -1011,7 +1023,7 @@ void MainWindow::on_encodePushButton_clicked()
     QDir outputDirectory = QFileInfo(outputFile->filePath()).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
     if(!tempDirectory.exists())
-        QDir().mkdir(tempDirectory.absolutePath());
+        QDir().mkdir(tempDirectory.canonicalPath());
 
     encodePass(firstPass);
 }

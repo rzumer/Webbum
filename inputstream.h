@@ -28,8 +28,8 @@ public:
     int height() const { return _height; }
     int bitRate() const { return _bitRate; }
     QString channelLayout() const { return _channelLayout; }
-
     bool isValid() { return _id != -1; }
+    bool isImageSub() const;
 
 private:
     int _id;
