@@ -397,6 +397,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     int videoStreamCounter = ui->streamVideoComboBox->currentIndex() - 1;
     int audioStreamCounter = ui->streamAudioComboBox->currentIndex() - 1;
     int subtitleStreamCounter = ui->streamSubtitlesComboBox->currentIndex() - 1;
+
     for(int i = 0; i < inputFile->streamCount(); i++)
     {
         InputStream stream = inputFile->stream(i);
@@ -405,22 +406,19 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         {
             if(videoStreamCounter == 0)
                 videoStream = stream;
-            else
-                --videoStreamCounter;
+            --videoStreamCounter;
         }
         else if(stream.type() == InputStream::AUDIO)
         {
             if(audioStreamCounter == 0)
                 audioStream = stream;
-            else
-                --audioStreamCounter;
+            --audioStreamCounter;
         }
         else if(stream.type() == InputStream::SUBTITLE)
         {
             if(subtitleStreamCounter == 0)
                 subtitleStream = stream;
-            else
-                --subtitleStreamCounter;
+            --subtitleStreamCounter;
         }
     }
     bool vp9 = outputFile->videoCodec() == OutputFile::VP9;
