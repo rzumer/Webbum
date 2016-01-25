@@ -484,7 +484,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         crf = outputFile->crf();
     }
 
-    int audioBitRate = ui->codecAudioBitRateSpinBox->value() * audioStream.channels();
+    int audioBitRate = ui->codecAudioBitRateSpinBox->value() * 2;//audioStream.channels();
 
     QString customFilters = outputFile->customFilters().trimmed();
     QString customParameters = outputFile->customParameters().trimmed();
@@ -685,6 +685,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         else
             passStringList << "-c:a:0." + QString::number(audioStream.id()) << "libopus";
 
+        passStringList << "-ac" << QString::number(2); // 2 channels
         passStringList << "-b:a" << QString::number(audioBitRate) + "k";
     }
 
