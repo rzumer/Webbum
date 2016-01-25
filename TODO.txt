@@ -1,5 +1,5 @@
-- Fix seeking with text subtitles
-- Mod2 resizing support (e.g. 640:-2)
+- Fix seeking with text subtitles (if possible)
+- Use 4 slices when video resolution is 720p or above (compute output pixel count)
 - Finetune encoding settings
 - Implement Avisynth input support
 - Implement encoding by frame number
