@@ -426,6 +426,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     bool vorbis = outputFile->audioCodec() == OutputFile::VORBIS;
 
     QTime startTime, endTime;
+    outputFile->setStartTime(QTime(0,0));
+    outputFile->setEndTime(getOutputDuration());
+
     if(ui->trimStartEndRadioButton->isChecked())
         outputFile->setStartTime(ui->trimStartEndStartTimeEdit->time());
     else if(ui->trimDurationRadioButton->isChecked())
