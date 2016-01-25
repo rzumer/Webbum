@@ -1042,6 +1042,8 @@ void MainWindow::on_encodePushButton_clicked()
 
 void MainWindow::encodePassFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    ui->cancelPushButton->setEnabled(false);
+
     if(exitCode != 0 || exitStatus == QProcess::CrashExit)
     {
         // recover from crash
