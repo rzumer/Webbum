@@ -84,6 +84,7 @@ InputStream::InputStream(AVStream *stream, int id)
                 _bitRate = 0;
 
             // Channel Layout
+            _channels = stream->codec->channels;
             char buf[256];
             av_get_channel_layout_string(buf,sizeof(buf),
                 stream->codec->channels,stream->codec->channel_layout);

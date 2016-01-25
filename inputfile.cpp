@@ -22,7 +22,7 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
                 for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
                 {
                     AVStream *currentStream = formatContext->streams[i];
-                    InputStream localStream = InputStream(currentStream, i);
+                    InputStream localStream = InputStream(currentStream, currentStream->id);
                     if(localStream.width() + localStream.height() > _width + _height)
                     {
                         _width = localStream.width();
