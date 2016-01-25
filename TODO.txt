@@ -1,3 +1,4 @@
+- Log encoding strings and possibly ffmpeg output locally for easier diagnostics
 - Fix seeking with text subtitles (if possible)
 - Use 4 slices when video resolution is 720p or above (compute output pixel count)
 - Finetune encoding settings
