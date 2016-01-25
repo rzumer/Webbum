@@ -1,9 +1,15 @@
 # Webbum
-A VP8 and VP9 WebM video encoder.
+A VP8 and VP9 WebM video encoder, using ffmpeg.
 
-It is an interface for ffmpeg.
-
-Any feedback is appreciated.
+# Features
+- Support for multiple video, audio and subtitle streams
+- Support for common text and image subtitle formats
+- Support for all VP8 and VP9 features and rate control modes
+- Support for target file size input
+- Support for trimming by chapter markers
+- Dynamic UI that enters proposed values automatically based on input
+- High quality default encoding settings
+- Advanced filtering and encoding parameter input
 
 # Compilation
 On Linux, the following packages are required (tested on Debian Jessie):  
