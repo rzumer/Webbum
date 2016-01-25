@@ -27,6 +27,7 @@ public:
     int width() const { return _width; }
     int height() const { return _height; }
     int bitRate() const { return _bitRate; }
+    int channels() const { return _channels; }
     QString channelLayout() const { return _channelLayout; }
     bool isValid() { return _id != -1; }
     bool isImageSub() const;
@@ -44,6 +45,7 @@ private:
     int _width; // video only
     int _height; // video only
     int _bitRate; // audio only
+    int _channels; // audio only
     QString _channelLayout; // audio only
 };
 

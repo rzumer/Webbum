@@ -393,6 +393,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     InputStream videoStream = InputStream();
     InputStream audioStream = InputStream();
     InputStream subtitleStream = InputStream();
+
     int videoStreamCounter = ui->streamVideoComboBox->currentIndex() - 1;
     int audioStreamCounter = ui->streamAudioComboBox->currentIndex() - 1;
     int subtitleStreamCounter = ui->streamSubtitlesComboBox->currentIndex() - 1;
@@ -405,21 +406,21 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
             if(videoStreamCounter == 0)
                 videoStream = stream;
             else
-                videoStreamCounter--;
+                --videoStreamCounter;
         }
         else if(stream.type() == InputStream::AUDIO)
         {
             if(audioStreamCounter == 0)
                 audioStream = stream;
             else
-                audioStreamCounter--;
+                --audioStreamCounter;
         }
         else if(stream.type() == InputStream::SUBTITLE)
         {
             if(subtitleStreamCounter == 0)
                 subtitleStream = stream;
             else
-                subtitleStreamCounter--;
+                --subtitleStreamCounter;
         }
     }
     bool vp9 = outputFile->videoCodec() == OutputFile::VP9;
@@ -485,7 +486,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         crf = outputFile->crf();
     }
 
-    int audioBitRate = ui->codecAudioBitRateSpinBox->value();
+    int audioBitRate = ui->codecAudioBitRateSpinBox->value() * audioStream.channels();
 
     QString customFilters = outputFile->customFilters().trimmed();
     QString customParameters = outputFile->customParameters().trimmed();
