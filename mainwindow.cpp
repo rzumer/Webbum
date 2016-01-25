@@ -1263,3 +1263,15 @@ QString MainWindow::getFilterString(QString rawString)
     return rawString.replace(":","\\:").replace("'","\\'").replace("[","\\[").replace("]","\\]").replace(",","\\,")
     .replace(";","\\;");//.replace("\\","\\\\").replace("\\\\'","\\\\\\'"));
 }
+
+void MainWindow::on_trimStartEndStartChapterComboBox_currentIndexChanged(int index)
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
+}
+
+void MainWindow::on_trimStartEndEndChapterComboBox_currentIndexChanged(int index)
+{
+    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+        ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
+}
