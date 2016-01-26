@@ -528,9 +528,12 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
 
     // video codec
     if(vp9)
-        passStringList << "-c:v:0." + QString::number(videoStream.id()) << "libvpx-vp9";
+        passStringList << "-c:v" << "libvpx-vp9";
     else
-        passStringList << "-c:v:0." + QString::number(videoStream.id()) << "libvpx";
+        passStringList << "-c:v" << "libvpx";
+
+    // video stream
+    passStringList << "-map" << "0:v:" + QString::number(videoStream.index());
 
     // pass number
     if(twoPass) passStringList << "-pass" << QString::number(passNumber);
@@ -552,8 +555,8 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << "-crf" << QString::number(crf);
         if(!vp9)
         {
-            passStringList << "-qmin" << QString::number(4);
-            passStringList << "-qmax" << QString::number(42);
+            passStringList << "-qmin" << QString::number(0);
+            passStringList << "-qmax" << QString::number(50);
         }
     }
 
@@ -612,23 +615,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     }
     if(subtitleStream.isValid())
     {
-        int subtitleStreamNumber = 0;
-        int videoStreamNumber = 0;
-        for(int i = 0; i < subtitleStream.id(); i++)
-        {
-            if(inputFile->stream(i).type() == InputStream::SUBTITLE)
-                subtitleStreamNumber++;
-        }
-        for(int i = 0; i < videoStream.id(); i++)
-        {
-            if(inputFile->stream(i).type() == InputStream::VIDEO)
-                videoStreamNumber++;
-        }
-
         if(subtitleStream.isImageSub())
         {
-            QString subtitleID = "[0:s:" + QString::number(subtitleStreamNumber) + "]";
-            QString videoID = "[0:v:" + QString::number(videoStreamNumber) + "]";
+            QString subtitleID = "[0:s:" + QString::number(subtitleStream.index()) + "]";
+            QString videoID = "[0:v:" + QString::number(videoStream.index()) + "]";
 
             complexFilterChain.append(videoID);
             complexFilterChain.append(subtitleID);
@@ -645,7 +635,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
                 filterChain.append(",");
 
             // Bug: filenames with single quotation marks cannot be used as input files with subs enabled
-            filterChain.append(QString("subtitles=" + getFilterString("'" + inputFilePath + "'") + ":si=" + QString::number(subtitleStreamNumber)));
+            filterChain.append(QString("subtitles=" + getFilterString("'" + inputFilePath + "'") + ":si=" + QString::number(subtitleStream.index())));
         }
     }
 
@@ -681,10 +671,11 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     else
     {
         if(vorbis)
-            passStringList << "-c:a:0." + QString::number(audioStream.id()) << "libvorbis";
+            passStringList << "-c:a" << "libvorbis";
         else
-            passStringList << "-c:a:0." + QString::number(audioStream.id()) << "libopus";
+            passStringList << "-c:a" << "libopus";
 
+        passStringList << "-map" << "0:a:" + QString::number(audioStream.index());
         passStringList << "-ac" << QString::number(2); // 2 channels
         passStringList << "-b:a" << QString::number(audioBitRate) + "k";
     }

@@ -1,17 +1,21 @@
 #include "inputstream.h"
 
-InputStream::InputStream(AVStream *stream, int id)
+InputStream::InputStream(AVStream *stream, int index)
 {
-    _id = id;
+    _index = index;
     _isDefault = false;
     _isForced = false;
     _width = 0;
     _height = 0;
     _bitRate = 0;
+    _channels = 0;
 
     // Extract stream information
     if(stream)
     {
+        // ID
+        _id = stream->id > 0 ? stream->id : stream->index;
+
         // Language
         AVDictionaryEntry *language = av_dict_get(stream->metadata,"language",NULL,0);
         if(language)

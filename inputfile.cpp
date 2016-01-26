@@ -18,12 +18,25 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
         {
             if(avformat_find_stream_info(formatContext,NULL) >= 0)
             {
+                int videoStreamIndex = 0;
+                int audioStreamIndex = 0;
+                int subtitleStreamIndex = 0;
+
                 // Streams
                 for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
                 {
                     AVStream *currentStream = formatContext->streams[i];
-                    int currentStreamID = currentStream->id > 0 ? currentStream->id : currentStream->index;
-                    InputStream localStream = InputStream(currentStream, currentStreamID);
+                    InputStream localStream;
+
+                    if(currentStream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+                        localStream = InputStream(currentStream, videoStreamIndex++);
+                    else if(currentStream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+                        localStream = InputStream(currentStream, audioStreamIndex++);
+                    else if(currentStream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
+                        localStream = InputStream(currentStream, subtitleStreamIndex++);
+                    else
+                        localStream = InputStream(currentStream);
+
                     if(localStream.width() + localStream.height() > _width + _height)
                     {
                         _width = localStream.width();

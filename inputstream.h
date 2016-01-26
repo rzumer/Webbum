@@ -12,10 +12,11 @@ class InputStream
 {
 public:
     enum StreamType {VIDEO, AUDIO, SUBTITLE, OTHER};
-    explicit InputStream(AVStream *stream = NULL, int id = -1);
+    explicit InputStream(AVStream *stream = NULL, int index = -1);
 
     // getters
     int id() const { return _id; }
+    int index() const { return _index; }
     QString codec() const { return _codec; }
     QString profile() const { return _profile; }
     QString title() const { return _title; }
@@ -29,11 +30,12 @@ public:
     int bitRate() const { return _bitRate; }
     int channels() const { return _channels; }
     QString channelLayout() const { return _channelLayout; }
-    bool isValid() { return _id != -1; }
+    bool isValid() { return _index != -1; }
     bool isImageSub() const;
 
 private:
     int _id;
+    int _index;
     QString _codec;
     QString _profile;
     QString _title;
