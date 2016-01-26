@@ -14,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->processingGroupBox->setEnabled(false);
     ui->encodingGroupBox->setEnabled(false);
 
+    // local variables
+#ifdef Q_OS_WIN32
+    taskBarButton = new QWinTaskbarButton(this);
+#endif
     inputFile = new InputFile();
     outputFile = new OutputFile();
     ffmpegProcess = new QProcess(this);
@@ -22,6 +26,17 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::showEvent(QShowEvent *e)
+{
+#ifdef Q_OS_WIN32
+    taskBarButton->setWindow(windowHandle());
+    taskBarProgress = taskBarButton->progress();
+    connect(ui->progressBar,SIGNAL(valueChanged(int)),taskBarProgress,SLOT(setValue(int)));
+#endif
+
+    e->accept();
 }
 
 void MainWindow::dropEvent(QDropEvent *ev)
@@ -728,6 +743,9 @@ void MainWindow::encodePass(QStringList &encodingParameters)
 
     ffmpegProcess->start("ffmpeg",encodingParameters);
 
+#ifdef Q_OS_WIN32
+    taskBarProgress->setVisible(true);
+#endif
     ui->cancelPushButton->setEnabled(true);
 }
 
@@ -1078,6 +1096,7 @@ void MainWindow::encodePassFinished(int exitCode, QProcess::ExitStatus exitStatu
     }
     else
     {
+        // last pass finished
         cleanTemporaryFiles();
 
         ui->progressBar->setValue(100);
@@ -1113,6 +1132,9 @@ bool MainWindow::passFileExists()
 
 void MainWindow::activateUserInterface()
 {
+#ifdef Q_OS_WIN32
+    taskBarProgress->setVisible(false);
+#endif
     ui->progressBar->setValue(0);
     ui->encodePushButton->setEnabled(false); // output file name conflict
     ui->scrollArea->setEnabled(true);
