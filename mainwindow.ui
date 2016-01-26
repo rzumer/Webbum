@@ -815,7 +815,7 @@
                    <number>510</number>
                   </property>
                   <property name="value">
-                   <number>64</number>
+                   <number>128</number>
                   </property>
                  </widget>
                 </item>
@@ -955,12 +955,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>184</x>
-     <y>268</y>
+     <x>137</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>306</x>
-     <y>266</y>
+     <x>234</x>
+     <y>264</y>
     </hint>
    </hints>
   </connection>
@@ -971,12 +971,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>184</x>
-     <y>268</y>
+     <x>137</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>437</x>
-     <y>266</y>
+     <x>332</x>
+     <y>264</y>
     </hint>
    </hints>
   </connection>
@@ -987,12 +987,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>184</x>
-     <y>338</y>
+     <x>137</x>
+     <y>324</y>
     </hint>
     <hint type="destinationlabel">
-     <x>306</x>
-     <y>336</y>
+     <x>234</x>
+     <y>326</y>
     </hint>
    </hints>
   </connection>
@@ -1003,12 +1003,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>184</x>
-     <y>338</y>
+     <x>137</x>
+     <y>324</y>
     </hint>
     <hint type="destinationlabel">
-     <x>437</x>
-     <y>336</y>
+     <x>332</x>
+     <y>326</y>
     </hint>
    </hints>
   </connection>
@@ -1019,12 +1019,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>536</y>
+     <x>132</x>
+     <y>482</y>
     </hint>
     <hint type="destinationlabel">
-     <x>307</x>
-     <y>567</y>
+     <x>232</x>
+     <y>508</y>
     </hint>
    </hints>
   </connection>
@@ -1035,12 +1035,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>536</y>
+     <x>132</x>
+     <y>482</y>
     </hint>
     <hint type="destinationlabel">
-     <x>437</x>
-     <y>567</y>
+     <x>332</x>
+     <y>508</y>
     </hint>
    </hints>
   </connection>
@@ -1051,12 +1051,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>408</y>
+     <x>132</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel">
-     <x>307</x>
-     <y>434</y>
+     <x>232</x>
+     <y>414</y>
     </hint>
    </hints>
   </connection>
@@ -1067,12 +1067,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>408</y>
+     <x>132</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel">
-     <x>437</x>
-     <y>434</y>
+     <x>332</x>
+     <y>414</y>
     </hint>
    </hints>
   </connection>
@@ -1083,12 +1083,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>408</y>
+     <x>132</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel">
-     <x>307</x>
-     <y>506</y>
+     <x>232</x>
+     <y>459</y>
     </hint>
    </hints>
   </connection>
@@ -1099,12 +1099,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>408</y>
+     <x>132</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel">
-     <x>437</x>
-     <y>506</y>
+     <x>332</x>
+     <y>459</y>
     </hint>
    </hints>
   </connection>
@@ -1115,12 +1115,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>124</x>
-     <y>523</y>
+     <x>132</x>
+     <y>482</y>
     </hint>
     <hint type="destinationlabel">
-     <x>218</x>
-     <y>585</y>
+     <x>232</x>
+     <y>531</y>
     </hint>
    </hints>
   </connection>
@@ -1131,12 +1131,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>74</x>
-     <y>530</y>
+     <x>103</x>
+     <y>482</y>
     </hint>
     <hint type="destinationlabel">
-     <x>366</x>
-     <y>590</y>
+     <x>332</x>
+     <y>531</y>
     </hint>
    </hints>
   </connection>
