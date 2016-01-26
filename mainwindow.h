@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtCore>
 #include <QtWidgets>
+#include <QtWinExtras>
 #include "inputfile.h"
 #include "outputfile.h"
 #include "inputstream.h"
@@ -27,6 +28,7 @@ public:
     ~MainWindow();
 
 protected:
+    void showEvent(QShowEvent *e);
     void dropEvent(QDropEvent *ev);
     void dragEnterEvent(QDragEnterEvent *ev) { ev->accept(); }
 
@@ -70,6 +72,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+#ifdef Q_OS_WIN32
+    QWinTaskbarButton *taskBarButton;
+    QWinTaskbarProgress *taskBarProgress;
+#endif
     InputFile *inputFile;
     OutputFile *outputFile;
     QProcess *ffmpegProcess;
