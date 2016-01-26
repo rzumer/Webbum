@@ -1,8 +1,8 @@
 # Webbum
 A VP8 and VP9 WebM video encoder, using ffmpeg.
 
-![](http://cyprienne.me/webbum/shot1.png)
-![](http://cyprienne.me/webbum/shot2.png)
+![](http://cyprienne.me/webbum/shot1.png?raw=true)
+![](http://cyprienne.me/webbum/shot2.png?raw=true)
 
 # Features
 - Support for multiple video, audio and subtitle streams
