@@ -223,7 +223,7 @@ void MainWindow::clearInputFileFormData()
     ui->cropBottomSpinBox->setMaximum(9998);
 
     // clear audio bitrate
-    ui->codecAudioBitRateSpinBox->setValue(64);
+    ui->codecAudioBitRateSpinBox->setValue(128);
 
     // clear generated form fields
     ui->resizeWidthSpinBox->setMinimum(0);
@@ -484,7 +484,8 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         crf = outputFile->crf();
     }
 
-    int audioBitRate = (int)(round(ui->codecAudioBitRateSpinBox->value() * ((double)audioStream.channels() / 2)));
+    int audioBitRate = ui->codecAudioBitRateSpinBox->value();
+    //(int)(round(ui->codecAudioBitRateSpinBox->value() * ((double)audioStream.channels() / 2))); if based on stereo bitrate
 
     QString customFilters = outputFile->customFilters().trimmed();
     QString customParameters = outputFile->customParameters().trimmed();
@@ -594,8 +595,18 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         passStringList << "-quality" << "good";
         passStringList << "-cpu-used" << QString::number(0);
         // TODO: calculate width and height of the output (based on aspect ratio)
+        int pixelCount = 0;
+        if(width < 0 && height < 0)
+            pixelCount = videoStream.width() * videoStream.height();
+        else if(width < 0)
+            pixelCount = (videoStream.width() * height / videoStream.height()) * height;
+        else if(height < 0)
+            pixelCount = width * (videoStream.height() * width / videoStream.width());
+        else
+            pixelCount = width * height;
         // 4 slices for anything larger than PAL DVD, else 1
-        //passStringList << "-slices" << QString::number(slices);
+        int slices = (pixelCount > 720 * 576 ? 4 : 1);
+        passStringList << "-slices" << QString::number(slices);
     }
 
     // filters
@@ -1221,8 +1232,11 @@ void MainWindow::on_resizeCheckBox_toggled(bool checked)
 
 void MainWindow::on_actionExit_triggered()
 {
-    if(ffmpegProcess->state() == QProcess::Running)
+    if(ffmpegProcess && ffmpegProcess->state() == QProcess::Running)
+    {
         ffmpegProcess->kill();
+        ffmpegProcess->waitForFinished();
+    }
 
     this->close();
 }
