@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
     connect(ui->inputFileBrowsePushButton,SIGNAL(clicked(bool)),ui->actionOpen,SLOT(trigger()));
 
+    // disable controls
+    ui->processingGroupBox->setEnabled(false);
+    ui->encodingGroupBox->setEnabled(false);
+
     inputFile = new InputFile();
     outputFile = new OutputFile();
     ffmpegProcess = new QProcess(this);

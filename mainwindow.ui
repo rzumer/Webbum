@@ -77,12 +77,18 @@
        <layout class="QGridLayout" name="gridLayout_9">
         <item row="1" column="0">
          <widget class="QGroupBox" name="processingGroupBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="title">
            <string>Processing</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <widget class="QGroupBox" name="trimmingGroupBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="title">
               <string>Trimming</string>
              </property>
@@ -119,7 +125,7 @@
               <item row="2" column="0">
                <widget class="QRadioButton" name="trimStartEndRadioButton">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Start/End Times</string>
@@ -129,7 +135,7 @@
               <item row="1" column="0">
                <widget class="QRadioButton" name="trimNoneRadioButton">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>No Trimming</string>
@@ -142,7 +148,7 @@
               <item row="4" column="0">
                <widget class="QRadioButton" name="trimDurationRadioButton">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Duration</string>
@@ -245,6 +251,9 @@
            </item>
            <item>
             <widget class="QGroupBox" name="resizingGroupBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="title">
               <string>Resizing</string>
              </property>
@@ -344,7 +353,7 @@
               <item row="8" column="0">
                <widget class="QCheckBox" name="resizeCheckBox">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Resize</string>
@@ -438,7 +447,7 @@
               <item row="3" column="0">
                <widget class="QCheckBox" name="cropCheckBox">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Crop</string>
@@ -525,12 +534,18 @@
         </item>
         <item row="1" column="1">
          <widget class="QGroupBox" name="encodingGroupBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="title">
            <string>Encoding</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QGroupBox" name="rateControlGroupBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="title">
               <string>Rate Control</string>
              </property>
@@ -552,7 +567,7 @@
               <item row="1" column="0">
                <widget class="QComboBox" name="rateModeComboBox">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
@@ -590,7 +605,7 @@
               <item row="1" column="1">
                <widget class="QComboBox" name="rateTargetModeComboBox">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
@@ -624,7 +639,7 @@
               <item row="1" column="4">
                <widget class="QSpinBox" name="rateTargetBitRateSpinBox">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::StrongFocus</enum>
@@ -686,6 +701,9 @@
            </item>
            <item>
             <widget class="QGroupBox" name="streamsGroupBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="title">
               <string>Streams</string>
              </property>
@@ -761,6 +779,9 @@
            </item>
            <item>
             <widget class="QGroupBox" name="codecsGroupBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="title">
               <string>Codecs</string>
              </property>
@@ -847,6 +868,9 @@
            </item>
            <item>
             <widget class="QGroupBox" name="customGroupBox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="title">
               <string>Custom</string>
              </property>
@@ -861,7 +885,7 @@
               <item row="3" column="0">
                <widget class="QLineEdit" name="customEncodingParametersLineEdit">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -875,7 +899,7 @@
               <item row="1" column="0">
                <widget class="QLineEdit" name="customFiltersLineEdit">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
