@@ -1293,6 +1293,9 @@ void MainWindow::on_codecAudioComboBox_currentIndexChanged(const QString &arg1)
 
 double MainWindow::getTargetFileSize()
 {
+    if(inputFile->bitRateInKilobits() == 0 || ui->rateTargetBitRateSpinBox->value() == 0)
+        return 0;
+
     return inputFile->fileSizeInMegabytes(getOutputDuration())
             / inputFile->bitRateInKilobits() * ui->rateTargetBitRateSpinBox->value();
 }
