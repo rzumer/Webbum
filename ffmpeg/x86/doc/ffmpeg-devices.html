@@ -424,7 +424,8 @@ On Windows, you need to run the IDL files through <code>widl</code>.
 <p>DeckLink is very picky about the formats it supports. Pixel format is
 uyvy422 or v210, framerate and video size must be determined for your device with
 <code>-list_formats 1</code>. Audio sample rate is always 48 kHz and the number
-of channels can be 2, 8 or 16.
+of channels can be 2, 8 or 16. Note that all audio channels are bundled in one single
+audio track.
 </p>
 <a name="Options-3"></a>
 <h4 class="subsection">3.4.1 Options<span class="pull-right"><a class="anchor hidden-xs" href="#Options-3" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-Options-3" aria-hidden="true">TOC</a></span></h4>
@@ -443,6 +444,22 @@ Defaults to <samp>false</samp>.
 <dt><samp>bm_v210</samp></dt>
 <dd><p>If set to &lsquo;<samp>1</samp>&rsquo;, video is captured in 10 bit v210 instead
 of uyvy422. Not all Blackmagic devices support this option.
+</p>
+</dd>
+<dt><samp>teletext_lines</samp></dt>
+<dd><p>If set to nonzero, an additional teletext stream will be captured from the
+vertical ancillary data. This option is a bitmask of the VBI lines checked,
+specifically lines 6 to 22, and lines 318 to 335. Line 6 is the LSB in the mask.
+Selected lines which do not contain teletext information will be ignored. You
+can use the special <samp>all</samp> constant to select all possible lines, or
+<samp>standard</samp> to skip lines 6, 318 and 319, which are not compatible with all
+receivers. Capturing teletext only works for SD PAL sources in 8 bit mode.
+To use this option, ffmpeg needs to be compiled with <code>--enable-libzvbi</code>.
+</p>
+</dd>
+<dt><samp>channels</samp></dt>
+<dd><p>Defines number of audio channels to capture. Must be &lsquo;<samp>2</samp>&rsquo;, &lsquo;<samp>8</samp>&rsquo; or &lsquo;<samp>16</samp>&rsquo;.
+Defaults to &lsquo;<samp>2</samp>&rsquo;.
 </p>
 </dd>
 </dl>
@@ -469,6 +486,11 @@ of uyvy422. Not all Blackmagic devices support this option.
 </li><li> Capture video clip at 1080i50 10 bit:
 <div class="example">
 <pre class="example">ffmpeg -bm_v210 1 -f decklink -i 'UltraStudio Mini Recorder@11' -acodec copy -vcodec copy output.avi
+</pre></div>
+
+</li><li> Capture video clip at 1080i50 with 16 audio channels:
+<div class="example">
+<pre class="example">ffmpeg -channels 16 -f decklink -i 'UltraStudio Mini Recorder@11' -acodec copy -vcodec copy output.avi
 </pre></div>
 
 </li></ul>
