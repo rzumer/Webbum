@@ -45,6 +45,7 @@ EXPORTS
     av_fft_permute
     av_free_packet
     av_get_audio_frame_duration
+    av_get_audio_frame_duration2
     av_get_bits_per_sample
     av_get_codec_tag_string
     av_get_exact_bits_per_sample
@@ -55,6 +56,8 @@ EXPORTS
     av_imdct_calc
     av_imdct_half
     av_init_packet
+    av_jni_get_java_vm
+    av_jni_set_java_vm
     av_lockmgr_register
     av_log_ask_for_sample
     av_log_missing_feature
@@ -154,6 +157,11 @@ EXPORTS
     avcodec_is_open
     avcodec_license
     avcodec_open2
+    avcodec_parameters_alloc
+    avcodec_parameters_copy
+    avcodec_parameters_free
+    avcodec_parameters_from_context
+    avcodec_parameters_to_context
     avcodec_pix_fmt_to_codec_tag
     avcodec_profile_name
     avcodec_register
@@ -179,6 +187,7 @@ EXPORTS
     avpriv_dca_sample_rates DATA
     avpriv_dnxhd_get_frame_size
     avpriv_dnxhd_get_interlaced
+    avpriv_dnxhd_parse_header_prefix
     avpriv_do_elbg
     avpriv_exif_decode_ifd
     avpriv_find_pix_fmt

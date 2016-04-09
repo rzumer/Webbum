@@ -796,7 +796,9 @@ see <a href="ffmpeg-utils.html#time-duration-syntax">(ffmpeg-utils)the Time dura
 </p>
 </dd>
 <dt><samp>-fs <var>limit_size</var> (<em>output</em>)</samp></dt>
-<dd><p>Set the file size limit, expressed in bytes.
+<dd><p>Set the file size limit, expressed in bytes. No further chunk of bytes is written
+after the limit is exceeded. The size of the output file is slightly more than the
+requested file size.
 </p>
 </dd>
 <dt><samp>-ss <var>position</var> (<em>input/output</em>)</samp></dt>
@@ -843,8 +845,8 @@ see <a href="ffmpeg-utils.html#date-syntax">(ffmpeg-utils)the Date section in th
 <dd><p>Set a metadata key/value pair.
 </p>
 <p>An optional <var>metadata_specifier</var> may be given to set metadata
-on streams or chapters. See <code>-map_metadata</code> documentation for
-details.
+on streams, chapters or programs. See <code>-map_metadata</code>
+documentation for details.
 </p>
 <p>This option overrides metadata set with <code>-map_metadata</code>. It is
 also possible to delete metadata by using an empty value.
