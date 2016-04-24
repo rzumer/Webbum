@@ -131,6 +131,15 @@ particular protocol using the option
 <p>The option &quot;-protocols&quot; of the ff* tools will display the list of
 supported protocols.
 </p>
+<p>All protocols accept the following options:
+</p>
+<dl compact="compact">
+<dt><samp>rw_timeout</samp></dt>
+<dd><p>Maximum time to wait for (network) read/write operations to complete,
+in microseconds.
+</p></dd>
+</dl>
+
 <p>A description of the currently available protocols follows.
 </p>
 <a name="async"></a>
@@ -328,6 +337,18 @@ it, unless special care is taken (tests, customized server configuration
 etc.). Different FTP servers behave in different way during seek
 operation. ff* tools may produce incomplete content due to server limitations.
 </p>
+<p>This protocol accepts the following options:
+</p>
+<dl compact="compact">
+<dt><samp>follow</samp></dt>
+<dd><p>If set to 1, the protocol will retry reading at the end of the file, allowing
+reading files that still are being written. In order for this to terminate,
+you either need to use the rw_timeout option, or use the interrupt callback
+(for API users).
+</p>
+</dd>
+</dl>
+
 <a name="gopher"></a>
 <h3 class="section">3.9 gopher<span class="pull-right"><a class="anchor hidden-xs" href="#gopher" aria-hidden="true">#</a> <a class="anchor hidden-xs"href="#toc-gopher" aria-hidden="true">TOC</a></span></h3>
 
