@@ -2,7 +2,7 @@ This is a FFmpeg win32 shared build by Kyle Schwarz.
 
 Zeranoe's FFmpeg Builds Home Page: <http://ffmpeg.zeranoe.com/builds/>
 
-FFmpeg version: 20160407-git-0c94906
+FFmpeg version: 20160422-git-268b5ae
 
 This FFmpeg build was configured with:
   --disable-static
@@ -96,7 +96,7 @@ This build was compiled with the following external libraries:
 
 The source code for this FFmpeg build can be found at: <http://ffmpeg.zeranoe.com/builds/source/>
 
-This build was compiled on Debian 8.3 (64-bit): <http://www.debian.org/>
+This build was compiled on Debian 8.4 (64-bit): <http://www.debian.org/>
 
 GCC 5.3.0 was used to compile this FFmpeg build: <http://gcc.gnu.org/>
 
