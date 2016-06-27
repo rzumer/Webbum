@@ -15,9 +15,9 @@ win32:RC_ICONS += $$PWD/icon64.ico
 win32
 {
     !contains(QMAKE_TARGET.arch, x86_64) {
-        INCLUDEPATH += $$PWD/ffmpeg/x86/include
+        INCLUDEPATH += $$PWD/dependencies/ffmpeg/x86/include
     } else {
-        INCLUDEPATH += $$PWD/ffmpeg/x64/include
+        INCLUDEPATH += $$PWD/dependencies/ffmpeg/x64/include
     }
 }
 unix: INCLUDEPATH += usr/include
@@ -42,7 +42,7 @@ win32
     !contains(QMAKE_TARGET.arch, x86_64) {
         message("x86 build")
 
-        LIBS += -L$$PWD/ffmpeg/x86/lib\
+        LIBS += -L$$PWD/dependencies/ffmpeg/x86/lib\
                 -lavutil\
                 -lavformat\
                 -lavcodec\
@@ -52,7 +52,7 @@ win32
     } else {
         message("x86_64 build")
 
-        LIBS += -L$$PWD/ffmpeg/x64/lib\
+        LIBS += -L$$PWD/dependencies/ffmpeg/x64/lib\
                 -lavutil\
                 -lavformat\
                 -lavcodec\
