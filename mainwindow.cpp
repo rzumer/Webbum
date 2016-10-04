@@ -631,7 +631,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     // filters
     QString filterChain;
     QString complexFilterChain;
-    if(cropWidth < videoStream.width() && cropHeight < videoStream.height())
+    if(cropWidth < videoStream.width() || cropHeight < videoStream.height())
     {
         filterChain.append("crop=" + QString::number(cropWidth) + ":" + QString::number(cropHeight) +
                            ":" + QString::number(cropX) + ":" + QString::number(cropY));
