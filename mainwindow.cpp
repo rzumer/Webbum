@@ -380,6 +380,7 @@ QTime MainWindow::getOutputDuration()
         else // else, duration is the entire video (using container duration)
             computedDuration = inputFile->duration();
     }
+
     return computedDuration;
 }
 
@@ -448,7 +449,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     outputFile->setEndTime(getOutputDuration());
 
     if(ui->trimStartEndRadioButton->isChecked())
+    {
         outputFile->setStartTime(ui->trimStartEndStartTimeEdit->time());
+        outputFile->setEndTime(ui->trimStartEndEndTimeEdit->time());
+    }
     else if(ui->trimDurationRadioButton->isChecked())
         outputFile->setStartTime(ui->trimDurationStartTimeEdit->time());
     if(ui->trimStartEndRadioButton->isChecked() || ui->trimDurationRadioButton->isChecked())
@@ -496,6 +500,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
         {
             outputFile->setBitRateInKilobits(ui->rateTargetBitRateSpinBox->value());
         }
+
         bitRate = outputFile->bitRateInKilobits();
     }
     if(rateMode == "Constant Quality" || rateMode == "Constrained Quality")
@@ -509,10 +514,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     QString customFilters = outputFile->customFilters().trimmed();
     QString customParameters = outputFile->customParameters().trimmed();
 
-    // Build the string list
+    // build the string list
     QStringList passStringList = QStringList();
 
-    // calculate target bitrate and cropping if needed
+    // adjust target bitrate and cropping if needed
     QTime computedDuration = getOutputDuration();
     if(audioStream.isValid() && bitRate > audioBitRate)
         bitRate -= audioBitRate;
