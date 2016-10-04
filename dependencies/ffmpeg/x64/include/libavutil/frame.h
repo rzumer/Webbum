@@ -176,6 +176,10 @@ typedef struct AVFrameSideData {
  * Similarly fields that are marked as to be only accessed by
  * av_opt_ptr() can be reordered. This allows 2 forks to add fields
  * without breaking compatibility with each other.
+ *
+ * Fields can be accessed through AVOptions, the name string used, matches the
+ * C structure field name for fields accessable through AVOptions. The AVClass
+ * for AVFrame can be obtained from avcodec_get_frame_class()
  */
 typedef struct AVFrame {
 #define AV_NUM_DATA_POINTERS 8
@@ -324,7 +328,7 @@ typedef struct AVFrame {
     int palette_has_changed;
 
     /**
-     * reordered opaque 64bit (generally an integer or a double precision float
+     * reordered opaque 64 bits (generally an integer or a double precision float
      * PTS but can be anything).
      * The user sets AVCodecContext.reordered_opaque to represent the input at
      * that time,
@@ -381,6 +385,7 @@ typedef struct AVFrame {
 
 /**
  * @defgroup lavu_frame_flags AV_FRAME_FLAGS
+ * @ingroup lavu_frame
  * Flags describing additional frame properties.
  *
  * @{
@@ -390,6 +395,10 @@ typedef struct AVFrame {
  * The frame data may be corrupted, e.g. due to decoding errors.
  */
 #define AV_FRAME_FLAG_CORRUPT       (1 << 0)
+/**
+ * A flag to mark the frames which need to be decoded, but shouldn't be output.
+ */
+#define AV_FRAME_FLAG_DISCARD   (1 << 2)
 /**
  * @}
  */
@@ -422,12 +431,6 @@ typedef struct AVFrame {
     enum AVColorSpace colorspace;
 
     enum AVChromaLocation chroma_location;
-
-    /**
-     * For hwaccel-format frames, this should be a reference to the
-     * AVHWFramesContext describing the frame.
-     */
-    AVBufferRef *hw_frames_ctx;
 
     /**
      * frame timestamp estimated using various heuristics, in stream time base
@@ -520,6 +523,11 @@ typedef struct AVFrame {
      */
     AVBufferRef *qp_table_buf;
 #endif
+    /**
+     * For hwaccel-format frames, this should be a reference to the
+     * AVHWFramesContext describing the frame.
+     */
+    AVBufferRef *hw_frames_ctx;
 } AVFrame;
 
 /**

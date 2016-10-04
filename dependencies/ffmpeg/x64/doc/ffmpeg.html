@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="style.min.css">
   </head>
   <body>
-    <div style="width: 95%; margin: auto">
+    <div class="container">
       <h1>
       ffmpeg Documentation
       </h1>
@@ -273,7 +273,7 @@ with the highest resolution, for audio, it is the stream with the most channels,
 subtitles, it is the first subtitle stream. In the case where several streams of
 the same type rate equally, the stream with the lowest index is chosen.
 </p>
-<p>You can disable some of those defaults by using the <code>-vn/-an/-sn</code> options. For
+<p>You can disable some of those defaults by using the <code>-vn/-an/-sn/-dn</code> options. For
 full manual control, use the <code>-map</code> option, which disables the defaults just
 described.
 </p>
@@ -1279,7 +1279,7 @@ If this option is not specified, the default adapter is used.
 </p>
 </dd>
 <dt><samp>qsv</samp></dt>
-<dd><p>For QSV, this option corresponds to the valus of MFX_IMPL_* . Allowed values
+<dd><p>For QSV, this option corresponds to the values of MFX_IMPL_* . Allowed values
 are:
 </p><dl compact="compact">
 <dt><samp>auto</samp></dt>

@@ -2,7 +2,7 @@ This is a FFmpeg win64 shared build by Kyle Schwarz.
 
 Zeranoe's FFmpeg Builds Home Page: <http://ffmpeg.zeranoe.com/builds/>
 
-FFmpeg version: 20160422-git-268b5ae
+FFmpeg version: 20161004-be1d324
 
 This FFmpeg build was configured with:
   --disable-static
@@ -10,8 +10,12 @@ This FFmpeg build was configured with:
   --enable-gpl
   --enable-version3
   --disable-w32threads
+  --enable-dxva2
+  --enable-libmfx
+  --enable-nvenc
   --enable-avisynth
   --enable-bzlib
+  --enable-libebur128
   --enable-fontconfig
   --enable-frei0r
   --enable-gnutls
@@ -25,10 +29,10 @@ This FFmpeg build was configured with:
   --enable-libgsm
   --enable-libilbc
   --enable-libmodplug
-  --enable-libmfx
   --enable-libmp3lame
   --enable-libopencore-amrnb
   --enable-libopencore-amrwb
+  --enable-libopenh264
   --enable-libopenjpeg
   --enable-libopus
   --enable-librtmp
@@ -54,13 +58,15 @@ This FFmpeg build was configured with:
   --enable-zlib
 
 This build was compiled with the following external libraries:
+  libmfx 1.17 <https://github.com/lu-zero/mfx_dispatch>
   bzip2 1.0.6 <http://bzip.org/>
+  libebur128 1.1.0 <https://github.com/jiixyj/libebur128>
   Fontconfig 2.11.94 <http://freedesktop.org/wiki/Software/fontconfig>
   Frei0r 20130909-git-10d8360 <http://frei0r.dyne.org/>
   GnuTLS 3.3.22 <http://gnutls.org/>
   libiconv 1.14 <http://gnu.org/software/libiconv/>
   libass 0.13.2 <https://github.com/libass/libass>
-  libbluray 0.9.2 <http://videolan.org/developers/libbluray.html>
+  libbluray 0.9.3 <http://videolan.org/developers/libbluray.html>
   libbs2b 3.1.0 <http://bs2b.sourceforge.net/>
   libcaca 0.99.beta18 <http://caca.zoy.org/wiki/libcaca>
   FreeType 2.6.3 <http://freetype.sourceforge.net/>
@@ -68,11 +74,11 @@ This build was compiled with the following external libraries:
   GSM 1.0.13-4 <http://packages.debian.org/source/squeeze/libgsm>
   iLBC 20141214-git-ef04ebe <https://github.com/dekkers/libilbc/>
   Modplug-XMMS 0.8.8.5 <http://modplug-xmms.sourceforge.net/>
-  libmfx 1.17 <https://github.com/lu-zero/mfx_dispatch>
   LAME 3.99.5 <http://lame.sourceforge.net/>
   OpenCORE AMR 0.1.3 <http://sourceforge.net/projects/opencore-amr/>
+  OpenH264 1.6.0 <https://github.com/cisco/openh264>
   OpenJPEG 1.5.2 <https://github.com/uclouvain/openjpeg>
-  Opus 1.1.2 <http://opus-codec.org/>
+  Opus 1.1.3 <http://opus-codec.org/>
   RTMPDump 20151223-git-fa8646d <http://rtmpdump.mplayerhq.hu/>
   Schroedinger 1.0.11-2.1build1 <http://diracvideo.org/>
   Snappy 20160108-0800b1e <https://github.com/google/snappy>
@@ -83,11 +89,11 @@ This build was compiled with the following external libraries:
   vid.stab 0.98 <http://public.hronopik.de/vid.stab/>
   VisualOn AMR-WB 0.1.2 <https://github.com/mstorsjo/vo-amrwbenc>
   Vorbis 1.3.5 <http://vorbis.com/>
-  vpx 1.5.0 <http://webmproject.org/>
+  vpx 1.6.0 <http://webmproject.org/>
   WavPack 4.80.0 <http://wavpack.com/>
-  WebP 0.5.0 <https://developers.google.com/speed/webp/>
-  x264 20160118-git-a01e339 <http://videolan.org/developers/x264.html>
-  x265 1.9 <http://x265.org/>
+  WebP 0.5.1 <https://developers.google.com/speed/webp/>
+  x264 20160920-72d53ab <http://videolan.org/developers/x264.html>
+  x265 2.1 <https://bitbucket.org/multicoreware/x265/wiki/Home>
   XAVS svn-r55 <http://xavs.sourceforge.net/>
   Xvid 1.3.4 <http://xvid.org/>
   z.lib 2.0.4 <https://github.com/sekrit-twc/zimg>
@@ -96,9 +102,9 @@ This build was compiled with the following external libraries:
 
 The source code for this FFmpeg build can be found at: <http://ffmpeg.zeranoe.com/builds/source/>
 
-This build was compiled on Debian 8.4 (64-bit): <http://www.debian.org/>
+This build was compiled on Debian 8.6 (64-bit): <http://www.debian.org/>
 
-GCC 5.3.0 was used to compile this FFmpeg build: <http://gcc.gnu.org/>
+GCC 5.4.0 was used to compile this FFmpeg build: <http://gcc.gnu.org/>
 
 This build was compiled using the MinGW-w64 toolchain: <http://mingw-w64.sourceforge.net/>
 
