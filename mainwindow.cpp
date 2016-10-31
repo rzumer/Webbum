@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef Q_OS_WIN32
     taskBarButton = new QWinTaskbarButton(this);
 #endif
+    ffmpegController = new FFMPEGController();
     inputFile = new InputFile();
     outputFile = new OutputFile();
-    ffmpegProcess = new QProcess(this);
 }
 
 MainWindow::~MainWindow()
@@ -349,6 +349,7 @@ QTime MainWindow::getOutputDuration()
 
 void MainWindow::connectSignalsAndSlots()
 {
+    // UI
     connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
     connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
     connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)));
@@ -365,6 +366,10 @@ void MainWindow::connectSignalsAndSlots()
     connect(ui->rateCRFSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCrf(int)));
     connect(ui->customFiltersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomFilters(QString)));
     connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));
+
+    // FFMPEG Controller
+    connect(ffmpegController,SIGNAL(failed(bool)),this,SLOT(encodeFailed(bool)));
+    connect(ffmpegController,SIGNAL(passFinished(int)),this,SLOT(encodePassFinished(int)));
 }
 
 QStringList MainWindow::generatePass(int passNumber, bool twoPass)
@@ -697,24 +702,9 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass)
     else
         passStringList << outputFilePath;
 
-    qDebug().noquote() << passStringList.join(' ');
-    /*QStringList dummy = QStringList();
-    return dummy;*/
+    //qDebug().noquote() << passStringList.join(' ');
+
     return passStringList;
-}
-
-void MainWindow::encodePass(QStringList &encodingParameters)
-{
-    ffmpegProcess = new QProcess(this);
-    connect(ffmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(encodePassFinished(int,QProcess::ExitStatus)));
-    connect(ffmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), ffmpegProcess, SLOT(deleteLater()));
-
-    ffmpegProcess->start("ffmpeg",encodingParameters);
-
-#ifdef Q_OS_WIN32
-    taskBarProgress->setVisible(true);
-#endif
-    ui->cancelPushButton->setEnabled(true);
 }
 
 void MainWindow::updateProgressBar()
@@ -1019,10 +1009,12 @@ void MainWindow::on_encodePushButton_clicked()
     ui->scrollArea->setEnabled(false);
     ui->menuBar->setEnabled(false);
 
+    ffmpegController->setOutputFilePath(outputFile->filePath());
+
     // two pass encode
     QStringList firstPass = generatePass(1);
 
-    cleanTemporaryFiles();
+    ffmpegController->cleanTemporaryFiles();
 
     QDir outputDirectory = QFileInfo(outputFile->filePath()).dir();
     QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
@@ -1030,72 +1022,11 @@ void MainWindow::on_encodePushButton_clicked()
     if(!tempDirectory.exists())
         QDir().mkdir(tempDirectory.path());
 
-    encodePass(firstPass);
-}
-
-void MainWindow::encodePassFinished(int exitCode, QProcess::ExitStatus exitStatus)
-{
-    ui->cancelPushButton->setEnabled(false);
-
-    if(exitCode != 0 || exitStatus == QProcess::CrashExit)
-    {
-        // recover from crash
-        cleanTemporaryFiles();
-
-        // delete incomplete encode
-        QFile outputFile(outputFile->filePath());
-        if(outputFile.exists())
-            outputFile.remove();
-
-        if(exitStatus != QProcess::CrashExit)
-            QMessageBox::critical(this,"Failure","The encode has failed unexpectedly.", QMessageBox::Ok);
-
-        activateUserInterface();
-        return;
-    }
-
-    int passNumberIndex = ffmpegProcess->arguments().indexOf("-pass") + 1;
-    if(QString(ffmpegProcess->arguments().at(passNumberIndex)).toInt() == 1)
-    {
-        // pass 1 finished
-        QStringList secondPass = generatePass(2);
-        ui->progressBar->setValue(50);
-        encodePass(secondPass);
-    }
-    else
-    {
-        // last pass finished
-        cleanTemporaryFiles();
-
-        ui->progressBar->setValue(100);
-        QMessageBox::information(this,"Success","Encode successful.",
-                                 QMessageBox::Ok);
-
-        activateUserInterface();
-    }
-}
-
-void MainWindow::cleanTemporaryFiles()
-{
-    QDir outputDirectory = QFileInfo(outputFile->filePath()).dir();
-    QDir tempDirectory = outputDirectory.canonicalPath() + "/temp";
-    QFile logFile("ffmpeg2pass-0.log");
-
-    if(tempDirectory.exists())
-        tempDirectory.removeRecursively();
-    if(logFile.exists())
-        logFile.remove();
-}
-
-bool MainWindow::passFileExists()
-{
-    QDir outputDirectory = QFileInfo(outputFile->filePath()).dir();
-    QFile passFile = outputDirectory.canonicalPath() + "/temp/null";
-
-    if(passFile.exists())
-        return true;
-
-    return false;
+    ffmpegController->encodePass(firstPass);
+#ifdef Q_OS_WIN32
+    taskBarProgress->setVisible(true);
+#endif
+    ui->cancelPushButton->setEnabled(true);
 }
 
 void MainWindow::activateUserInterface()
@@ -1104,6 +1035,7 @@ void MainWindow::activateUserInterface()
     taskBarProgress->setVisible(false);
 #endif
     ui->progressBar->setValue(0);
+    ui->cancelPushButton->setEnabled(false);
     ui->encodePushButton->setEnabled(false); // output file name conflict
     ui->scrollArea->setEnabled(true);
     ui->menuBar->setEnabled(true);
@@ -1226,22 +1158,15 @@ void MainWindow::on_resizeCheckBox_toggled(bool checked)
 
 void MainWindow::on_actionExit_triggered()
 {
-    if(ffmpegProcess && ffmpegProcess->state() == QProcess::Running)
-    {
-        ffmpegProcess->kill();
-        ffmpegProcess->waitForFinished();
-    }
+    ffmpegController->killProcess();
 
     this->close();
 }
 
 void MainWindow::on_cancelPushButton_clicked()
 {
-    if(ffmpegProcess->state() == QProcess::Running)
-    {
-        ffmpegProcess->kill();
-        ui->cancelPushButton->setEnabled(false);
-    }
+    ffmpegController->killProcess();
+    ui->cancelPushButton->setEnabled(false);
 }
 
 void MainWindow::on_codecAudioComboBox_currentIndexChanged(const QString &arg1)
@@ -1272,4 +1197,35 @@ QString MainWindow::getFilterString(QString rawString)
 {
     return rawString.replace(":","\\:").replace("'","\\'").replace("[","\\[").replace("]","\\]").replace(",","\\,")
     .replace(";","\\;");//.replace("\\","\\\\").replace("\\\\'","\\\\\\'"));
+}
+
+void MainWindow::encodeFailed(bool crashed)
+{
+    if(crashed)
+        QMessageBox::critical(this,"Failure","The encode has failed unexpectedly.", QMessageBox::Ok);
+
+    activateUserInterface();
+}
+
+void MainWindow::encodePassFinished(int passNumber)
+{
+    if(passNumber == 1)
+    {
+        QStringList secondPass = generatePass(2);
+        ui->progressBar->setValue(50);
+        ffmpegController->encodePass(secondPass);
+    }
+    else if(passNumber == 2)
+    {
+        encodeFinished();
+    }
+}
+
+void MainWindow::encodeFinished()
+{
+    ui->progressBar->setValue(100);
+    QMessageBox::information(this,"Success","Encode successful.",
+                             QMessageBox::Ok);
+
+    activateUserInterface();
 }

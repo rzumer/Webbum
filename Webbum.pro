@@ -27,13 +27,15 @@ SOURCES += main.cpp\
     inputfile.cpp \
     outputfile.cpp \
     inputstream.cpp \
-    inputchapter.cpp
+    inputchapter.cpp \
+    ffmpegcontroller.cpp
 
 HEADERS  += mainwindow.h \
     outputfile.h \
     inputfile.h \
     inputstream.h \
-    inputchapter.h
+    inputchapter.h \
+    ffmpegcontroller.h
 
 FORMS    += mainwindow.ui
 

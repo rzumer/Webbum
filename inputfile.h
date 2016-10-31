@@ -17,6 +17,7 @@ extern "C"
 class InputFile : public QObject
 {
     Q_OBJECT
+
 public:
     explicit InputFile(QObject *parent = 0, QString inputFilePath = QString());
 
@@ -51,8 +52,6 @@ private:
 
 signals:
     void inputFileChanged(QString filePath);
-
-public slots:
 };
 
 #endif // INPUTFILE_H

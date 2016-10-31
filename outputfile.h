@@ -10,6 +10,7 @@
 class OutputFile : public QObject
 {
     Q_OBJECT
+
 public:
     enum OutputVideoCodec {VP8, VP9};
     enum OutputAudioCodec {OPUS, VORBIS};
