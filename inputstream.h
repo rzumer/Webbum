@@ -32,6 +32,7 @@ public:
     QString channelLayout() const { return _channelLayout; }
     bool isValid() { return _index != -1; }
     bool isImageSub() const;
+    QString getShortString() const;
 
 private:
     int _id;

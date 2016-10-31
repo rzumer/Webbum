@@ -132,51 +132,14 @@ void MainWindow::populateStreamComboBoxes()
     {
         InputStream currentStream = inputFile->stream(i);
 
-        QString streamStr = "[" + QString::number(currentStream.id()) + "] ";
-
-        // Title
-        if(!currentStream.title().isEmpty())
-            streamStr.append("\"" + currentStream.title() + "\" - ");
-
-        // Codec
-        streamStr.append(currentStream.codec());
-
-        // Profile
-        if(!currentStream.profile().isEmpty())
-            streamStr.append("/" + currentStream.profile());
-
-        // Audio information
-        if(currentStream.type() == InputStream::AUDIO)
-        {
-            streamStr.append(" (");
-
-            // Bit Rate
-            if(currentStream.bitRate() > 0)
-                streamStr.append(QString::number(round((double)currentStream.bitRate() / 1000)) + "kbps");
-
-            // Channel Layout
-            if(!currentStream.channelLayout().isEmpty() && currentStream.bitRate() > 0)
-                streamStr.append("/");
-
-            streamStr.append(currentStream.channelLayout() + ")");
-        }
-
-        // Language
-        if(!currentStream.language().isEmpty())
-            streamStr.append(" (" + currentStream.language() + ")");
-
-        // Disposition
-        /*if(currentStream.isDefault())
-            streamStr.append(" [default]");
-        if(currentStream.isForced())
-            streamStr.append(" [forced]");*/
+        QString streamString = currentStream.getShortString();
 
         if(currentStream.type() == (int)InputStream::VIDEO)
-            ui->streamVideoComboBox->addItem(streamStr);
+            ui->streamVideoComboBox->addItem(streamString);
         else if(currentStream.type() == (int)InputStream::AUDIO)
-            ui->streamAudioComboBox->addItem(streamStr);
+            ui->streamAudioComboBox->addItem(streamString);
         else if(currentStream.type() == (int)InputStream::SUBTITLE)
-            ui->streamSubtitlesComboBox->addItem(streamStr);
+            ui->streamSubtitlesComboBox->addItem(streamString);
     }
 
     // enable combo boxes if at least one stream of that type is found,

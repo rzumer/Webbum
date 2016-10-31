@@ -102,3 +102,49 @@ bool InputStream::isImageSub() const
     return (_type == StreamType::SUBTITLE && (_codec == "dvd_subtitle" || _codec == "hdmv_pgs_subtitle"));
 }
 
+QString InputStream::getShortString() const
+{
+    QString streamString = "[" + QString::number(_id) + "] ";
+
+    // Title
+    if(!_title.isEmpty())
+        streamString.append("\"" + _title + "\" - ");
+
+    // Codec
+    streamString.append(_codec);
+
+    // Profile
+    if(!_profile.isEmpty())
+        streamString.append("/" + _profile);
+
+    // Audio information
+    if(_type == InputStream::AUDIO && (_bitRate > 0 || !_channelLayout.isEmpty()))
+    {
+        streamString.append(" (");
+
+        // Bit Rate
+        if(_bitRate > 0)
+        {
+            streamString.append(QString::number(round((double)_bitRate / 1000)) + "kbps");
+
+            // Channel Layout
+            if(!_channelLayout.isEmpty())
+                streamString.append("/");
+        }
+
+        streamString.append(_channelLayout + ")");
+    }
+
+    // Language
+    if(!_language.isEmpty())
+        streamString.append(" (" + _language + ")");
+
+    // Disposition
+    /*if(_isDefault)
+        streamStr.append(" [default]");
+    if(_isForced)
+        streamStr.append(" [forced]");*/
+
+    return streamString;
+}
+
