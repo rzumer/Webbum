@@ -36,3 +36,4 @@ Makefile*
 # Binaries
 
 bin/
+dependencies/libav/
