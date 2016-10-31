@@ -29,6 +29,7 @@ public:
     ~MainWindow();
 
 protected:
+    bool event(QEvent *event);
     void showEvent(QShowEvent *e);
     void dropEvent(QDropEvent *ev);
     void dragEnterEvent(QDragEnterEvent *ev) { ev->accept(); }

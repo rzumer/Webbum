@@ -53,6 +53,16 @@ void MainWindow::dropEvent(QDropEvent *ev)
     }
 }
 
+bool MainWindow::event(QEvent *event)
+{
+    if(event->type() == QEvent::WindowActivate)
+    {
+        validateFormFields();
+    }
+
+    return QWidget::event(event);
+}
+
 void MainWindow::validateFormFields()
 {
     ui->encodePushButton->setEnabled(false);
@@ -820,6 +830,7 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
     else
     {
         int videoStreamIndex = 0;
+
         for(int i = 0; i < inputFile->streamCount(); i++)
         {
             InputStream stream = inputFile->stream(i);
@@ -833,6 +844,8 @@ void MainWindow::on_streamVideoComboBox_currentIndexChanged(int index)
                 }
             }
         }
+
+        ui->encodePushButton->setEnabled(true);
         ui->resizingGroupBox->setEnabled(true);
         ui->codecVideoComboBox->setEnabled(true);
     }
