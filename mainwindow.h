@@ -83,19 +83,22 @@ private:
     InputFile *inputFile;
     OutputFile *outputFile;
     FFMPEGController *ffmpegController;
+    bool textSubtitlesDisabled;
     void refreshTargetMode(QString &currentTargetMode);
     void processInputFile(QString &inputFilePath);
     void clearInputFileFormData();
     void populateStreamComboBoxes();
     void initializeFormData();
-    QStringList generatePass(int passNumber, bool twoPass = true);
+    QStringList generatePass(int passNumber, bool twoPass = true) const;
     void validateFormFields();
     void updateProgressBar();
-    QTime getOutputDuration();
+    QTime getOutputDuration() const;
     void connectSignalsAndSlots();
     void activateUserInterface();
-    double getTargetFileSize();
-    QString getFilterString(QString rawString);
+    double getTargetFileSize() const;
+    QString getFilterString(QString rawString) const;
+    InputStream getSelectedStream(InputStream::StreamType streamType) const;
+    InputStream getStreamByType(InputStream::StreamType streamType, int index) const;
 };
 
 #endif // MAINWINDOW_H

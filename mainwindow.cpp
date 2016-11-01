@@ -122,18 +122,38 @@ void MainWindow::processInputFile(QString &inputFilePath)
     connectSignalsAndSlots();
     populateStreamComboBoxes();
     initializeFormData();
+    textSubtitlesDisabled = false;
 
-    /*
-    if(inputFilePath.contains("'") && ui->streamSubtitlesComboBox->currentIndex() > 0)
+    // Due to an issue with the filtergraph string generation in generatePass(),
+    // text subtitles are not supported for input files with a path containing an apostrophe.
+    if(inputFilePath.contains("'"))
     {
-        // see generatePass for subtitle bug involving filenames containing single quotes
-        // commented out, as it does not apply to image subtitles...
-        ui->streamSubtitlesComboBox->setCurrentIndex(0);
-        ui->streamSubtitlesComboBox->setEnabled(false);
-        QString errorMessage = QString("This file path contains a single quotation mark ('), ")
-                + QString("which is unsupported by the subtitle filter.\n\nSubtitle support has been disabled.");
-        QMessageBox::warning(this,"Warning",errorMessage);
-    }*/
+        bool streamRemoved = false;
+
+        for(int i = 1; i < ui->streamSubtitlesComboBox->count(); i++)
+        {
+            InputStream subtitleStream = getStreamByType(InputStream::SUBTITLE, i);
+
+            if(!subtitleStream.isImageSub())
+            {
+                ui->streamSubtitlesComboBox->removeItem(i);
+                streamRemoved = true;
+            }
+        }
+
+        if(ui->streamSubtitlesComboBox->count() <= 1)
+            ui->streamSubtitlesComboBox->setEnabled(false);
+
+        if(streamRemoved)
+        {
+            QString errorMessage = QString(
+                        "The text subtitle filter does not support input paths containing apostrophes.\n"
+                        "Text subtitle selection was disabled for this file.");
+            QMessageBox::warning(this,"Warning",errorMessage);
+        }
+
+        textSubtitlesDisabled = true;
+    }
 }
 
 void MainWindow::populateStreamComboBoxes()
@@ -333,7 +353,7 @@ void MainWindow::initializeFormData()
     ui->rateTargetFileSizeDoubleSpinBox->setValue(fileSize);
 }
 
-QTime MainWindow::getOutputDuration()
+QTime MainWindow::getOutputDuration() const
 {
     QTime duration = ui->trimDurationDurationTimeEdit->time();
     QTime startTime;
@@ -382,43 +402,58 @@ void MainWindow::connectSignalsAndSlots()
     connect(ffmpegController,SIGNAL(passFinished(int)),this,SLOT(encodePassFinished(int)));
 }
 
-QStringList MainWindow::generatePass(int passNumber, bool twoPass)
+InputStream MainWindow::getSelectedStream(InputStream::StreamType streamType) const
+{
+    if(streamType == InputStream::VIDEO)
+        return getStreamByType(streamType, ui->streamVideoComboBox->currentIndex() - 1);
+    else if(streamType == InputStream::AUDIO)
+        return getStreamByType(streamType, ui->streamAudioComboBox->currentIndex() - 1);
+    else if(streamType == InputStream::SUBTITLE)
+        return getStreamByType(streamType, ui->streamSubtitlesComboBox->currentIndex() - 1);
+
+    throw std::invalid_argument("streamType");
+}
+
+InputStream MainWindow::getStreamByType(InputStream::StreamType streamType, int index) const
+{
+    if(index <= 0)
+    {
+        throw std::out_of_range("index");
+    }
+
+    int streamCounter = index - 1;
+
+    for(int i = 0; i < inputFile->streamCount(); i++)
+    {
+        const InputStream stream = inputFile->stream(i);
+
+        if(stream.type() == streamType)
+        {
+            // If text subtitles are disabled, do not count them.
+            if(streamType == InputStream::SUBTITLE &&
+                    textSubtitlesDisabled &&
+                    !stream.isImageSub())
+                continue;
+
+            if(streamCounter == 0)
+                return stream;
+            --streamCounter;
+        }
+    }
+
+    throw std::out_of_range("index");
+}
+
+QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
 {
     QString inputFilePath = inputFile->filePath();
     QString outputFilePath = outputFile->filePath();
 
     // get streams
-    InputStream videoStream = InputStream();
-    InputStream audioStream = InputStream();
-    InputStream subtitleStream = InputStream();
+    InputStream videoStream = getSelectedStream(InputStream::VIDEO);
+    InputStream audioStream = getSelectedStream(InputStream::AUDIO);
+    InputStream subtitleStream = getSelectedStream(InputStream::SUBTITLE);
 
-    int videoStreamCounter = ui->streamVideoComboBox->currentIndex() - 1;
-    int audioStreamCounter = ui->streamAudioComboBox->currentIndex() - 1;
-    int subtitleStreamCounter = ui->streamSubtitlesComboBox->currentIndex() - 1;
-
-    for(int i = 0; i < inputFile->streamCount(); i++)
-    {
-        InputStream stream = inputFile->stream(i);
-
-        if(stream.type() == InputStream::VIDEO)
-        {
-            if(videoStreamCounter == 0)
-                videoStream = stream;
-            --videoStreamCounter;
-        }
-        else if(stream.type() == InputStream::AUDIO)
-        {
-            if(audioStreamCounter == 0)
-                audioStream = stream;
-            --audioStreamCounter;
-        }
-        else if(stream.type() == InputStream::SUBTITLE)
-        {
-            if(subtitleStreamCounter == 0)
-                subtitleStream = stream;
-            --subtitleStreamCounter;
-        }
-    }
     bool vp9 = outputFile->videoCodec() == OutputFile::VP9;
     bool vorbis = outputFile->audioCodec() == OutputFile::VORBIS;
 
@@ -1197,7 +1232,7 @@ void MainWindow::on_codecAudioComboBox_currentIndexChanged(const QString &arg1)
     }
 }
 
-double MainWindow::getTargetFileSize()
+double MainWindow::getTargetFileSize() const
 {
     if(inputFile->bitRateInKilobits() == 0 || ui->rateTargetBitRateSpinBox->value() == 0)
         return 0;
@@ -1206,7 +1241,7 @@ double MainWindow::getTargetFileSize()
             / inputFile->bitRateInKilobits() * ui->rateTargetBitRateSpinBox->value();
 }
 
-QString MainWindow::getFilterString(QString rawString)
+QString MainWindow::getFilterString(QString rawString) const
 {
     return rawString.replace(":","\\:").replace("'","\\'").replace("[","\\[").replace("]","\\]").replace(",","\\,")
     .replace(";","\\;");//.replace("\\","\\\\").replace("\\\\'","\\\\\\'"));
