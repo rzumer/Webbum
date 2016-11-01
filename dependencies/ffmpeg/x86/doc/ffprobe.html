@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="style.min.css">
   </head>
   <body>
-    <div class="container">
+    <div style="width: 95%; margin: auto">
       <h1>
       ffprobe Documentation
       </h1>
@@ -304,11 +304,11 @@ loglevel will be used. If multiple loglevel parameters are given, using
 </p></dd>
 <dt>&lsquo;<samp>panic, 0</samp>&rsquo;</dt>
 <dd><p>Only show fatal errors which could lead the process to crash, such as
-and assert failure. This is not currently used for anything.
+an assertion failure. This is not currently used for anything.
 </p></dd>
 <dt>&lsquo;<samp>fatal, 8</samp>&rsquo;</dt>
 <dd><p>Only show fatal errors. These are errors after which the process absolutely
-cannot continue after.
+cannot continue.
 </p></dd>
 <dt>&lsquo;<samp>error, 16</samp>&rsquo;</dt>
 <dd><p>Show all errors, including ones which can be recovered from.
@@ -330,13 +330,13 @@ warnings and errors. This is the default value.
 <dt>&lsquo;<samp>trace, 56</samp>&rsquo;</dt>
 </dl>
 
-<p>By default the program logs to stderr, if coloring is supported by the
+<p>By default the program logs to stderr. If coloring is supported by the
 terminal, colors are used to mark errors and warnings. Log coloring
 can be disabled setting the environment variable
 <code>AV_LOG_FORCE_NOCOLOR</code> or <code>NO_COLOR</code>, or can be forced setting
 the environment variable <code>AV_LOG_FORCE_COLOR</code>.
 The use of the environment variable <code>NO_COLOR</code> is deprecated and
-will be dropped in a following FFmpeg version.
+will be dropped in a future FFmpeg version.
 </p>
 </dd>
 <dt><samp>-report</samp></dt>

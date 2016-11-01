@@ -34,7 +34,6 @@ EXPORTS
     av_format_set_subtitle_codec
     av_format_set_video_codec
     av_get_frame_filename
-    av_get_frame_filename2
     av_get_output_timestamp
     av_get_packet
     av_guess_codec
@@ -66,7 +65,6 @@ EXPORTS
     av_register_output_format
     av_sdp_create
     av_seek_frame
-    av_stream_get_codec_timebase
     av_stream_get_end_pts
     av_stream_get_parser
     av_stream_get_r_frame_rate
@@ -101,7 +99,6 @@ EXPORTS
     avformat_query_codec
     avformat_queue_attached_pictures
     avformat_seek_file
-    avformat_transfer_internal_stream_timing_info
     avformat_version
     avformat_write_header
     avio_accept

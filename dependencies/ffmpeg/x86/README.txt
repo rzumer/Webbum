@@ -2,7 +2,7 @@ This is a FFmpeg win32 shared build by Kyle Schwarz.
 
 Zeranoe's FFmpeg Builds Home Page: <http://ffmpeg.zeranoe.com/builds/>
 
-FFmpeg version: 20161004-be1d324
+FFmpeg version: 3.1.5
 
 This FFmpeg build was configured with:
   --disable-static
@@ -58,30 +58,30 @@ This FFmpeg build was configured with:
   --enable-zlib
 
 This build was compiled with the following external libraries:
-  libmfx 1.17 <https://github.com/lu-zero/mfx_dispatch>
+  libmfx 1.19 <https://ffmpeg.zeranoe.com>
   bzip2 1.0.6 <http://bzip.org/>
   libebur128 1.1.0 <https://github.com/jiixyj/libebur128>
-  Fontconfig 2.11.94 <http://freedesktop.org/wiki/Software/fontconfig>
+  Fontconfig 2.12.1 <http://freedesktop.org/wiki/Software/fontconfig>
   Frei0r 20130909-git-10d8360 <http://frei0r.dyne.org/>
-  GnuTLS 3.3.22 <http://gnutls.org/>
+  GnuTLS 3.4.15 <http://gnutls.org/>
   libiconv 1.14 <http://gnu.org/software/libiconv/>
-  libass 0.13.2 <https://github.com/libass/libass>
+  libass 0.13.4 <https://github.com/libass/libass>
   libbluray 0.9.3 <http://videolan.org/developers/libbluray.html>
   libbs2b 3.1.0 <http://bs2b.sourceforge.net/>
   libcaca 0.99.beta18 <http://caca.zoy.org/wiki/libcaca>
-  FreeType 2.6.3 <http://freetype.sourceforge.net/>
+  FreeType 2.7 <http://freetype.sourceforge.net/>
   Game Music Emu 0.6.0 <https://bitbucket.org/mpyne/game-music-emu/wiki/Home>
   GSM 1.0.13-4 <http://packages.debian.org/source/squeeze/libgsm>
   iLBC 20141214-git-ef04ebe <https://github.com/dekkers/libilbc/>
   Modplug-XMMS 0.8.8.5 <http://modplug-xmms.sourceforge.net/>
   LAME 3.99.5 <http://lame.sourceforge.net/>
   OpenCORE AMR 0.1.3 <http://sourceforge.net/projects/opencore-amr/>
-  OpenH264 1.6.0 <https://github.com/cisco/openh264>
+  OpenH264 1.5.0 <https://github.com/cisco/openh264>
   OpenJPEG 1.5.2 <https://github.com/uclouvain/openjpeg>
   Opus 1.1.3 <http://opus-codec.org/>
   RTMPDump 20151223-git-fa8646d <http://rtmpdump.mplayerhq.hu/>
   Schroedinger 1.0.11-2.1build1 <http://diracvideo.org/>
-  Snappy 20160108-0800b1e <https://github.com/google/snappy>
+  Snappy 20160523-32d6d7d <https://github.com/google/snappy>
   libsoxr 0.1.2 <http://sourceforge.net/projects/soxr/>
   Speex 1.2rc2 <http://speex.org/>
   Theora 1.1.1 <http://theora.org/>
@@ -96,7 +96,7 @@ This build was compiled with the following external libraries:
   x265 2.1 <https://bitbucket.org/multicoreware/x265/wiki/Home>
   XAVS svn-r55 <http://xavs.sourceforge.net/>
   Xvid 1.3.4 <http://xvid.org/>
-  z.lib 2.0.4 <https://github.com/sekrit-twc/zimg>
+  z.lib 2.2.1 <https://github.com/sekrit-twc/zimg>
   XZ Utils 5.2.2 <http://tukaani.org/xz>
   zlib 1.2.8 <http://zlib.net/>
 
