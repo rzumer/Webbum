@@ -13,6 +13,7 @@ An advanced VP8 and VP9 WebM video encoding interface for ffmpeg.
 - Support for target file size input
 - Support for trimming by chapter markers
 - Support for advanced custom parameter input
+- Support for additional languages
 
 # Compilation
 On Linux, the following packages are required (tested on Debian Jessie):  
