@@ -131,7 +131,7 @@ void MainWindow::processInputFile(QString &inputFilePath)
 
         for(int i = 1; i < ui->streamSubtitlesComboBox->count(); i++)
         {
-            InputStream subtitleStream = getStreamByType(InputStream::SUBTITLE, i);
+            InputStream subtitleStream = getStreamByType(InputStream::SUBTITLE, i - 1);
 
             if(!subtitleStream.isImageSub())
             {
@@ -415,12 +415,12 @@ InputStream MainWindow::getSelectedStream(InputStream::StreamType streamType) co
 
 InputStream MainWindow::getStreamByType(InputStream::StreamType streamType, int index) const
 {
-    if(index <= 0)
+    if(index < 0)
     {
-        throw std::out_of_range("index");
+        return InputStream();
     }
 
-    int streamCounter = index - 1;
+    int streamCounter = index;
 
     for(int i = 0; i < inputFile->streamCount(); i++)
     {
@@ -440,7 +440,7 @@ InputStream MainWindow::getStreamByType(InputStream::StreamType streamType, int 
         }
     }
 
-    throw std::out_of_range("index");
+    return InputStream();
 }
 
 QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
