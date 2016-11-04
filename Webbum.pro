@@ -41,6 +41,8 @@ HEADERS  += src/controllers/mainwindow.h \
 
 FORMS    += src/views/mainwindow.ui
 
+TRANSLATIONS += Webbum_fr.ts
+
 win32
 {
     !contains(QMAKE_TARGET.arch, x86_64) {

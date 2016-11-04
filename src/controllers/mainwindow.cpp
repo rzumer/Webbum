@@ -145,9 +145,9 @@ void MainWindow::processInputFile(QString &inputFilePath)
 
         if(streamRemoved)
         {
-            QString errorMessage = QString(
+            QString errorMessage = QString(tr(
                         "The text subtitle filter does not support input paths containing apostrophes.\n"
-                        "Text subtitle selection was disabled for this file.");
+                        "Text subtitle selection was disabled for this file."));
             QMessageBox::warning(this,"Warning",errorMessage);
         }
 
@@ -781,7 +781,7 @@ void MainWindow::on_outputFileBrowsePushButton_clicked()
 {
     QString outputFilePath = QFileDialog::getSaveFileName(this,"Select Output File",
                                 ui->outputFileLineEdit->text().trimmed(),
-                                "WebM (*.webm)");
+                                tr("WebM (*.webm)"));
     if(!outputFilePath.isEmpty())
         ui->outputFileLineEdit->setText(QDir::toNativeSeparators(outputFilePath));
 }
@@ -1037,7 +1037,7 @@ void MainWindow::on_actionOpen_triggered()
 {
     QString inputFilePath = QFileDialog::getOpenFileName(this,"Select Input File",
                                  QFileInfo(ui->inputFileLineEdit->text().trimmed()).dir().canonicalPath(),
-                                 "All Files (*.*)");
+                                 tr("All Files (*.*)"));
     if(!inputFilePath.isEmpty())
         ui->inputFileLineEdit->setText(QDir::toNativeSeparators(inputFilePath));
 }
@@ -1241,7 +1241,7 @@ QString MainWindow::getFilterString(QString rawString) const
 void MainWindow::encodeFailed(bool crashed)
 {
     if(crashed)
-        QMessageBox::critical(this,"Failure","The encode has failed unexpectedly.", QMessageBox::Ok);
+        QMessageBox::critical(this,tr("Failure"),tr("The encode has failed unexpectedly."), QMessageBox::Ok);
 
     activateUserInterface();
 }
@@ -1263,7 +1263,7 @@ void MainWindow::encodePassFinished(int passNumber)
 void MainWindow::encodeFinished()
 {
     ui->progressBar->setValue(100);
-    QMessageBox::information(this,"Success","Encode successful.",
+    QMessageBox::information(this,tr("Success"),tr("Encode successful."),
                              QMessageBox::Ok);
 
     activateUserInterface();
