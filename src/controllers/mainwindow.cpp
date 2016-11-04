@@ -379,26 +379,26 @@ QTime MainWindow::getOutputDuration() const
 void MainWindow::connectSignalsAndSlots()
 {
     // UI
-    connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)));
-    connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)));
-    connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)));
-    connect(ui->cropBottomSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropBottom(int)));
-    connect(ui->resizeWidthSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setWidth(int)));
-    connect(ui->resizeHeightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setHeight(int)));
-    connect(ui->trimStartEndStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
-    connect(ui->trimDurationStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)));
-    connect(ui->trimStartEndEndTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setEndTime(QTime)));
-    connect(ui->codecVideoComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setVideoCodec(int)));
-    connect(ui->codecAudioComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setAudioCodec(int)));
-    connect(ui->rateTargetBitRateSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setBitRateInKilobits(int)));
-    connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setBitRateForMegabytes(double)));
-    connect(ui->rateCRFSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCrf(int)));
-    connect(ui->customFiltersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomFilters(QString)));
-    connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)));
+    connect(ui->cropLeftSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropLeft(int)), Qt::UniqueConnection);
+    connect(ui->cropRightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropRight(int)), Qt::UniqueConnection);
+    connect(ui->cropTopSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropTop(int)), Qt::UniqueConnection);
+    connect(ui->cropBottomSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCropBottom(int)), Qt::UniqueConnection);
+    connect(ui->resizeWidthSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setWidth(int)), Qt::UniqueConnection);
+    connect(ui->resizeHeightSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setHeight(int)), Qt::UniqueConnection);
+    connect(ui->trimStartEndStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)), Qt::UniqueConnection);
+    connect(ui->trimDurationStartTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setStartTime(QTime)), Qt::UniqueConnection);
+    connect(ui->trimStartEndEndTimeEdit,SIGNAL(timeChanged(QTime)),outputFile,SLOT(setEndTime(QTime)), Qt::UniqueConnection);
+    connect(ui->codecVideoComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setVideoCodec(int)), Qt::UniqueConnection);
+    connect(ui->codecAudioComboBox,SIGNAL(currentIndexChanged(int)),outputFile,SLOT(setAudioCodec(int)), Qt::UniqueConnection);
+    connect(ui->rateTargetBitRateSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setBitRateInKilobits(int)), Qt::UniqueConnection);
+    connect(ui->rateTargetFileSizeDoubleSpinBox,SIGNAL(valueChanged(double)),outputFile,SLOT(setBitRateForMegabytes(double)), Qt::UniqueConnection);
+    connect(ui->rateCRFSpinBox,SIGNAL(valueChanged(int)),outputFile,SLOT(setCrf(int)), Qt::UniqueConnection);
+    connect(ui->customFiltersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomFilters(QString)), Qt::UniqueConnection);
+    connect(ui->customEncodingParametersLineEdit,SIGNAL(textChanged(QString)),outputFile,SLOT(setCustomParameters(QString)), Qt::UniqueConnection);
 
     // FFMPEG Controller
-    connect(ffmpegController,SIGNAL(failed(bool)),this,SLOT(encodeFailed(bool)));
-    connect(ffmpegController,SIGNAL(passFinished(int)),this,SLOT(encodePassFinished(int)));
+    connect(ffmpegController,SIGNAL(failed(bool)),this,SLOT(encodeFailed(bool)), Qt::UniqueConnection);
+    connect(ffmpegController,SIGNAL(passFinished(int)),this,SLOT(encodePassFinished(int)), Qt::UniqueConnection);
 }
 
 InputStream MainWindow::getSelectedStream(InputStream::StreamType streamType) const
