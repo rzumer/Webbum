@@ -25,7 +25,7 @@ win32
 unix: INCLUDEPATH += usr/include
 
 SOURCES += src/main.cpp\
-        src/controllers/mainwindow.cpp \
+    src/controllers/mainwindow.cpp \
     src/controllers/ffmpegcontroller.cpp \
     src/models/inputfile.cpp \
     src/models/outputfile.cpp \

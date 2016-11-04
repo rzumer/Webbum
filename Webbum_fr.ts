@@ -41,6 +41,8 @@
     <message>
         <location filename="src/views/mainwindow.ui" line="120"/>
         <location filename="src/views/mainwindow.ui" line="187"/>
+        <location filename="src/controllers/mainwindow.cpp" line="262"/>
+        <location filename="src/controllers/mainwindow.cpp" line="263"/>
         <source>No Chapter</source>
         <translation>Aucun chapitre</translation>
     </message>
@@ -171,16 +173,24 @@
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="583"/>
+        <location filename="src/controllers/mainwindow.cpp" line="505"/>
+        <location filename="src/controllers/mainwindow.cpp" line="795"/>
         <source>Variable Bit Rate</source>
         <translation>Débit variable</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="588"/>
+        <location filename="src/controllers/mainwindow.cpp" line="501"/>
+        <location filename="src/controllers/mainwindow.cpp" line="505"/>
+        <location filename="src/controllers/mainwindow.cpp" line="795"/>
         <source>Constant Bit Rate</source>
         <translation>Débit constant</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="593"/>
+        <location filename="src/controllers/mainwindow.cpp" line="505"/>
+        <location filename="src/controllers/mainwindow.cpp" line="518"/>
+        <location filename="src/controllers/mainwindow.cpp" line="810"/>
         <source>Constrained Quality</source>
         <translation>Qualité contrainte</translation>
     </message>
@@ -191,11 +201,24 @@
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="615"/>
+        <location filename="src/controllers/mainwindow.cpp" line="91"/>
+        <location filename="src/controllers/mainwindow.cpp" line="511"/>
+        <location filename="src/controllers/mainwindow.cpp" line="912"/>
+        <location filename="src/controllers/mainwindow.cpp" line="930"/>
+        <location filename="src/controllers/mainwindow.cpp" line="942"/>
+        <location filename="src/controllers/mainwindow.cpp" line="956"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1107"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1116"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1124"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1130"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1136"/>
         <source>Bit Rate</source>
         <translation>Par débit</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="620"/>
+        <location filename="src/controllers/mainwindow.cpp" line="96"/>
+        <location filename="src/controllers/mainwindow.cpp" line="507"/>
         <source>File Size</source>
         <translation>Par taille</translation>
     </message>
@@ -256,21 +279,25 @@
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="813"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1143"/>
         <source>VP8</source>
         <translation>VP8</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="818"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1149"/>
         <source>VP9</source>
         <translation>VP9</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="835"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1214"/>
         <source>Opus</source>
         <translation>Opus</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="840"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1219"/>
         <source>Vorbis</source>
         <translation>Vorbis</translation>
     </message>
@@ -313,9 +340,39 @@ Text subtitle selection was disabled for this file.</source>
 La sélection de sous-titres textuels a été désactivée pour ce fichier.</translation>
     </message>
     <message>
+        <location filename="src/controllers/mainwindow.cpp" line="151"/>
+        <source>Warning</source>
+        <translation>Avertissement</translation>
+    </message>
+    <message>
+        <location filename="src/controllers/mainwindow.cpp" line="518"/>
+        <location filename="src/controllers/mainwindow.cpp" line="802"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1146"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1152"/>
+        <source>Constant Quality</source>
+        <translation>Qualité constante</translation>
+    </message>
+    <message>
+        <location filename="src/controllers/mainwindow.cpp" line="782"/>
+        <source>Select Output File</source>
+        <translation>Sélectionner le fichier de sortie</translation>
+    </message>
+    <message>
         <location filename="src/controllers/mainwindow.cpp" line="784"/>
         <source>WebM (*.webm)</source>
         <translation>WebM (*.webm)</translation>
+    </message>
+    <message>
+        <location filename="src/controllers/mainwindow.cpp" line="817"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1147"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1153"/>
+        <source>Lossless</source>
+        <translation>Sans perte</translation>
+    </message>
+    <message>
+        <location filename="src/controllers/mainwindow.cpp" line="1038"/>
+        <source>Select Input File</source>
+        <translation>Sélectionner le fichier d&apos;entrée</translation>
     </message>
     <message>
         <location filename="src/controllers/mainwindow.cpp" line="1040"/>

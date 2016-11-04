@@ -88,12 +88,12 @@ void MainWindow::validateFormFields()
 
 void MainWindow::refreshTargetMode(QString &currentTargetMode)
 {
-    if(currentTargetMode == "Bit Rate")
+    if(currentTargetMode == tr("Bit Rate"))
     {
         ui->rateTargetBitRateSpinBox->setEnabled(true);
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
-    else if(currentTargetMode == "File Size")
+    else if(currentTargetMode == tr("File Size"))
     {
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(true);
         ui->rateTargetBitRateSpinBox->setEnabled(false);
@@ -148,7 +148,7 @@ void MainWindow::processInputFile(QString &inputFilePath)
             QString errorMessage = QString(tr(
                         "The text subtitle filter does not support input paths containing apostrophes.\n"
                         "Text subtitle selection was disabled for this file."));
-            QMessageBox::warning(this,"Warning",errorMessage);
+            QMessageBox::warning(this,tr("Warning"),errorMessage);
         }
 
         textSubtitlesDisabled = true;
@@ -259,8 +259,8 @@ void MainWindow::clearInputFileFormData()
     ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0));
 
     // add "No Chapter" item to chapter combo boxes in case it was removed
-    ui->trimStartEndStartChapterComboBox->insertItem(0,"No Chapter");
-    ui->trimStartEndEndChapterComboBox->insertItem(0,"No Chapter");
+    ui->trimStartEndStartChapterComboBox->insertItem(0,tr("No Chapter"));
+    ui->trimStartEndEndChapterComboBox->insertItem(0,tr("No Chapter"));
 
     // set selected streams/chapters to Disabled/No Chapter
     ui->streamVideoComboBox->setCurrentIndex(0);
@@ -479,6 +479,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
     int cropBottom = 0;
     int width = -2; // mod2 if automatic
     int height = -2; // mod2 if automatic
+
     if(ui->cropCheckBox->isChecked())
     {
         cropLeft = outputFile->cropLeft();
@@ -498,24 +499,27 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
     int bitRate = -1;
     bool cbr = false;
     QString rateMode = ui->rateModeComboBox->currentText();
-    if(rateMode == "Constant Bit Rate")
+
+    if(rateMode == tr("Constant Bit Rate"))
     {
         cbr = true;
     }
-    if(rateMode == "Constant Bit Rate" || rateMode == "Variable Bit Rate" || rateMode == "Constrained Quality")
+
+    if(rateMode == tr("Constant Bit Rate") || rateMode == tr("Variable Bit Rate") || rateMode == tr("Constrained Quality"))
     {
-        if(ui->rateTargetModeComboBox->currentText() == "File Size")
+        if(ui->rateTargetModeComboBox->currentText() == tr("File Size"))
         {
             outputFile->setBitRateForMegabytes(ui->rateTargetFileSizeDoubleSpinBox->value());
         }
-        else if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+        else if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate"))
         {
             outputFile->setBitRateInKilobits(ui->rateTargetBitRateSpinBox->value());
         }
 
         bitRate = outputFile->bitRateInKilobits();
     }
-    if(rateMode == "Constant Quality" || rateMode == "Constrained Quality")
+
+    if(rateMode == tr("Constant Quality") || rateMode == tr("Constrained Quality"))
     {
         crf = outputFile->crf();
     }
@@ -648,11 +652,13 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
     // filters
     QString filterChain;
     QString complexFilterChain;
+
     if(cropWidth < videoStream.width() || cropHeight < videoStream.height())
     {
         filterChain.append("crop=" + QString::number(cropWidth) + ":" + QString::number(cropHeight) +
                            ":" + QString::number(cropX) + ":" + QString::number(cropY));
     }
+
     if(width > 0 || height > 0)
     {
         if(!filterChain.isEmpty())
@@ -660,6 +666,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
 
         filterChain.append("scale=" + QString::number(width) + ":" + QString::number(height));
     }
+
     if(subtitleStream.isValid())
     {
         if(subtitleStream.isImageSub())
@@ -701,6 +708,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
 
         filterChain.append(customFilters);
     }
+
     if(!complexFilterChain.isEmpty())
     {
         passStringList << "-filter_complex" << complexFilterChain;
@@ -779,7 +787,7 @@ void MainWindow::on_outputFileLineEdit_textChanged(const QString &arg1)
 
 void MainWindow::on_outputFileBrowsePushButton_clicked()
 {
-    QString outputFilePath = QFileDialog::getSaveFileName(this,"Select Output File",
+    QString outputFilePath = QFileDialog::getSaveFileName(this,tr("Select Output File"),
                                 ui->outputFileLineEdit->text().trimmed(),
                                 tr("WebM (*.webm)"));
     if(!outputFilePath.isEmpty())
@@ -792,14 +800,14 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
     QComboBox *targetModeComboBox = ui->rateTargetModeComboBox;
     QString currentModeText = targetModeComboBox->currentText();
 
-    if(currentMode == "Variable Bit Rate" || currentMode == "Constant Bit Rate")
+    if(currentMode == tr("Variable Bit Rate") || currentMode == tr("Constant Bit Rate"))
     {
         // Disable CRF selection, enable target mode/bit rate/file size selection
         ui->rateCRFSpinBox->setEnabled(false);
         targetModeComboBox->setEnabled(true);
         refreshTargetMode(currentModeText);
     }
-    else if(currentMode == "Constant Quality")
+    else if(currentMode == tr("Constant Quality"))
     {
         // Enable CRF selection, disable target mode/bit rate/file size selection
         ui->rateCRFSpinBox->setEnabled(true);
@@ -807,14 +815,14 @@ void MainWindow::on_rateModeComboBox_currentIndexChanged(const QString &arg1)
         ui->rateTargetBitRateSpinBox->setEnabled(false);
         ui->rateTargetFileSizeDoubleSpinBox->setEnabled(false);
     }
-    else if(currentMode == "Constrained Quality")
+    else if(currentMode == tr("Constrained Quality"))
     {
         // Enable all rate control selection
         ui->rateCRFSpinBox->setEnabled(true);
         targetModeComboBox->setEnabled(true);
         refreshTargetMode(currentModeText);
     }
-    else if(currentMode == "Lossless")
+    else if(currentMode == tr("Lossless"))
     {
         // Disable all rate control selection
         ui->rateCRFSpinBox->setEnabled(false);
@@ -909,7 +917,7 @@ void MainWindow::on_trimStartEndStartChapterComboBox_activated(int index)
         }
     }
 
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 }
 
@@ -927,7 +935,7 @@ void MainWindow::on_trimStartEndEndChapterComboBox_activated(int index)
         }
     }
 
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 }
 
@@ -939,7 +947,7 @@ void MainWindow::on_trimStartEndStartTimeEdit_editingFinished()
     if(startTime >= endTime)
         ui->trimStartEndEndTimeEdit->setTime(startTime.addMSecs(1));
 
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 
     validateFormFields();
@@ -953,7 +961,7 @@ void MainWindow::on_trimStartEndEndTimeEdit_editingFinished()
     if(endTime <= startTime)
         ui->trimStartEndStartTimeEdit->setTime(endTime.addMSecs(-1));
 
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(inputFile->fileSizeInMegabytes(getOutputDuration()));
 
     validateFormFields();
@@ -1035,7 +1043,7 @@ void MainWindow::on_resizeHeightSpinBox_editingFinished()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString inputFilePath = QFileDialog::getOpenFileName(this,"Select Input File",
+    QString inputFilePath = QFileDialog::getOpenFileName(this,tr("Select Input File"),
                                  QFileInfo(ui->inputFileLineEdit->text().trimmed()).dir().canonicalPath(),
                                  tr("All Files (*.*)"));
     if(!inputFilePath.isEmpty())
@@ -1104,7 +1112,7 @@ void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
             ui->trimDurationDurationTimeEdit->setTime(maxDuration);
         ui->trimDurationDurationTimeEdit->setMaximumTime(maxDuration);
 
-        if(ui->rateTargetModeComboBox->currentText() == "Bit Rate")
+        if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate"))
             ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
     }
 
@@ -1113,7 +1121,7 @@ void MainWindow::on_trimDurationStartTimeEdit_editingFinished()
 
 void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 {
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 
     validateFormFields();
@@ -1121,36 +1129,36 @@ void MainWindow::on_trimDurationDurationTimeEdit_editingFinished()
 
 void MainWindow::on_trimNoneRadioButton_clicked()
 {
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 }
 
 void MainWindow::on_trimStartEndRadioButton_clicked()
 {
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 }
 
 void MainWindow::on_trimDurationRadioButton_clicked()
 {
-    if(ui->rateTargetModeComboBox->currentText() == "Bit Rate" && inputFile->isValid())
+    if(ui->rateTargetModeComboBox->currentText() == tr("Bit Rate") && inputFile->isValid())
         ui->rateTargetFileSizeDoubleSpinBox->setValue(getTargetFileSize());
 }
 
 void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
 {
     QString codec = arg1;
-    if(codec == "VP8")
+    if(codec == tr("VP8"))
     {
         ui->rateCRFSpinBox->setMinimum(4);
-        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Constant Quality"));
-        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText("Lossless"));
+        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Constant Quality")));
+        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Lossless")));
     }
-    else if(codec == "VP9")
+    else if(codec == tr("VP9"))
     {
         ui->rateCRFSpinBox->setMinimum(0);
-        ui->rateModeComboBox->insertItem(2,"Constant Quality");
-        ui->rateModeComboBox->insertItem(4,"Lossless");
+        ui->rateModeComboBox->insertItem(2,tr("Constant Quality"));
+        ui->rateModeComboBox->insertItem(4,tr("Lossless"));
     }
 }
 
@@ -1211,12 +1219,12 @@ void MainWindow::on_cancelPushButton_clicked()
 void MainWindow::on_codecAudioComboBox_currentIndexChanged(const QString &arg1)
 {
     QString selectedCodec = arg1;
-    if(selectedCodec == "Opus")
+    if(selectedCodec == tr("Opus"))
     {
         ui->codecAudioBitRateSpinBox->setMinimum(6);
         ui->codecAudioBitRateSpinBox->setMaximum(510);
     }
-    else if(selectedCodec == "Vorbis")
+    else if(selectedCodec == tr("Vorbis"))
     {
         ui->codecAudioBitRateSpinBox->setMinimum(45);
         ui->codecAudioBitRateSpinBox->setMaximum(500);

@@ -17,7 +17,7 @@ void FFMPEGController::encodePass(QStringList &encodingParameters)
     connect(ffmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(encodePassFinished(int,QProcess::ExitStatus)), Qt::UniqueConnection);
     connect(ffmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), ffmpegProcess, SLOT(deleteLater()), Qt::UniqueConnection);
 
-    ffmpegProcess->start("ffmpeg",encodingParameters);
+    ffmpegProcess->start("ffmpeg", encodingParameters);
 }
 
 void FFMPEGController::encodePassFinished(int exitCode, QProcess::ExitStatus exitStatus)

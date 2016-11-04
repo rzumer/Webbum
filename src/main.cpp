@@ -7,15 +7,12 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+    QApplication::setApplicationName("Webbum");
 
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),
-           QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    application.installTranslator(&qtTranslator);
-
-    QTranslator appTranslator;
-    appTranslator.load("Webbum_" + QLocale::system().name());
-    application.installTranslator(&appTranslator);
+    QTranslator translator;
+    QString locale = QLocale::system().name();
+    translator.load(application.applicationName() + "_" + locale);
+    application.installTranslator(&translator);
 
     MainWindow window;
     window.show();
