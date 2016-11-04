@@ -35,7 +35,6 @@ protected:
     void dragEnterEvent(QDragEnterEvent *ev) { ev->accept(); }
 
 private slots:
-    void on_actionAbout_triggered();
     void on_inputFileLineEdit_textChanged(const QString &arg1);
     void on_outputFileLineEdit_textChanged(const QString &arg1);
     void on_outputFileBrowsePushButton_clicked();

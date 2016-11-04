@@ -521,7 +521,6 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
     }
 
     int audioBitRate = ui->codecAudioBitRateSpinBox->value();
-    //(int)(round(ui->codecAudioBitRateSpinBox->value() * ((double)audioStream.channels() / 2))); if based on stereo bitrate
 
     QString customFilters = outputFile->customFilters().trimmed();
     QString customParameters = outputFile->customParameters().trimmed();
@@ -640,6 +639,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
             pixelCount = width * (videoStream.height() * width / videoStream.width());
         else
             pixelCount = width * height;
+
         // 4 slices for anything larger than PAL DVD, else 1
         int slices = (pixelCount > 720 * 576 ? 4 : 1);
         passStringList << "-slices" << QString::number(slices);
@@ -746,20 +746,12 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
     else
         passStringList << outputFilePath;
 
-    //qDebug().noquote() << passStringList.join(' ');
-
     return passStringList;
 }
 
 void MainWindow::updateProgressBar()
 {
     // do stuff
-}
-
-void MainWindow::on_actionAbout_triggered()
-{
-    // About dialog box
-    QMessageBox::about(this,"About","Webbum makes WebMs.");
 }
 
 void MainWindow::on_inputFileLineEdit_textChanged(const QString &arg1)
