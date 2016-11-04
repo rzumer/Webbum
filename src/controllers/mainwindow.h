@@ -5,9 +5,9 @@
 #include <QtCore>
 #include <QtWidgets>
 #include <QtWinExtras>
-#include "inputfile.h"
-#include "outputfile.h"
-#include "inputstream.h"
+#include "models/inputfile.h"
+#include "models/outputfile.h"
+#include "models/inputstream.h"
 #include "ffmpegcontroller.h"
 
 extern "C"

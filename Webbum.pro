@@ -10,6 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
 
+INCLUDEPATH += $$PWD/src
+
 win32:RC_ICONS += $$PWD/icon64.ico
 
 win32
@@ -22,22 +24,22 @@ win32
 }
 unix: INCLUDEPATH += usr/include
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    inputfile.cpp \
-    outputfile.cpp \
-    inputstream.cpp \
-    inputchapter.cpp \
-    ffmpegcontroller.cpp
+SOURCES += src/main.cpp\
+        src/controllers/mainwindow.cpp \
+    src/controllers/ffmpegcontroller.cpp \
+    src/models/inputfile.cpp \
+    src/models/outputfile.cpp \
+    src/models/inputstream.cpp \
+    src/models/inputchapter.cpp
 
-HEADERS  += mainwindow.h \
-    outputfile.h \
-    inputfile.h \
-    inputstream.h \
-    inputchapter.h \
-    ffmpegcontroller.h
+HEADERS  += src/controllers/mainwindow.h \
+    src/controllers/ffmpegcontroller.h \
+    src/models/outputfile.h \
+    src/models/inputfile.h \
+    src/models/inputstream.h \
+    src/models/inputchapter.h
 
-FORMS    += mainwindow.ui
+FORMS    += src/views/mainwindow.ui
 
 win32
 {
