@@ -319,6 +319,7 @@ void MainWindow::initializeFormData()
     ui->outputFileBrowsePushButton->setEnabled(true);
 
     // enable controls
+    ui->trimmingGroupBox->setEnabled(true);
     ui->processingGroupBox->setEnabled(true);
     ui->encodingGroupBox->setEnabled(true);
 
@@ -330,8 +331,18 @@ void MainWindow::initializeFormData()
     ui->trimStartEndEndTimeEdit->setMaximumTime(duration);
     ui->trimDurationStartTimeEdit->setMaximumTime(duration.addMSecs(-1));
     ui->trimDurationDurationTimeEdit->setMaximumTime(duration);
-    ui->trimStartEndEndTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
-    ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
+
+    // Set the minimum end time and duration higher than 0, unless the duration was not retrieved correctly.
+    // If the duration was not retrieved correctly, disable trimming.
+    if(duration.msec() > 0)
+    {
+        ui->trimStartEndEndTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
+        ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
+    }
+    else
+    {
+        ui->trimmingGroupBox->setEnabled(false);
+    }
 
     // set default width and height based on the largest video stream's
     int width = inputFile->width();

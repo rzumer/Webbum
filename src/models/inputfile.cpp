@@ -56,7 +56,11 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
             }
 
             // Duration
-            _duration = QTime(0,0).addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
+            _duration = QTime(0, 0);
+            if(formatContext->duration != _I64_MIN)
+            {
+                _duration = _duration.addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
+            }
 
             // Bit Rate
             _bitRate = formatContext->bit_rate;
