@@ -26,6 +26,6 @@ On Linux, the `ffmpeg` and `qt5` packages are required to run Webbum, and the `f
 
 On Windows, the [`Microsoft Visual C++ 2013 Redistributable`](https://www.microsoft.com/en-ca/download/details.aspx?id=40784) package is required to run Webbum. Release builds include the appropriate `ffmpeg` binaries from Zeranoe.
 
-For custom builds of `ffmpeg`, the following options are recommended (though not tested): `--disable-static`, `--enable-shared`, `--enable-fontconfig`, `--enable-libass`, `--enable-libopus`, `--enable-libvorbis`, `--enable-libvpx`, as well as any other libraries for susceptible input video codecs to process with Webbum.
+For custom builds of `ffmpeg`, the following options are recommended: `--disable-static`, `--enable-shared`, `--enable-fontconfig`, `--enable-libass`, `--enable-libopus`, `--enable-libvorbis`, `--enable-libvpx`, `--enable-libx265`, `--enable-libaom`. These options should cover most typical input content.
 
 All other libraries and dependencies should be provided.
