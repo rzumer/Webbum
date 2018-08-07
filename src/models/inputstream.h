@@ -12,7 +12,7 @@ class InputStream
 {
 public:
     enum StreamType {VIDEO, AUDIO, SUBTITLE, OTHER};
-    explicit InputStream(AVStream *stream = NULL, int index = -1);
+    explicit InputStream(AVStream *stream = nullptr, int index = -1);
 
     // getters
     int id() const { return _id; }
@@ -27,7 +27,7 @@ public:
     double frameRate() const { return _frameRate; }
     int width() const { return _width; }
     int height() const { return _height; }
-    int bitRate() const { return _bitRate; }
+    long long bitRate() const { return _bitRate; }
     int channels() const { return _channels; }
     QString channelLayout() const { return _channelLayout; }
     bool isValid() { return _index != -1; }
@@ -47,7 +47,7 @@ private:
     double _frameRate; // video only
     int _width; // video only
     int _height; // video only
-    int _bitRate; // audio only
+    long long _bitRate; // audio only
     int _channels; // audio only
     QString _channelLayout; // audio only
 };

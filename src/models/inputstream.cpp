@@ -17,7 +17,7 @@ InputStream::InputStream(AVStream *stream, int index)
         _id = stream->id > 0 ? stream->id : stream->index;
 
         // Language
-        AVDictionaryEntry *language = av_dict_get(stream->metadata,"language",NULL,0);
+        AVDictionaryEntry *language = av_dict_get(stream->metadata,"language", nullptr, 0);
         if(language)
             _language = language->value;
 
@@ -28,70 +28,68 @@ InputStream::InputStream(AVStream *stream, int index)
             _isForced = true;
 
         // Codec Type
-        if(stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        if(stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
             _type = VIDEO;
-        else if(stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+        else if(stream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
             _type = AUDIO;
-        else if(stream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
+        else if(stream->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE)
             _type = SUBTITLE;
         else
             _type = OTHER;
 
         // Title
-        AVDictionaryEntry *title = av_dict_get(stream->metadata,"title",NULL,0);
+        AVDictionaryEntry *title = av_dict_get(stream->metadata,"title", nullptr, 0);
         if(title)
             _title = QString::fromStdString(title->value);
 
         // Codec Name
-        _codec = QString::fromStdString(avcodec_get_name(stream->codec->codec_id));
+        _codec = QString::fromStdString(avcodec_get_name(stream->codecpar->codec_id));
 
         // Profile Name
-        if(stream->codec->profile != FF_PROFILE_UNKNOWN)
+        if(stream->codecpar->profile != FF_PROFILE_UNKNOWN)
         {
             const AVCodec *profile;
-            const char *profileName;
+            const char *profileName = nullptr;
 
             if(stream->codec->codec)
                 profile = stream->codec->codec;
             else
-                profile = avcodec_find_decoder(stream->codec->codec_id);
+                profile = avcodec_find_decoder(stream->codecpar->codec_id);
 
             if(profile)
-                profileName = av_get_profile_name(profile,stream->codec->profile);
+                profileName = av_get_profile_name(profile,stream->codecpar->profile);
 
             if(profileName)
                 _profile = profileName;
         }
 
         // Video information
-        if(stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        if(stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
         {
             // Frame Rate
             _frameRate = av_q2d(stream->codec->framerate);
 
             // Width/Height
-            _width = stream->codec->width;
-            _height = stream->codec->height;
+            _width = stream->codecpar->width;
+            _height = stream->codecpar->height;
         }
 
         // Audio information
-        if(stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+        if(stream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
         {
             // Bit Rate
-            int bitsPerSample = av_get_bits_per_sample(stream->codec->codec_id);
-            int bitRate = bitsPerSample ? stream->codec->sample_rate *
-                                          stream->codec->channels *
-                                          bitsPerSample : stream->codec->bit_rate;
-            if(bitRate > 0)
-                _bitRate = bitRate;
-            else
-                _bitRate = 0;
+            int bitsPerSample = av_get_bits_per_sample(stream->codecpar->codec_id);
+            long long bitRate = bitsPerSample ? stream->codecpar->sample_rate *
+                                          stream->codecpar->channels *
+                                          bitsPerSample : stream->codecpar->bit_rate;
+
+            _bitRate = std::max(bitRate, 0ll);
 
             // Channel Layout
-            _channels = stream->codec->channels;
+            _channels = stream->codecpar->channels;
             char buf[256];
             av_get_channel_layout_string(buf,sizeof(buf),
-                stream->codec->channels,stream->codec->channel_layout);
+                stream->codecpar->channels,stream->codecpar->channel_layout);
             _channelLayout = QString::fromStdString(buf);
         }
     }
@@ -125,7 +123,7 @@ QString InputStream::getShortString() const
         // Bit Rate
         if(_bitRate > 0)
         {
-            streamString.append(QString::number(round((double)_bitRate / 1000)) + "kbps");
+            streamString.append(QString::number(round(static_cast<double>(_bitRate) / 1000)) + "kbps");
 
             // Channel Layout
             if(!_channelLayout.isEmpty())

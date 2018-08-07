@@ -12,27 +12,27 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
     {
         av_register_all();
 
-        AVFormatContext *formatContext = NULL;
+        AVFormatContext *formatContext = nullptr;
 
-        if(avformat_open_input(&formatContext,inputFilePath.toStdString().c_str(),NULL,NULL) == 0)
+        if(avformat_open_input(&formatContext, inputFilePath.toStdString().c_str(), nullptr, nullptr) == 0)
         {
-            if(avformat_find_stream_info(formatContext,NULL) >= 0)
+            if(avformat_find_stream_info(formatContext, nullptr) >= 0)
             {
                 int videoStreamIndex = 0;
                 int audioStreamIndex = 0;
                 int subtitleStreamIndex = 0;
 
                 // Streams
-                for(int i = 0; (unsigned)i < formatContext->nb_streams; i++)
+                for(int i = 0; static_cast<unsigned int>(i) < formatContext->nb_streams; i++)
                 {
                     AVStream *currentStream = formatContext->streams[i];
                     InputStream localStream;
 
-                    if(currentStream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+                    if(currentStream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
                         localStream = InputStream(currentStream, videoStreamIndex++);
-                    else if(currentStream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+                    else if(currentStream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
                         localStream = InputStream(currentStream, audioStreamIndex++);
-                    else if(currentStream->codec->codec_type == AVMEDIA_TYPE_SUBTITLE)
+                    else if(currentStream->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE)
                         localStream = InputStream(currentStream, subtitleStreamIndex++);
                     else
                         localStream = InputStream(currentStream);
@@ -48,7 +48,7 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
             }
 
             // Chapters
-            for(int i = 0; (unsigned)i < formatContext->nb_chapters; i++)
+            for(int i = 0; static_cast<unsigned int>(i) < formatContext->nb_chapters; i++)
             {
                 AVChapter *currentChapter = formatContext->chapters[i];
                 InputChapter localChapter = InputChapter(currentChapter, i);
@@ -59,7 +59,7 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
             _duration = QTime(0, 0);
             if(formatContext->duration != _I64_MIN)
             {
-                _duration = _duration.addMSecs((double)(formatContext->duration + 500) / AV_TIME_BASE * 1000);
+                _duration = _duration.addMSecs(static_cast<int>(round(static_cast<double>(formatContext->duration + 500) / AV_TIME_BASE * 1000)));
             }
 
             // Bit Rate
@@ -72,9 +72,9 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
 double InputFile::fileSize(double durationInMSecs) const
 {
     if(durationInMSecs > 0)
-        return ((double)_bitRate / 8) * durationInMSecs / 1000;
+        return (static_cast<double>(_bitRate) / 8) * durationInMSecs / 1000;
     else
-        return ((double)_bitRate / 8) * QTime(0,0).msecsTo(_duration) / 1000;
+        return (static_cast<double>(_bitRate) / 8) * QTime(0,0).msecsTo(_duration) / 1000;
 }
 
 double InputFile::fileSize(QTime duration) const
@@ -105,11 +105,11 @@ bool InputFile::isValid()
 
 void InputFile::dumpStreamInformation()
 {
-    AVFormatContext *formatContext = NULL;
+    AVFormatContext *formatContext = nullptr;
 
-    if(avformat_open_input(&formatContext,_filePath.toStdString().c_str(),NULL,NULL) == 0)
+    if(avformat_open_input(&formatContext, _filePath.toStdString().c_str(), nullptr, nullptr) == 0)
     {
-        if(avformat_find_stream_info(formatContext,NULL) >= 0)
+        if(avformat_find_stream_info(formatContext, nullptr) >= 0)
         {
             const char *fileNameStdString = _filePath.toStdString().c_str();
             av_dump_format(formatContext,0,fileNameStdString,false);

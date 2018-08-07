@@ -19,7 +19,7 @@ class InputFile : public QObject
     Q_OBJECT
 
 public:
-    explicit InputFile(QObject *parent = 0, QString inputFilePath = QString());
+    explicit InputFile(QObject *parent = nullptr, QString inputFilePath = QString());
 
     // getters
     QString filePath() const { return _filePath; }
@@ -28,8 +28,8 @@ public:
     int chapterCount() const { return _chapters.size(); }
     InputChapter chapter(int index) const { return _chapters.at(index); }
     QTime duration() const { return _duration; }
-    int bitRate() const { return _bitRate; }
-    int bitRateInKilobits() const { return (int)(round(_bitRate / 1000)); }
+    long long bitRate() const { return _bitRate; }
+    int bitRateInKilobits() const { return static_cast<int>(round(_bitRate / 1000)); }
     double fileSize(double durationInMSecs = 0) const;
     double fileSize(QTime duration) const;
     double fileSizeInMegabytes(double durationInMSecs = 0) const;
@@ -46,7 +46,7 @@ private:
     QList<InputStream> _streams;
     QList<InputChapter> _chapters;
     QTime _duration;
-    int _bitRate;
+    long long _bitRate;
     int _width;
     int _height;
 
