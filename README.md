@@ -1,5 +1,5 @@
 # Webbum
-An advanced VP8 and VP9 WebM video encoding interface for ffmpeg.
+An advanced VP8, VP9 and AV1 WebM video encoding interface for ffmpeg.
 
 ![](https://rzumer.tebako.net/img/webbum1.png?raw=true)
 ![](https://rzumer.tebako.net/img/webbum2.png?raw=true)
@@ -7,13 +7,14 @@ An advanced VP8 and VP9 WebM video encoding interface for ffmpeg.
 # Features
 - Dynamic form completion for quick and responsive adjustments
 - High quality default encoding settings
-- Support for multiple video, audio and subtitle streams
-- Support for common text and image subtitle formats
-- Support for all VP8 and VP9 features and rate control modes
-- Support for target file size input
+- Support for selecting among multiple video, audio and subtitle streams
+- Support for embedding common text and image subtitle formats
+- All VP8, VP9 and AV1 features and rate control modes
+- Vorbis and Opus audio with VP8 and VP9, Opus audio with AV1
+- Target file size and bit rate inputs
 - Support for trimming by chapter markers
-- Support for advanced custom parameter input
-- Support for additional languages
+- Advanced custom parameter input
+- Translation support
 
 # Compilation
 On Linux, the following packages are required (tested on Debian Jessie):  
