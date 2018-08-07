@@ -74,7 +74,7 @@ void MainWindow::validateFormFields()
     {
         if(ui->rateTargetBitRateSpinBox->isEnabled() && ui->rateTargetBitRateSpinBox->value() == 0)
             return;
-        if(ui->rateTargetFileSizeDoubleSpinBox->isEnabled() && ui->rateTargetFileSizeDoubleSpinBox->value() == 0)
+        if(ui->rateTargetFileSizeDoubleSpinBox->isEnabled() && ui->rateTargetFileSizeDoubleSpinBox->value() == 0.0)
             return;
     }
     if(ui->trimStartEndRadioButton->isChecked() && ui->trimStartEndStartTimeEdit->time()
@@ -163,11 +163,11 @@ void MainWindow::populateStreamComboBoxes()
 
         QString streamString = currentStream.getShortString();
 
-        if(currentStream.type() == (int)InputStream::VIDEO)
+        if(currentStream.type() == static_cast<int>(InputStream::VIDEO))
             ui->streamVideoComboBox->addItem(streamString);
-        else if(currentStream.type() == (int)InputStream::AUDIO)
+        else if(currentStream.type() == static_cast<int>(InputStream::AUDIO))
             ui->streamAudioComboBox->addItem(streamString);
-        else if(currentStream.type() == (int)InputStream::SUBTITLE)
+        else if(currentStream.type() == static_cast<int>(InputStream::SUBTITLE))
             ui->streamSubtitlesComboBox->addItem(streamString);
     }
 
@@ -527,7 +527,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
             outputFile->setBitRateInKilobits(ui->rateTargetBitRateSpinBox->value());
         }
 
-        bitRate = outputFile->bitRateInKilobits();
+        bitRate = static_cast<int>(outputFile->bitRateInKilobits());
     }
 
     if(rateMode == tr("Constant Quality") || rateMode == tr("Constrained Quality"))
@@ -1104,7 +1104,7 @@ void MainWindow::activateUserInterface()
 void MainWindow::on_rateTargetFileSizeDoubleSpinBox_editingFinished()
 {
     if(inputFile->isValid())
-        ui->rateTargetBitRateSpinBox->setValue(getTargetBitRate());
+        ui->rateTargetBitRateSpinBox->setValue(static_cast<int>(getTargetBitRate()));
 
     validateFormFields();
 }
