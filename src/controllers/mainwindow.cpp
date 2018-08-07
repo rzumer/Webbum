@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->processingGroupBox->setEnabled(false);
     ui->encodingGroupBox->setEnabled(false);
 
+    // disable AV1 until supported by ffmpeg
+    ui->codecVideoComboBox->removeItem(ui->codecVideoComboBox->findText(tr("AV1")));
+
     // local variables
 #ifdef Q_OS_WIN32
     taskBarButton = new QWinTaskbarButton(this);
@@ -1160,17 +1163,43 @@ void MainWindow::on_trimDurationRadioButton_clicked()
 void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
 {
     QString codec = arg1;
+
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Variable Bit Rate")));
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Constant Quality")));
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Constant Bit Rate")));
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Constrained Quality")));
+    ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Lossless")));
+
+    ui->codecAudioComboBox->removeItem(ui->codecAudioComboBox->findText(tr("Vorbis")));
+
     if(codec == tr("VP8"))
     {
         ui->rateCRFSpinBox->setMinimum(4);
-        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Constant Quality")));
-        ui->rateModeComboBox->removeItem(ui->rateModeComboBox->findText(tr("Lossless")));
+        ui->rateCRFSpinBox->setMaximum(63);
+        ui->rateModeComboBox->insertItem(1,tr("Variable Bit Rate"));
+        ui->rateModeComboBox->insertItem(2,tr("Constant Bit Rate"));
+        ui->rateModeComboBox->insertItem(3,tr("Constrained Quality"));
+
+        ui->codecAudioComboBox->insertItem(2,tr("Vorbis"));
     }
     else if(codec == tr("VP9"))
     {
         ui->rateCRFSpinBox->setMinimum(0);
+        ui->rateCRFSpinBox->setMaximum(63);
+        ui->rateModeComboBox->insertItem(1,tr("Variable Bit Rate"));
         ui->rateModeComboBox->insertItem(2,tr("Constant Quality"));
-        ui->rateModeComboBox->insertItem(4,tr("Lossless"));
+        ui->rateModeComboBox->insertItem(3,tr("Constant Bit Rate"));
+        ui->rateModeComboBox->insertItem(4,tr("Constrained Quality"));
+        ui->rateModeComboBox->insertItem(5,tr("Lossless"));
+
+        ui->codecAudioComboBox->insertItem(2,tr("Vorbis"));
+    }
+    else if(codec == tr("AV1"))
+    {
+        ui->rateCRFSpinBox->setMinimum(1);
+        ui->rateCRFSpinBox->setMaximum(255);
+        ui->rateModeComboBox->insertItem(1,tr("Constant Quality"));
+        ui->rateModeComboBox->insertItem(2,tr("Lossless"));
     }
 }
 
