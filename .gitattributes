@@ -1,0 +1,2 @@
+* text=auto !eol
+*.vcxproj text eol=crlf
