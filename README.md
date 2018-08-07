@@ -24,7 +24,7 @@ On Windows, all dependencies should be provided in the source code. Note that `f
 # Dependencies
 On Linux, the `ffmpeg` and `qt5` packages are required to run Webbum, and the `fontconfig` package is required for proper subtitle support.
 
-On Windows, the [`Microsoft Visual C++ 2013 Redistributable`](https://www.microsoft.com/en-ca/download/details.aspx?id=40784) package is required to run Webbum. Release builds include the installers and `ffmpeg` binaries from Zeranoe.
+On Windows, the [`Microsoft Visual C++ 2013 Redistributable`](https://www.microsoft.com/en-ca/download/details.aspx?id=40784) package is required to run Webbum. Release builds include the appropriate `ffmpeg` binaries from Zeranoe.
 
 For custom builds of `ffmpeg`, the following options are recommended (though not tested): `--disable-static`, `--enable-shared`, `--enable-fontconfig`, `--enable-libass`, `--enable-libopus`, `--enable-libvorbis`, `--enable-libvpx`, as well as any other libraries for susceptible input video codecs to process with Webbum.
 
