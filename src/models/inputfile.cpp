@@ -10,8 +10,6 @@ InputFile::InputFile(QObject *parent, QString inputFilePath) : QObject(parent)
 
     if(isValid())
     {
-        av_register_all();
-
         AVFormatContext *formatContext = nullptr;
 
         if(avformat_open_input(&formatContext, inputFilePath.toStdString().c_str(), nullptr, nullptr) == 0)

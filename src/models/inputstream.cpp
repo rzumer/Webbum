@@ -48,16 +48,13 @@ InputStream::InputStream(AVStream *stream, int index)
         // Profile Name
         if(stream->codecpar->profile != FF_PROFILE_UNKNOWN)
         {
-            const AVCodec *profile;
+            const AVCodec *decoder;
             const char *profileName = nullptr;
 
-            if(stream->codec->codec)
-                profile = stream->codec->codec;
-            else
-                profile = avcodec_find_decoder(stream->codecpar->codec_id);
+            decoder = avcodec_find_decoder(stream->codecpar->codec_id);
 
-            if(profile)
-                profileName = av_get_profile_name(profile,stream->codecpar->profile);
+            if(decoder)
+                profileName = av_get_profile_name(decoder, stream->codecpar->profile);
 
             if(profileName)
                 _profile = profileName;
@@ -67,7 +64,7 @@ InputStream::InputStream(AVStream *stream, int index)
         if(stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
         {
             // Frame Rate
-            _frameRate = av_q2d(stream->codec->framerate);
+            _frameRate = av_q2d(stream->r_frame_rate);
 
             // Width/Height
             _width = stream->codecpar->width;
