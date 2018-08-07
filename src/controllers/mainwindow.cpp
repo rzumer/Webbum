@@ -334,7 +334,7 @@ void MainWindow::initializeFormData()
 
     // Set the minimum end time and duration higher than 0, unless the duration was not retrieved correctly.
     // If the duration was not retrieved correctly, disable trimming.
-    if(duration.msec() > 0)
+    if(duration > QTime(0,0))
     {
         ui->trimStartEndEndTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));
         ui->trimDurationDurationTimeEdit->setMinimumTime(QTime(0,0).addMSecs(1));

@@ -34,8 +34,8 @@ SOURCES += src/main.cpp\
 
 HEADERS  += src/controllers/mainwindow.h \
     src/controllers/ffmpegcontroller.h \
-    src/models/outputfile.h \
     src/models/inputfile.h \
+    src/models/outputfile.h \
     src/models/inputstream.h \
     src/models/inputchapter.h
 
