@@ -12,7 +12,7 @@ class OutputFile : public QObject
     Q_OBJECT
 
 public:
-    enum OutputVideoCodec {VP8, VP9};
+    enum OutputVideoCodec {VP8, VP9, AV1};
     enum OutputAudioCodec {OPUS, VORBIS};
     explicit OutputFile(QObject *parent = nullptr, QString outputFilePath = QString());
 

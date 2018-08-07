@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->processingGroupBox->setEnabled(false);
     ui->encodingGroupBox->setEnabled(false);
 
-    // disable AV1 until supported by ffmpeg
-    ui->codecVideoComboBox->removeItem(ui->codecVideoComboBox->findText(tr("AV1")));
+    // disable AV1 until supported by ffmpeg with WebM
+    //ui->codecVideoComboBox->removeItem(ui->codecVideoComboBox->findText(tr("AV1")));
 
     // local variables
 #ifdef Q_OS_WIN32
@@ -467,8 +467,8 @@ QStringList MainWindow::generatePass(int passNumber) const
     InputStream audioStream = getSelectedStream(InputStream::AUDIO);
     InputStream subtitleStream = getSelectedStream(InputStream::SUBTITLE);
 
-    bool vp9 = outputFile->videoCodec() == OutputFile::VP9;
-    bool vorbis = outputFile->audioCodec() == OutputFile::VORBIS;
+    OutputFile::OutputVideoCodec videoCodec = static_cast<OutputFile::OutputVideoCodec>(outputFile->videoCodec());
+    OutputFile::OutputAudioCodec audioCodec = static_cast<OutputFile::OutputAudioCodec>(outputFile->audioCodec());
 
     QTime startTime, endTime;
     outputFile->setStartTime(QTime(0,0));
@@ -578,7 +578,13 @@ QStringList MainWindow::generatePass(int passNumber) const
         passStringList << "-i" << inputFilePath;
 
     // video codec
-    if(vp9)
+    if(videoCodec == OutputFile::AV1)
+    {
+        passStringList << "-c:v" << "libaom-av1";
+        passStringList << "-strict" << "experimental";
+        passStringList << "-cpu-used" << QString::number(2);
+    }
+    else if(videoCodec == OutputFile::VP9)
         passStringList << "-c:v" << "libvpx-vp9";
     else
         passStringList << "-c:v" << "libvpx";
@@ -604,7 +610,7 @@ QStringList MainWindow::generatePass(int passNumber) const
     if(crf > -1)
     {
         passStringList << "-crf" << QString::number(crf);
-        if(!vp9)
+        if(videoCodec == OutputFile::VP8)
         {
             passStringList << "-qmin" << QString::number(0);
             passStringList << "-qmax" << QString::number(50);
@@ -623,17 +629,17 @@ QStringList MainWindow::generatePass(int passNumber) const
     {
         passStringList << "-auto-alt-ref" << QString::number(1);
         passStringList << "-lag-in-frames" << QString::number(25);
-        if(vp9)
+        if(videoCodec == OutputFile::VP9)
             passStringList << "-speed" << QString::number(0);
     }
     else
     {
-        if(vp9)
+        if(videoCodec == OutputFile::VP9)
             passStringList << "-speed" << QString::number(4);
     }
 
     // vp8/vp9 exclusive parameters
-    if(vp9)
+    if(videoCodec == OutputFile::VP9)
     {
         passStringList << "-tile-columns" << QString::number(6);
         passStringList << "-frame-parallel" << QString::number(1);
@@ -736,7 +742,7 @@ QStringList MainWindow::generatePass(int passNumber) const
     }
     else
     {
-        if(vorbis)
+        if(audioCodec == OutputFile::VORBIS)
             passStringList << "-c:a" << "libvorbis";
         else
             passStringList << "-c:a" << "libopus";
@@ -1196,10 +1202,10 @@ void MainWindow::on_codecVideoComboBox_currentIndexChanged(const QString &arg1)
     }
     else if(codec == tr("AV1"))
     {
-        ui->rateCRFSpinBox->setMinimum(1);
-        ui->rateCRFSpinBox->setMaximum(255);
-        ui->rateModeComboBox->insertItem(1,tr("Constant Quality"));
-        ui->rateModeComboBox->insertItem(2,tr("Lossless"));
+        ui->rateCRFSpinBox->setMinimum(0);
+        ui->rateCRFSpinBox->setMaximum(63);
+        ui->rateModeComboBox->insertItem(1,tr("Variable Bit Rate"));
+        ui->rateModeComboBox->insertItem(2,tr("Constant Quality"));
     }
 }
 
