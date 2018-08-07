@@ -556,10 +556,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
     // lossless shortcut
     bool lossless = bitRate == -1 && crf == -1;
 
-    // fast seeking compatible shortcut
+    // fast seeking compatible
     bool fastSeek = subtitleStream.isImageSub() || !subtitleStream.isValid();
 
-    // input - text subtitles
+    // input - non-seekable subtitles
     if(!fastSeek)
         passStringList << "-i" << inputFilePath;
 
@@ -573,7 +573,7 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
         passStringList << "-t" << computedDuration.toString("hh:mm:ss.zzz");
     }
 
-    // input - image subtitles
+    // input - seekable subtitles
     if(fastSeek)
         passStringList << "-i" << inputFilePath;
 
@@ -1103,6 +1103,9 @@ void MainWindow::activateUserInterface()
 
 void MainWindow::on_rateTargetFileSizeDoubleSpinBox_editingFinished()
 {
+    if(inputFile->isValid())
+        ui->rateTargetBitRateSpinBox->setValue(getTargetBitRate());
+
     validateFormFields();
 }
 
@@ -1249,6 +1252,15 @@ double MainWindow::getTargetFileSize() const
 
     return inputFile->fileSizeInMegabytes(getOutputDuration())
             / inputFile->bitRateInKilobits() * ui->rateTargetBitRateSpinBox->value();
+}
+
+double MainWindow::getTargetBitRate() const
+{
+    if(inputFile->bitRateInKilobits() == 0 || ui->rateTargetFileSizeDoubleSpinBox->value() == 0.0)
+        return 0;
+
+    return ui->rateTargetFileSizeDoubleSpinBox->value() * 1024
+            / QTime(0,0).msecsTo(getOutputDuration()) * 1000 * 8;
 }
 
 QString MainWindow::getFilterString(QString rawString) const

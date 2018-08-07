@@ -95,6 +95,7 @@ private:
     void connectSignalsAndSlots();
     void activateUserInterface();
     double getTargetFileSize() const;
+    double getTargetBitRate() const;
     QString getFilterString(QString rawString) const;
     InputStream getSelectedStream(InputStream::StreamType streamType) const;
     InputStream getStreamByType(InputStream::StreamType streamType, int index) const;
