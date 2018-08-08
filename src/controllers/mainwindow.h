@@ -88,7 +88,7 @@ private:
     void clearInputFileFormData();
     void populateStreamComboBoxes();
     void initializeFormData();
-    QStringList generatePass(int passNumber, bool twoPass = true) const;
+    QStringList generatePass(int passNumber) const;
     void validateFormFields();
     void updateProgressBar();
     QTime getOutputDuration() const;

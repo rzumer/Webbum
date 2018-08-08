@@ -55,6 +55,7 @@ void FFMPEGController::encodePassFinished(int exitCode, QProcess::ExitStatus exi
                 cleanTemporaryFiles();
             }
 
+            // this value is also sent after completion of single pass encodes
             emit passFinished(2);
         }
     }

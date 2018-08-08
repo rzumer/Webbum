@@ -454,7 +454,7 @@ InputStream MainWindow::getStreamByType(InputStream::StreamType streamType, int 
     return InputStream();
 }
 
-QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
+QStringList MainWindow::generatePass(int passNumber) const
 {
     QString inputFilePath = inputFile->filePath();
     QString outputFilePath = outputFile->filePath();
@@ -508,13 +508,10 @@ QStringList MainWindow::generatePass(int passNumber, bool twoPass) const
 
     int crf = -1;
     int bitRate = -1;
-    bool cbr = false;
     QString rateMode = ui->rateModeComboBox->currentText();
 
-    if(rateMode == tr("Constant Bit Rate"))
-    {
-        cbr = true;
-    }
+    bool twoPass = rateMode == tr("Variable Bit Rate");
+    bool cbr = rateMode == tr("Constant Bit Rate");
 
     if(rateMode == tr("Constant Bit Rate") || rateMode == tr("Variable Bit Rate") || rateMode == tr("Constrained Quality"))
     {
@@ -1069,7 +1066,8 @@ void MainWindow::on_encodePushButton_clicked()
 
     ffmpegController->setOutputFilePath(outputFile->filePath());
 
-    // two pass encode
+    // generate the first pass of an encode
+    // the second pass is generated afterwards for two-pass encodes
     QStringList firstPass = generatePass(1);
 
     ffmpegController->cleanTemporaryFiles();
