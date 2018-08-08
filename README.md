@@ -1,8 +1,8 @@
 # Webbum
 An advanced VP8 and VP9 WebM video encoding interface for ffmpeg.
 
-![](http://ns326742.ip-37-187-108.eu/static/img/webbum1.png?raw=true)
-![](http://ns326742.ip-37-187-108.eu/static/img/webbum2.png?raw=true)
+![](https://rzumer.tebako.net/img/webbum1.png?raw=true)
+![](https://rzumer.tebako.net/img/webbum2.png?raw=true)
 
 # Features
 - Dynamic form completion for quick and responsive adjustments
