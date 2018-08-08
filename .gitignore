@@ -33,9 +33,14 @@ Makefile*
 *.qmlproject.user
 *.qmlproject.user.*
 
+# Compiled translations
+
+*.qm
+
 # Binaries
 
 bin/
+*zip
 
 #LibAV Dependencies
 

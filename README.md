@@ -19,7 +19,14 @@ An advanced VP8 and VP9 WebM video encoding interface for ffmpeg.
 On Linux, the following packages are required (tested on Debian Jessie):  
 `libavutil-dev`, `libavfilter-dev`, `libavcodec-dev`
 
-On Windows, all dependencies should be provided in the source code. Note that `ffmpeg` and its libraries must be present in the build directory (or the `PATH` variable) in order for the application to run after compiling.
+On Windows, all dependencies should be provided in the source code. 
+Note that `ffmpeg` and its libraries must be present in the build directory 
+(or the `PATH` environment variable) in order for the application to run after compiling.
+
+A deployment script for Qt components is also provided. 
+It will compile translations and copy dependencies to a specified build directory on Windows for MSVC and MinGW compilers.
+`wget` and `unzip` (e.g. GnuWin32 ports) are required to deploy ffmpeg libraries automatically.
+Edit the variables in `release.bat` based on your Qt installation, then run it *after* compiling in release mode.
 
 # Dependencies
 On Linux, the `ffmpeg` and `qt5` packages are required to run Webbum, and the `fontconfig` package is required for proper subtitle support.
