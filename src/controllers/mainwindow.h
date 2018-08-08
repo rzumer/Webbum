@@ -73,6 +73,8 @@ private slots:
     void encodePassFinished(int passNumber);
     void encodeFinished();
 
+    void on_actionAbout_Qt_triggered();
+
 private:
     Ui::MainWindow *ui;
 #ifdef Q_OS_WIN32

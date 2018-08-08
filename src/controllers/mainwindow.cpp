@@ -1297,3 +1297,8 @@ void MainWindow::encodeFinished()
 
     activateUserInterface();
 }
+
+void MainWindow::on_actionAbout_Qt_triggered()
+{
+    QMessageBox::aboutQt(this, tr("About Qt"));
+}

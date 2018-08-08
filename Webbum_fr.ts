@@ -173,24 +173,25 @@
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="583"/>
-        <location filename="src/controllers/mainwindow.cpp" line="505"/>
-        <location filename="src/controllers/mainwindow.cpp" line="795"/>
+        <location filename="src/controllers/mainwindow.cpp" line="513"/>
+        <location filename="src/controllers/mainwindow.cpp" line="516"/>
+        <location filename="src/controllers/mainwindow.cpp" line="811"/>
         <source>Variable Bit Rate</source>
         <translation>Débit variable</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="588"/>
-        <location filename="src/controllers/mainwindow.cpp" line="501"/>
-        <location filename="src/controllers/mainwindow.cpp" line="505"/>
-        <location filename="src/controllers/mainwindow.cpp" line="795"/>
+        <location filename="src/controllers/mainwindow.cpp" line="514"/>
+        <location filename="src/controllers/mainwindow.cpp" line="516"/>
+        <location filename="src/controllers/mainwindow.cpp" line="811"/>
         <source>Constant Bit Rate</source>
         <translation>Débit constant</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="593"/>
-        <location filename="src/controllers/mainwindow.cpp" line="505"/>
-        <location filename="src/controllers/mainwindow.cpp" line="518"/>
-        <location filename="src/controllers/mainwindow.cpp" line="810"/>
+        <location filename="src/controllers/mainwindow.cpp" line="516"/>
+        <location filename="src/controllers/mainwindow.cpp" line="530"/>
+        <location filename="src/controllers/mainwindow.cpp" line="826"/>
         <source>Constrained Quality</source>
         <translation>Qualité contrainte</translation>
     </message>
@@ -202,23 +203,23 @@
     <message>
         <location filename="src/views/mainwindow.ui" line="615"/>
         <location filename="src/controllers/mainwindow.cpp" line="91"/>
-        <location filename="src/controllers/mainwindow.cpp" line="511"/>
-        <location filename="src/controllers/mainwindow.cpp" line="912"/>
-        <location filename="src/controllers/mainwindow.cpp" line="930"/>
-        <location filename="src/controllers/mainwindow.cpp" line="942"/>
-        <location filename="src/controllers/mainwindow.cpp" line="956"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1107"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1116"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1124"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1130"/>
+        <location filename="src/controllers/mainwindow.cpp" line="522"/>
+        <location filename="src/controllers/mainwindow.cpp" line="928"/>
+        <location filename="src/controllers/mainwindow.cpp" line="946"/>
+        <location filename="src/controllers/mainwindow.cpp" line="958"/>
+        <location filename="src/controllers/mainwindow.cpp" line="972"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1127"/>
         <location filename="src/controllers/mainwindow.cpp" line="1136"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1144"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1150"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1156"/>
         <source>Bit Rate</source>
         <translation>Par débit</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="620"/>
         <location filename="src/controllers/mainwindow.cpp" line="96"/>
-        <location filename="src/controllers/mainwindow.cpp" line="507"/>
+        <location filename="src/controllers/mainwindow.cpp" line="518"/>
         <source>File Size</source>
         <translation>Par taille</translation>
     </message>
@@ -279,25 +280,25 @@
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="813"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1143"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1163"/>
         <source>VP8</source>
         <translation>VP8</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="818"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1149"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1169"/>
         <source>VP9</source>
         <translation>VP9</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="835"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1214"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1234"/>
         <source>Opus</source>
         <translation>Opus</translation>
     </message>
     <message>
         <location filename="src/views/mainwindow.ui" line="840"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1219"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1239"/>
         <source>Vorbis</source>
         <translation>Vorbis</translation>
     </message>
@@ -323,12 +324,33 @@
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="src/views/mainwindow.ui" line="939"/>
-        <source>Open...</source>
-        <translation>Ouvrir...</translation>
+        <location filename="src/views/mainwindow.ui" line="937"/>
+        <source>Help</source>
+        <translation>Aide</translation>
     </message>
     <message>
-        <location filename="src/views/mainwindow.ui" line="944"/>
+        <location filename="src/views/mainwindow.ui" line="946"/>
+        <source>Open</source>
+        <translation>Ouvrir</translation>
+    </message>
+    <message>
+        <location filename="src/views/mainwindow.ui" line="949"/>
+        <source>Ctrl+O</source>
+        <translation>Ctrl+O</translation>
+    </message>
+    <message>
+        <location filename="src/views/mainwindow.ui" line="957"/>
+        <source>Ctrl+Q</source>
+        <translation>Ctrl+Q</translation>
+    </message>
+    <message>
+        <location filename="src/views/mainwindow.ui" line="962"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1303"/>
+        <source>About Qt</source>
+        <translation>À propos de Qt</translation>
+    </message>
+    <message>
+        <location filename="src/views/mainwindow.ui" line="954"/>
         <source>Exit</source>
         <translation>Quitter</translation>
     </message>
@@ -345,57 +367,57 @@ La sélection de sous-titres textuels a été désactivée pour ce fichier.</tra
         <translation>Avertissement</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="518"/>
-        <location filename="src/controllers/mainwindow.cpp" line="802"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1146"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1152"/>
+        <location filename="src/controllers/mainwindow.cpp" line="530"/>
+        <location filename="src/controllers/mainwindow.cpp" line="818"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1166"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1172"/>
         <source>Constant Quality</source>
         <translation>Qualité constante</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="782"/>
+        <location filename="src/controllers/mainwindow.cpp" line="798"/>
         <source>Select Output File</source>
         <translation>Sélectionner le fichier de sortie</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="784"/>
+        <location filename="src/controllers/mainwindow.cpp" line="800"/>
         <source>WebM (*.webm)</source>
         <translation>WebM (*.webm)</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="817"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1147"/>
-        <location filename="src/controllers/mainwindow.cpp" line="1153"/>
+        <location filename="src/controllers/mainwindow.cpp" line="833"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1167"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1173"/>
         <source>Lossless</source>
         <translation>Sans perte</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="1038"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1054"/>
         <source>Select Input File</source>
         <translation>Sélectionner le fichier d&apos;entrée</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="1040"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1056"/>
         <source>All Files (*.*)</source>
         <translation>Tous les formats (*.*)</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="1244"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1273"/>
         <source>Failure</source>
         <translation>Échec</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="1244"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1273"/>
         <source>The encode has failed unexpectedly.</source>
         <translation>L&apos;encodage a échoué de façon inattendue.</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="1266"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1295"/>
         <source>Success</source>
         <translation>Succès</translation>
     </message>
     <message>
-        <location filename="src/controllers/mainwindow.cpp" line="1266"/>
+        <location filename="src/controllers/mainwindow.cpp" line="1295"/>
         <source>Encode successful.</source>
         <translation>L&apos;encodage a été complété avec succès.</translation>
     </message>
