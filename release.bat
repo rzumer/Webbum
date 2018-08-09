@@ -18,16 +18,22 @@ SET QT_ROOT=C:\Applications\Qt
 SET QT_VERSION=5.11.1
 SET COMPILER32=msvc2015
 SET COMPILER64=msvc2017_64
+
+REM The following may not be necessary when compiling through MinGW. Check for warnings on deployment.
+SET VC_INSTALL_DIR_32=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
+SET VC_INSTALL_DIR_64=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC
 SET CL_EXE_PATH_32=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.14.26428\bin\Hostx64\x86
 SET CL_EXE_PATH_64=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.14.26428\bin\Hostx64\x64
 
+setlocal enableextensions enabledelayedexpansion
 IF %BIT_ARCH%==32 (
 	SET COMPILER=%COMPILER32%
+	SET VCINSTALLDIR=%VC_INSTALL_DIR_32%
 ) ELSE (
 	SET COMPILER=%COMPILER64%
+	SET VCINSTALLDIR=%VC_INSTALL_DIR_64%
 )
 
-setlocal enableextensions enabledelayedexpansion
 SET PATH=%PATH%;%CL_EXE_PATH_64%
 SET BIN_PATH=%QT_ROOT%\%QT_VERSION%\%COMPILER%\bin
 %BIN_PATH%\lrelease .\Webbum.pro
