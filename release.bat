@@ -1,4 +1,5 @@
 @ECHO OFF
+
 REM Basic deployment script for Qt components in Windows builds.
 
 IF "%1"=="" GOTO usage
@@ -12,13 +13,28 @@ IF NOT ERRORLEVEL 1 SET BIT_ARCH=32
 echo.%2 | findstr /C:"86" 1>nul
 IF NOT ERRORLEVEL 1 SET BIT_ARCH=32
 
+REM Set the following variables based on your environment.
 SET QT_ROOT=C:\Applications\Qt
 SET QT_VERSION=5.11.1
-SET COMPILER=msvc2017
-SET BIN_PATH=%QT_ROOT%\%QT_VERSION%\%COMPILER%_%BITARCH%\bin
+SET COMPILER32=msvc2015
+SET COMPILER64=msvc2017_64
+SET CL_EXE_PATH_32=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.14.26428\bin\Hostx64\x86
+SET CL_EXE_PATH_64=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.14.26428\bin\Hostx64\x64
+
+IF %BIT_ARCH%==32 (
+	SET COMPILER=%COMPILER32%
+) ELSE (
+	SET COMPILER=%COMPILER64%
+)
+
+setlocal enableextensions enabledelayedexpansion
+SET PATH=%PATH%;%CL_EXE_PATH_64%
+SET BIN_PATH=%QT_ROOT%\%QT_VERSION%\%COMPILER%\bin
 %BIN_PATH%\lrelease .\Webbum.pro
 move .\*.qm "%~1"
-%BIN_PATH%\windeployqt --release "%~1"
+%BIN_PATH%\windeployqt --release "%~1\Webbum.exe"
+endlocal
+
 copy ".\LICENSE.md" "%~1\LICENSE.txt"
 GOTO fetch_ffmpeg
 EXIT /B 0
