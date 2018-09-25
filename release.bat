@@ -55,7 +55,7 @@ EXIT /B 0
 
 :fetch_ffmpeg
 SET FFMPEG_DEPS=wget unzip
-SET FFMPEG_VER=4.0.2
+SET FFMPEG_VER=20180925-a7429d8
 SET PACKAGE=ffmpeg-%FFMPEG_VER%-win%BIT_ARCH%-shared
 SET FETCH_DIR=https://ffmpeg.zeranoe.com/builds/win%BIT_ARCH%/shared/
 

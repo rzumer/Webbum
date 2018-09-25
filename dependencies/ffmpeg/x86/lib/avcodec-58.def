@@ -6,6 +6,7 @@ EXPORTS
     av_bitstream_filter_init
     av_bitstream_filter_next
     av_bsf_alloc
+    av_bsf_flush
     av_bsf_free
     av_bsf_get_by_name
     av_bsf_get_class
@@ -204,6 +205,7 @@ EXPORTS
     avpriv_dca_parse_core_frame_header
     avpriv_dca_sample_rates
     avpriv_dnxhd_get_frame_size
+    avpriv_dnxhd_get_hr_frame_size
     avpriv_dnxhd_get_interlaced
     avpriv_do_elbg
     avpriv_exif_decode_ifd

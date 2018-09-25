@@ -469,6 +469,7 @@ EXPORTS
     av_thread_message_flush
     av_thread_message_queue_alloc
     av_thread_message_queue_free
+    av_thread_message_queue_nb_elems
     av_thread_message_queue_recv
     av_thread_message_queue_send
     av_thread_message_queue_set_err_recv

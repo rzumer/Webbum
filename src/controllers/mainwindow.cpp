@@ -13,9 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->processingGroupBox->setEnabled(false);
     ui->encodingGroupBox->setEnabled(false);
 
-    // disable AV1 until supported by ffmpeg with WebM
-    //ui->codecVideoComboBox->removeItem(ui->codecVideoComboBox->findText(tr("AV1")));
-
     // local variables
 #ifdef Q_OS_WIN32
     taskBarButton = new QWinTaskbarButton(this);
