@@ -579,7 +579,7 @@ QStringList MainWindow::generatePass(int passNumber) const
     {
         passStringList << "-c:v" << "libaom-av1";
         passStringList << "-strict" << "experimental";
-        passStringList << "-cpu-used" << QString::number(2);
+        passStringList << "-cpu-used" << QString::number(4);
     }
     else if(videoCodec == OutputFile::VP9)
         passStringList << "-c:v" << "libvpx-vp9";
